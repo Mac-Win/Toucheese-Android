@@ -1,16 +1,33 @@
+# 빌드 파일
+/build/
+.gradle/
+
+# Android Studio 파일
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/inspectionProfiles/
+.idea/vcs.xml
+
+# 로컬 설정 파일
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
 local.properties
-/.idea/vcs.xml
+.classpath
+.project
+.settings/
+*.prefs
+
+# 디버그 키스토어
+*.keystore
+
+# APK/AAB 파일
+*.apk
+*.aab
+
+# 로그 파일
+*.log
+
+# OS별 파일
+.DS_Store
+Thumbs.db
