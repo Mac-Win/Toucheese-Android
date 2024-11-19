@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.toucheeseapp.ui.screens.HomeScreen
 
 @Composable
 fun ToucheeseApp() {
@@ -16,7 +17,7 @@ fun ToucheeseApp() {
 
         // 메인 화면
         composable("HomeScreen"){
-
+            HomeScreen()
         }
         // 스튜디오 조회 화면
         composable("StudioListScreen"){
