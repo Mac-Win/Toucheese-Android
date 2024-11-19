@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.presentation.ui.theme
+package com.example.toucheeseapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

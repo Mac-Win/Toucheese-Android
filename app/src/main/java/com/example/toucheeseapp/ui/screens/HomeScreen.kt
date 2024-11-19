@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.presentation.ui.feature_screen
+package com.example.toucheeseapp.ui.screens
 
 import androidx.compose.runtime.Composable
 

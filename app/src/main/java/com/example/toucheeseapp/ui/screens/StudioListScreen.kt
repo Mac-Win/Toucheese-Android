@@ -1,8 +1,8 @@
-package com.example.toucheeseapp.presentation.ui.feature_screen
+package com.example.toucheeseapp.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.toucheeseapp.presentation.ui.theme.ToucheeseAppTheme
+import com.example.toucheeseapp.ui.theme.ToucheeseAppTheme
 
 @Composable
 fun StudioListScreen() {

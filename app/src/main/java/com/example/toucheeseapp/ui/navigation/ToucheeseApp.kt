@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.presentation.navigation
+package com.example.toucheeseapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
