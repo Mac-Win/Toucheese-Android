@@ -47,7 +47,12 @@ fun StudioListScreen(navController: NavController) {
             // 스튜디오 리스트
             LazyColumn() {
                 item {
-                    StudioListItemComponent()
+                    StudioListItemComponent(true)
+                    StudioListItemComponent(true)
+                    StudioListItemComponent(true)
+                    StudioListItemComponent(true)
+                    StudioListItemComponent(true)
+                    StudioListItemComponent(true)
                 }
             }
 

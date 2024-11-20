@@ -1,17 +1,23 @@
 package com.example.toucheeseapp.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,19 +39,26 @@ import com.example.toucheeseapp.data.model.Studio
 
 // 추후 parameter에 studio: Studio 추가
 @Composable
-fun StudioListItemComponent(modifier: Modifier = Modifier) {
+fun StudioListItemComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.padding(16.dp)
+        modifier = modifier.padding(top = 16.dp, start = 16.dp, bottom = 16.dp)
     ) {
+        // Item Title
+        StudioListItemTitleComponent(
+            isMarked,
+            modifier = Modifier.fillMaxWidth()
+        )
+        // Item Carousel
+        StudioListItemCarouselComponent()
 
     }
 }
 
 @Composable
-fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
+private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
     // 윗 부분
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -76,9 +89,9 @@ fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifie
             // 별점
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier =  Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = 4.dp),
 
-            ) {
+                ) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
@@ -97,7 +110,7 @@ fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifie
         Text(
             text = "10,000원",
             modifier = Modifier.padding(8.dp)
-            )
+        )
 
         IconButton(
             onClick = {
@@ -105,10 +118,14 @@ fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifie
             }
         ) {
             Icon(
-                imageVector = if (isMarked) ImageVector.vectorResource(R.drawable.bookmarkfull_36px) else ImageVector.vectorResource(R.drawable.bookmark_36px), // 북마크로 변경
+                imageVector = if (isMarked) ImageVector.vectorResource(R.drawable.bookmarkfull_36px) else ImageVector.vectorResource(
+                    R.drawable.bookmark_36px
+                ), // 북마크로 변경
                 contentDescription = null,
                 tint = if (isMarked) Color(0xFFFFCC00) else Color(0xFF000000),
-                modifier = Modifier.padding(8.dp).size(24.dp)
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(24.dp)
             )
         }
     }
@@ -116,12 +133,51 @@ fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifie
 
 // Carousel
 @Composable
-fun StudioListItemCarouselComponent() {
+private fun StudioListItemCarouselComponent(modifier: Modifier = Modifier) {
+    LazyRow(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            CarouselItem(R.drawable.image1)
+            CarouselItem(R.drawable.image2)
+            CarouselItem(R.drawable.image3)
+            CarouselItem(R.drawable.image4)
+            CarouselItem(R.drawable.image5)
+            CarouselItem(R.drawable.image6)
+        }
 
+
+    }
 }
+
+// Carousel Item
+@Composable
+private fun CarouselItem(@DrawableRes image: Int, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+    ) {
+        Image(
+            painter = painterResource(image),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.Center,
+            modifier = Modifier.size(100.dp)
+        )
+
+    }
+}
+
 
 @Preview
 @Composable
-fun StudioListItemPreview() {
-    StudioListItemTitleComponent(false)
+private fun StudioListItemPreview() {
+    StudioListItemComponent(true)
+//    StudioListItemCarouselComponent()
+//    CarouselItem()
 }
