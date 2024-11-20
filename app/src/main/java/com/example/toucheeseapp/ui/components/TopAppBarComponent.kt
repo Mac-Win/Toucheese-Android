@@ -72,7 +72,7 @@ fun TopAppBarComponent(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun TopAppBarPreview() {
+private fun TopAppBarPreview() {
     TopAppBarComponent()
 }
 
