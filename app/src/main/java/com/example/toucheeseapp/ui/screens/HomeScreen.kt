@@ -116,7 +116,7 @@ fun SearchBar() {
             )
         },
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color(0xFFF3F3F3),
+            containerColor = Color(0xFFFFF2CC),
             cursorColor = Color.Black,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
