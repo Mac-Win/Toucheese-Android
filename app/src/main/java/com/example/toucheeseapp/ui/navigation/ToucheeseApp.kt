@@ -13,7 +13,7 @@ fun ToucheeseApp() {
 
     NavHost(
         navController = navController,
-        startDestination = "HomeScreen", // 첫 번째 화면 route 지정
+        startDestination = "StudioListScreen", // 첫 번째 화면 route 지정
     ){ // Builder 부문
 
         // 메인 화면
