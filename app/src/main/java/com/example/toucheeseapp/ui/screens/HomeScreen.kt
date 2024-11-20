@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +51,7 @@ import com.example.toucheeseapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onCardClick: () -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
 
     Scaffold(
@@ -80,7 +79,7 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Spacer(modifier = Modifier.height(4.dp)) // 서치바와 카드 사이 간격
-            CardGrid()
+            CardGrid(onCardClick = onCardClick)
         }
     }
 }
@@ -129,7 +128,7 @@ fun SearchBar() {
 }
 
 @Composable
-fun CardGrid() {
+fun CardGrid(onCardClick: () -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(
@@ -151,19 +150,20 @@ fun CardGrid() {
                 Pair(R.drawable.image6, "선명한")
             )[index]
 
-            PhotoCard(imageRes = cardData.first, title = cardData.second)
+            PhotoCard(imageRes = cardData.first, title = cardData.second, onCardClick = onCardClick)
         }
     }
 }
 
 @Composable
-fun PhotoCard(imageRes: Int, title: String) {
+fun PhotoCard(imageRes: Int, title: String, onCardClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(188.dp), // 카드 전체 높이
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        onClick = onCardClick
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
