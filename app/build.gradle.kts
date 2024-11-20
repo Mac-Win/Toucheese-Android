@@ -59,7 +59,7 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
     // Retrofit
-    implementation(libs.retrofit2)
-    implementation(libs.converter.gson)
-    implementation(libs.converter.scalars)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson.v290)
+    implementation(libs.converter.scalars.v290)
 }
