@@ -103,7 +103,7 @@ fun FilterChipComponent(
 }
 
 @Composable
-fun FilterChipItem(
+private fun FilterChipItem(
     filterName: String,
     expanded: Boolean,
     modifier: Modifier = Modifier,

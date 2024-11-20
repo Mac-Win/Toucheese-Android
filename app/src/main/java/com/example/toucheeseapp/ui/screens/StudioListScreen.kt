@@ -23,12 +23,15 @@ import com.example.toucheeseapp.ui.components.TopAppBarComponent
 import com.example.toucheeseapp.ui.theme.ToucheeseAppTheme
 
 @Composable
-fun StudioListScreen(navController: NavController) {
+fun StudioListScreen(onClickLeadingIcon: () -> Unit, onClickTrailingIcon: () -> Unit) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var selectedFilter by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
-            TopAppBarComponent()
+            TopAppBarComponent(
+                onClickLeadingIcon = onClickLeadingIcon,
+                onClickTrailingIcon = onClickTrailingIcon,
+            )
         },
         modifier = Modifier.fillMaxSize()
     ) {
