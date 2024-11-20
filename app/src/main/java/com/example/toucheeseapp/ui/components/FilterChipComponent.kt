@@ -90,7 +90,10 @@ fun FilterChipComponent(
                         RadioButtonComponent(
                             selected = selectedFilter == it,
                             filterItemName = it,
-                            onClick = { onSelectedFilterChange(it) }
+                            onClick = {
+                                onSelectedItemChange(-1)
+                                onSelectedFilterChange(it)
+                            }
                         )
                     }
                 }
