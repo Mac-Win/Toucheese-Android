@@ -58,4 +58,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    // Retrofit
+    implementation(libs.retrofit2)
+    implementation(libs.converter.gson)
+    implementation(libs.converter.scalars)
 }
