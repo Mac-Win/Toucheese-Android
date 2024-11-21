@@ -33,6 +33,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,13 +49,31 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.toucheeseapp.R
+import com.example.toucheeseapp.data.network.ToucheeseServer
+import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onCardClick: () -> Unit) {
-    var selectedTab by remember { mutableStateOf(0) }
+fun HomeScreen(api: ToucheeseServer, onCardClick: () -> Unit) {
+    // 화면 내에서 viewModel 생성
+    val viewModel: StudioViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return StudioViewModel(api = api) as T
+            }
 
+        }
+    )
+    var selectedTab by remember { mutableStateOf(0) }
+    val studios = viewModel.studios.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchStudios(conceptId = 1, 0) // 첫 페이지 호출
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
