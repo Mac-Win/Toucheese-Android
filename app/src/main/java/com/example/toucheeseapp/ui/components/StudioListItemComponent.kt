@@ -35,15 +35,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.toucheeseapp.R
+import com.example.toucheeseapp.data.model.Studio
 
 // 추후 parameter에 studio: Studio 추가
 @Composable
-fun StudioListItemComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
+fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(top = 16.dp, start = 16.dp, bottom = 16.dp)
     ) {
         // Item Title
         StudioListItemTitleComponent(
+            studioName = studio.name,
+            studioRating = studio.rating,
+            price =  studio .price,
             isMarked,
             modifier = Modifier.fillMaxWidth()
         )
@@ -54,7 +58,7 @@ fun StudioListItemComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
+private fun StudioListItemTitleComponent(studioName: String, studioRating: Double, price: Int, isMarked: Boolean, modifier: Modifier = Modifier) {
     // 윗 부분
     Row(
         modifier = modifier,
@@ -82,7 +86,7 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
         ) {
             // 상호명
             Text(
-                text = "퓨어&플라워",
+                text = studioName,
                 fontSize = 24.sp,
             )
             // 별점
@@ -98,7 +102,7 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "4.3", // rating 연결
+                    text = "$studioRating", // rating 연결
                     color = Color(0xFFFFCC00),
                 )
             }
@@ -106,11 +110,13 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
 
         Spacer(Modifier.weight(1f))
 
+        // 가격
         Text(
-            text = "10,000원",
+            text = "${price / 1000},000원",
             modifier = Modifier.padding(8.dp)
         )
 
+        // 북마크 버튼
         IconButton(
             onClick = {
 
@@ -176,7 +182,6 @@ private fun CarouselItem(@DrawableRes image: Int, modifier: Modifier = Modifier)
 @Preview
 @Composable
 private fun StudioListItemPreview() {
-    StudioListItemComponent(true)
 //    StudioListItemCarouselComponent()
 //    CarouselItem()
 }
