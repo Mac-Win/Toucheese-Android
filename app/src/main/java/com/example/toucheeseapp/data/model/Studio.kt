@@ -1,11 +1,19 @@
 package com.example.toucheeseapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+
 data class Studio(
-    val studioName: String,
-    val profileImage: String, // url
-    val price: Int,
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("profileImage")
+    val profileImage: String,
+    @SerializedName("rating")
     val rating: Double,
-    val address: String,
-    val location: String,
-    val photoList: List<String>,
+    @SerializedName("price")
+    val price: Int,
+    @SerializedName("images")
+    val images: List<String>
 )

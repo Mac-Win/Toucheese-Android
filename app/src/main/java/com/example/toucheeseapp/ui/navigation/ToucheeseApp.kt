@@ -5,13 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.screens.HomeScreen
 import com.example.toucheeseapp.ui.screens.StudioListScreen
 
 val TAG = "ToucheeseApp"
 
 @Composable
-fun ToucheeseApp() {
+fun ToucheeseApp(api: ToucheeseServer) {
     val navController = rememberNavController()
 
     NavHost(
@@ -21,7 +22,7 @@ fun ToucheeseApp() {
 
         // 메인 화면
         composable("HomeScreen"){
-            HomeScreen(){
+            HomeScreen(api = api){
                 // 스튜디오 조회 화면으로 이동
                 navController.navigate("StudioListScreen")
 

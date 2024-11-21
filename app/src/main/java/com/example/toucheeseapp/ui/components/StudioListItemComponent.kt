@@ -35,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.toucheeseapp.R
-import com.example.toucheeseapp.data.model.Studio
 
 // 추후 parameter에 studio: Studio 추가
 @Composable
