@@ -7,14 +7,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -22,6 +28,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +41,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,21 +53,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.rememberAsyncImagePainter
 import com.example.toucheeseapp.R
+import com.example.toucheeseapp.data.model.concept_studio.Studio
+import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: () -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     val studios = viewModel.studios.collectAsState()
+    val isSearching by viewModel.isSearching.collectAsState()
+    val searchResults by viewModel.searchStudios.collectAsState()
     // 데이터 수신 확인
     Log.d("HomeScreen", "${studios.value}")
+    Log.d("UI State", "isSearching: $isSearching, searchResults: $searchResults")
 
 
     Scaffold(
@@ -79,18 +93,33 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: () -> 
                 onTabSelected = { selectedTab = it }
             )
         }
-    ) { innerPadding ->
-        Column(
+    ) {  innerPadding ->
+        Box(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Spacer(modifier = Modifier.height(4.dp)) // 서치바와 카드 사이 간격
-            CardGrid(onCardClick = onCardClick)
+            // 홈 화면 콘텐츠
+            HomeContent(
+                studios = studios,
+                onCardClick = onCardClick,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            // 검색 결과 리스트 (조건부로 표시)
+            if (isSearching) {
+                SearchResultBox(
+                    searchResults = searchResults,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart)
+                        .padding(horizontal = 16.dp)// 화면 상단에 정렬
+                )
+            }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,7 +160,7 @@ fun SearchBar(viewModel: StudioViewModel) {
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp)
             .height(50.dp)
     )
 }
@@ -286,4 +315,85 @@ fun ReusableTopBar(
             }
         }
     )
+}
+
+@Composable
+fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color(0xFFFFF2CC))
+            .padding(16.dp)
+    ) {
+        if (searchResults.isEmpty()) {
+            // 검색 결과가 없을 때 메시지 표시
+            Text(
+                text = "검색된 내용이 없습니다.",
+                modifier = Modifier.align(Alignment.TopStart),
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp)
+            ) {
+                searchResults.forEach { studio ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .background(Color.White)
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(studio.profileImage),
+                                contentDescription = "${studio.name} 프로필 이미지",
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .background(Color.LightGray)
+                                    .padding(8.dp)
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = studio.name,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = studio.address,
+                                    fontSize = 14.sp,
+                                    color = Color.Gray,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeContent(studios: State<List<Studio>>, onCardClick: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Spacer(modifier = Modifier.height(4.dp))
+        CardGrid(onCardClick = onCardClick) // 기존 홈 콘텐츠 (카드 그리드)
+    }
 }
