@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.example.toucheeseapp.R
 import com.example.toucheeseapp.data.model.Studio
 
@@ -52,7 +54,9 @@ fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifie
             modifier = Modifier.fillMaxWidth()
         )
         // Item Carousel
-        StudioListItemCarouselComponent()
+        StudioListItemCarouselComponent(
+            imageUrlList = studio.images
+        )
 
     }
 }
@@ -138,20 +142,15 @@ private fun StudioListItemTitleComponent(studioName: String, studioRating: Doubl
 
 // Carousel
 @Composable
-private fun StudioListItemCarouselComponent(modifier: Modifier = Modifier) {
+private fun StudioListItemCarouselComponent(imageUrlList: List<String>, modifier: Modifier = Modifier) {
     LazyRow(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item {
-            CarouselItem(R.drawable.image1)
-            CarouselItem(R.drawable.image2)
-            CarouselItem(R.drawable.image3)
-            CarouselItem(R.drawable.image4)
-            CarouselItem(R.drawable.image5)
-            CarouselItem(R.drawable.image6)
+        items(imageUrlList){
+            CarouselItem(imageUrl = it)
         }
 
 
@@ -160,21 +159,20 @@ private fun StudioListItemCarouselComponent(modifier: Modifier = Modifier) {
 
 // Carousel Item
 @Composable
-private fun CarouselItem(@DrawableRes image: Int, modifier: Modifier = Modifier) {
+private fun CarouselItem(imageUrl: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
     ) {
-        Image(
-            painter = painterResource(image),
+        AsyncImage(
+            model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             alignment = Alignment.Center,
             modifier = Modifier.size(100.dp)
         )
-
     }
 }
 
