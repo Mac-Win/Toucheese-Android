@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.data.model
+package com.example.toucheeseapp.data.model.concept_studio
 
 
 import com.google.gson.annotations.SerializedName

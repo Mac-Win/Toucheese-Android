@@ -1,5 +1,6 @@
 package com.example.toucheeseapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +34,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,31 +49,19 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.R
-import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(api: ToucheeseServer, onCardClick: () -> Unit) {
-    // 화면 내에서 viewModel 생성
-    val viewModel: StudioViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return StudioViewModel(api = api) as T
-            }
-
-        }
-    )
+fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: () -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     val studios = viewModel.studios.collectAsState()
+    // 데이터 수신 확인
+    Log.d("HomeScreen", "${studios.value}")
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchStudios(conceptId = 1, 0) // 첫 페이지 호출
-    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -82,7 +70,7 @@ fun HomeScreen(api: ToucheeseServer, onCardClick: () -> Unit) {
                     showBackButton = false, // 홈 화면에서는 뒤로가기 버튼 없음
                     showCartButton = false  // 홈 화면에서는 장바구니 버튼 없음
                 )
-                SearchBar() // 서치바를 탑바 아래에 추가
+                SearchBar(viewModel) // 서치바를 탑바 아래에 추가
             }
         },
         bottomBar = {
@@ -106,11 +94,12 @@ fun HomeScreen(api: ToucheeseServer, onCardClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar() {
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+fun SearchBar(viewModel: StudioViewModel) {
+    var searchText by remember { mutableStateOf("") }
     TextField(
         value = searchText,
-        onValueChange = { searchText = it }, // 사용자가 입력한 텍스트를 업데이트
+        onValueChange = { searchText = it
+                        viewModel.searchStudios(searchText) }, // 사용자가 입력한 텍스트를 업데이트
         leadingIcon = { // 왼쪽 아이콘
             Icon(
                 imageVector = Icons.Default.Menu, // 햄버거 메뉴 아이콘

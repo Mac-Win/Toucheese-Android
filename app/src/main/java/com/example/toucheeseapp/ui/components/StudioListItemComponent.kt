@@ -1,7 +1,5 @@
 package com.example.toucheeseapp.ui.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,16 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,32 +25,39 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.example.toucheeseapp.R
+import com.example.toucheeseapp.data.model.concept_studio.Studio
 
 // 추후 parameter에 studio: Studio 추가
 @Composable
-fun StudioListItemComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
+fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(top = 16.dp, start = 16.dp, bottom = 16.dp)
     ) {
         // Item Title
         StudioListItemTitleComponent(
+            studioName = studio.name,
+            studioProfileImageUrl = studio.profileImage,
+            studioRating = studio.rating,
+            price =  studio .price,
             isMarked,
             modifier = Modifier.fillMaxWidth()
         )
         // Item Carousel
-        StudioListItemCarouselComponent()
+        StudioListItemCarouselComponent(
+            imageUrlList = studio.images
+        )
 
     }
 }
 
 @Composable
-private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier = Modifier) {
+private fun StudioListItemTitleComponent(studioName: String, studioProfileImageUrl: String, studioRating: Double, price: Int, isMarked: Boolean, modifier: Modifier = Modifier) {
     // 윗 부분
     Row(
         modifier = modifier,
@@ -62,9 +65,8 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
         horizontalArrangement = Arrangement.Start
     ) {
         // profile Image
-        // 임시 데이터
-        Image(
-            painter = painterResource(R.drawable.image2),
+        AsyncImage(
+            model = studioProfileImageUrl,
             contentDescription = "스튜디오 프로필 이미지",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -82,7 +84,7 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
         ) {
             // 상호명
             Text(
-                text = "퓨어&플라워",
+                text = studioName,
                 fontSize = 24.sp,
             )
             // 별점
@@ -98,7 +100,7 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "4.3", // rating 연결
+                    text = "$studioRating", // rating 연결
                     color = Color(0xFFFFCC00),
                 )
             }
@@ -106,11 +108,13 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
 
         Spacer(Modifier.weight(1f))
 
+        // 가격
         Text(
-            text = "10,000원",
+            text = "${price / 1000},000원",
             modifier = Modifier.padding(8.dp)
         )
 
+        // 북마크 버튼
         IconButton(
             onClick = {
 
@@ -132,20 +136,15 @@ private fun StudioListItemTitleComponent(isMarked: Boolean, modifier: Modifier =
 
 // Carousel
 @Composable
-private fun StudioListItemCarouselComponent(modifier: Modifier = Modifier) {
+private fun StudioListItemCarouselComponent(imageUrlList: List<String>, modifier: Modifier = Modifier) {
     LazyRow(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item {
-            CarouselItem(R.drawable.image1)
-            CarouselItem(R.drawable.image2)
-            CarouselItem(R.drawable.image3)
-            CarouselItem(R.drawable.image4)
-            CarouselItem(R.drawable.image5)
-            CarouselItem(R.drawable.image6)
+        items(imageUrlList){
+            CarouselItem(imageUrl = it)
         }
 
 
@@ -154,21 +153,20 @@ private fun StudioListItemCarouselComponent(modifier: Modifier = Modifier) {
 
 // Carousel Item
 @Composable
-private fun CarouselItem(@DrawableRes image: Int, modifier: Modifier = Modifier) {
+private fun CarouselItem(imageUrl: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
     ) {
-        Image(
-            painter = painterResource(image),
+        AsyncImage(
+            model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             alignment = Alignment.Center,
             modifier = Modifier.size(100.dp)
         )
-
     }
 }
 
@@ -176,7 +174,6 @@ private fun CarouselItem(@DrawableRes image: Int, modifier: Modifier = Modifier)
 @Preview
 @Composable
 private fun StudioListItemPreview() {
-    StudioListItemComponent(true)
 //    StudioListItemCarouselComponent()
 //    CarouselItem()
 }
