@@ -17,12 +17,12 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     NavHost(
         navController = navController,
-        startDestination = "StudioListScreen", // 첫 번째 화면 route 지정
+        startDestination = "HomeScreen", // 첫 번째 화면 route 지정
     ){ // Builder 부문
 
         // 메인 화면
         composable("HomeScreen"){
-            HomeScreen(api = api){
+            HomeScreen(){
                 // 스튜디오 조회 화면으로 이동
                 navController.navigate("StudioListScreen")
 
