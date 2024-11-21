@@ -48,6 +48,7 @@ fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifie
         // Item Title
         StudioListItemTitleComponent(
             studioName = studio.name,
+            studioProfileImageUrl = studio.profileImage,
             studioRating = studio.rating,
             price =  studio .price,
             isMarked,
@@ -62,7 +63,7 @@ fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifie
 }
 
 @Composable
-private fun StudioListItemTitleComponent(studioName: String, studioRating: Double, price: Int, isMarked: Boolean, modifier: Modifier = Modifier) {
+private fun StudioListItemTitleComponent(studioName: String, studioProfileImageUrl: String, studioRating: Double, price: Int, isMarked: Boolean, modifier: Modifier = Modifier) {
     // 윗 부분
     Row(
         modifier = modifier,
@@ -70,9 +71,8 @@ private fun StudioListItemTitleComponent(studioName: String, studioRating: Doubl
         horizontalArrangement = Arrangement.Start
     ) {
         // profile Image
-        // 임시 데이터
-        Image(
-            painter = painterResource(R.drawable.image2),
+        AsyncImage(
+            model = studioProfileImageUrl,
             contentDescription = "스튜디오 프로필 이미지",
             contentScale = ContentScale.Crop,
             modifier = Modifier
