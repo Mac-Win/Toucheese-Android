@@ -56,6 +56,7 @@ class StudioViewModel @Inject constructor(
         }
     }
 
+
     private fun loadStudios(conceptId: Int){
         viewModelScope.launch {
             try {
@@ -64,6 +65,17 @@ class StudioViewModel @Inject constructor(
                 Log.d("Retrofit", "$result")
             } catch (e: Exception){
                 Log.d("Retrofit", "error = ${e.message}")
+            }
+        }
+    }
+
+    fun loadStudiosByConcept(conceptId: Int) {
+        viewModelScope.launch {
+            try {
+                val result = repository.getStudios(conceptId)
+                _studios.value = result // 업데이트된 스튜디오 리스트
+            } catch (e: Exception) {
+                Log.e("StudioViewModel", "Error loading studios: ${e.message}")
             }
         }
     }
