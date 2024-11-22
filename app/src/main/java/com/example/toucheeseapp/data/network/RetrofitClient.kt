@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class) // 애플리케이션 전역 사용
 object RetrofitClient {
 
-    private const val BASE_URL = "https://32ae-211-51-35-227.ngrok-free.app/api/"
+    private const val BASE_URL = "http://3.36.123.17:8080/api/"
 
     @Singleton
     @Provides
