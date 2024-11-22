@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,7 +67,7 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: () -> Unit) {
+fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
@@ -166,7 +167,16 @@ fun SearchBar(viewModel: StudioViewModel) {
 }
 
 @Composable
-fun CardGrid(onCardClick: () -> Unit) {
+fun CardGrid(onCardClick: (Int) -> Unit) {
+    val cardData = listOf(
+        Triple(R.drawable.image1, "생동감 있는", 1), // ID 추가
+        Triple(R.drawable.image2, "플래쉬/유광", 2),
+        Triple(R.drawable.image3, "흑백/블루 배우", 3),
+        Triple(R.drawable.image5, "내추럴 화보", 4),
+        Triple(R.drawable.image6, "선명한", 5),
+        Triple(R.drawable.image4, "수채화 그림체", 6)
+    )
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(
@@ -178,17 +188,12 @@ fun CardGrid(onCardClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(6) { index ->
-            val cardData = listOf(
-                Pair(R.drawable.image1, "생동감 있는"),
-                Pair(R.drawable.image2, "플래쉬/유광"),
-                Pair(R.drawable.image3, "흑백/블루 배우"),
-                Pair(R.drawable.image4, "수채화 그림체"),
-                Pair(R.drawable.image5, "내추럴 화보"),
-                Pair(R.drawable.image6, "선명한")
-            )[index]
-
-            PhotoCard(imageRes = cardData.first, title = cardData.second, onCardClick = onCardClick)
+        items(cardData) { (imageRes, title, id) ->
+            PhotoCard(
+                imageRes = imageRes,
+                title = title,
+                onCardClick = { onCardClick(id) } // 클릭 시 ID 전달
+            )
         }
     }
 }
@@ -388,7 +393,7 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
 }
 
 @Composable
-fun HomeContent(studios: State<List<Studio>>, onCardClick: () -> Unit, modifier: Modifier = Modifier) {
+fun HomeContent(studios: State<List<Studio>>, onCardClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
