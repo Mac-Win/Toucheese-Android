@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -95,8 +97,10 @@ private fun FilterChipItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val chipWidth = (screenWidth * 0.25).dp
     FilterChip(
-        modifier = modifier,
+        modifier = modifier.width(chipWidth),
         selected = expanded,
         shape = CircleShape,
         border = BorderStroke(
