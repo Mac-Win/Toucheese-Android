@@ -362,8 +362,6 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
                                 contentDescription = "${studio.name} 프로필 이미지",
                                 modifier = Modifier
                                     .size(60.dp)
-                                    .background(Color.LightGray)
-                                    .padding(8.dp)
                             )
 
                             Column(

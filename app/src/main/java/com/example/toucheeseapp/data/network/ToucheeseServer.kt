@@ -1,8 +1,12 @@
 package com.example.toucheeseapp.data.network
 
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
+import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
+import okhttp3.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -19,5 +23,16 @@ interface ToucheeseServer {
     suspend fun searchStudios(
         @Query("keyword") keyword: String
     ): SearchResponse
+
+    // 필터 스튜디오 데이터 조회
+    @GET("v1/studios/{id}/filters")
+    suspend fun filterStudio(
+        @Path("id") conceptId: Int,
+        @Query("page") page: Int,
+        @Query("price") price: Int?,
+        @Query("rating") rating: Double?,
+        @Query("locations") locations: List<String>?,
+    ): FilterResponse
+
 
 }

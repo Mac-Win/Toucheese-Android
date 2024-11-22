@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -28,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -35,68 +38,53 @@ import androidx.compose.ui.unit.sp
 fun FilterChipComponent(
     modifier: Modifier = Modifier,
     selectedIndex: Int,
-    selectedFilter: String,
+    selectedFilters: Map<Int, Int>, // 각 카테고리의 선택 상태
     onSelectedItemChange: (Int) -> Unit,
-    onSelectedFilterChange: (String) -> Unit,
+    onSelectedFilterChange: (Int, Int) -> Unit, // (카테고리 인덱스, 선택된 항목 인덱스)
 ) {
-    val color by animateColorAsState(
-        targetValue = if (selectedIndex != -1) Color(0xFFFFFCF5) else Color(0xFFFFFFFF)
-    )
-    Card(modifier = modifier) {
-        Column(
-            // Animation
-            modifier = Modifier
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessHigh,
-                    )
-                )
-                .background(color = color)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically, // 세로 기준 중앙 정렬
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-            ) {
-                listOf("가격순", "인기순", "지역순").forEachIndexed { index, filterName ->
-                    FilterChipItem(
-                        filterName = filterName,
-                        expanded = selectedIndex == index,
-                        onClick = { onSelectedItemChange(index) }
-                    )
-                }
-            }
+    val filterCategories = listOf("가격순", "인기순", "지역순")
 
-            val filterList = when (selectedIndex) {
-                0 -> listOf("전체", "10만원 미만", "20만원 미만", "20만원 이상")
-                1 -> listOf("전체", "3.0점 이상", "4.0점 이상", "4.5점 이상")
-                2 -> listOf("전체", "강남구","서초구","송파구", "강서구","마포구","영등포구", "강북구","용산구","성동구")
-                else -> emptyList()
-            }
-            LazyRow(
-                modifier= Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(filterList) {
-                    Box(
-                        modifier= Modifier
-                            .fillMaxWidth(0.25f)
-                            .padding(4.dp)
-                    ){
-                        RadioButtonComponent(
-                            selected = selectedFilter == it,
-                            filterItemName = it,
-                            onClick = {
-                                onSelectedItemChange(-1)
-                                onSelectedFilterChange(it)
-                            }
-                        )
+    // 상단 필터칩
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+    ) {
+        filterCategories.forEachIndexed { index, filterName ->
+            FilterChipItem(
+                filterName = filterName,
+                expanded = selectedIndex == index,
+                onClick = { onSelectedItemChange(index) }
+            )
+        }
+    }
+
+    // 선택된 카테고리의 필터 리스트
+    val filterList = when (selectedIndex) {
+        0 -> listOf("전체", "10만원 미만", "20만원 미만", "20만원 이상")
+        1 -> listOf("전체", "3.0점 이상", "4.0점 이상", "4.5점 이상")
+        2 -> listOf("전체", "강남구", "서초구", "송파구", "강서구", "마포구", "영등포", "강북구", "용산구", "성동구")
+        else -> emptyList()
+    }
+
+    if (filterList.isNotEmpty()) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            itemsIndexed(filterList) { index, filterName ->
+                RadioButtonComponent(
+                    selected = selectedFilters[selectedIndex] == index,
+                    filterItemName = filterName,
+                    onClick = {
+                        onSelectedFilterChange(selectedIndex, index) // 선택 후 상위로 전달
                     }
-                }
+                )
             }
         }
     }
@@ -109,8 +97,10 @@ private fun FilterChipItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val chipWidth = (screenWidth * 0.25).dp
     FilterChip(
-        modifier = modifier,
+        modifier = modifier.width(chipWidth),
         selected = expanded,
         shape = CircleShape,
         border = BorderStroke(

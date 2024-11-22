@@ -14,6 +14,6 @@ data class Studio(
     val rating: Double,
     @SerializedName("price")
     val price: Int,
-    @SerializedName("images")
+    @SerializedName("imageUrls")
     val images: List<String>
 )
