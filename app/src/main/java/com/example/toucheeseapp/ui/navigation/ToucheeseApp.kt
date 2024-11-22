@@ -22,15 +22,17 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
         // 메인 화면
         composable("HomeScreen"){
-            HomeScreen(){
+            HomeScreen(){ conceptId ->
                 // 스튜디오 조회 화면으로 이동
-                navController.navigate("StudioListScreen")
+                navController.navigate("StudioListScreen/$conceptId")
 
             }
         }
         // 스튜디오 조회 화면
-        composable("StudioListScreen"){
+        composable("StudioListScreen/{conceptId}"){ backStackEntry ->
+            val conceptId = backStackEntry.arguments?.getString("conceptId")?.toIntOrNull() ?:0
             StudioListScreen(
+                conceptId = conceptId,
                 onClickLeadingIcon = { navController.navigateUp() },
                 onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")}
             )
