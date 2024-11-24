@@ -52,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -167,7 +168,7 @@ fun SearchBar(viewModel: StudioViewModel) {
 }
 
 @Composable
-fun CardGrid(onCardClick: (Int) -> Unit) {
+fun CardGrid(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
     val cardData = listOf(
         Triple(R.drawable.image1, "생동감 있는", 1), // ID 추가
         Triple(R.drawable.image2, "플래쉬/유광", 2),
@@ -181,29 +182,32 @@ fun CardGrid(onCardClick: (Int) -> Unit) {
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(
             start = 8.dp,
-            top = 16.dp,
             end = 8.dp,
-            bottom = 16.dp
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.fillMaxSize()
     ) {
         items(cardData) { (imageRes, title, id) ->
             PhotoCard(
                 imageRes = imageRes,
                 title = title,
-                onCardClick = { onCardClick(id) } // 클릭 시 ID 전달
+                modifier = modifier.fillMaxSize(),
+                onCardClick = { onCardClick(id) }, // 클릭 시 ID 전달
             )
         }
     }
 }
 
 @Composable
-fun PhotoCard(imageRes: Int, title: String, onCardClick: () -> Unit) {
+fun PhotoCard(imageRes: Int, title: String, modifier: Modifier = Modifier, onCardClick: () -> Unit) {
+    // 기기의 스크린 높이를 계산
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    // Card 높이를 기기 높이의 70%로 지정
+    val cardHeight = (screenHeight * 0.7).dp
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(188.dp), // 카드 전체 높이
+        modifier = modifier
+            .height(cardHeight / 3), // 카드 전체 높이
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         onClick = onCardClick
@@ -393,10 +397,8 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
 @Composable
 fun HomeContent(studios: State<List<Studio>>, onCardClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier.fillMaxSize().padding(8.dp),
     ) {
-        Spacer(modifier = Modifier.height(4.dp))
-        CardGrid(onCardClick = onCardClick) // 기존 홈 콘텐츠 (카드 그리드)
+        CardGrid(onCardClick = onCardClick, modifier = modifier.fillMaxSize()) // 기존 홈 콘텐츠 (카드 그리드)
     }
 }
