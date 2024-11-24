@@ -28,10 +28,6 @@ class StudioViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching // 현재 검색중인지 여부를 확인
 
-    init {
-        loadStudios(1)
-    }
-
     // 검색 스튜디오  조회
     fun searchStudios(keyword: String){
         viewModelScope.launch {
@@ -54,19 +50,6 @@ class StudioViewModel @Inject constructor(
             } catch (e: Exception){
                 Log.d("Search", "${e.message}")
                 _searchStudios.value = emptyList() // 에러 발생 시 빈 리스트로 초기화
-            }
-        }
-    }
-
-
-    private fun loadStudios(conceptId: Int){
-        viewModelScope.launch {
-            try {
-                val result = repository.getStudios(conceptId)
-                _studios.value = result
-                Log.d("Retrofit", "$result")
-            } catch (e: Exception){
-                Log.d("Retrofit", "error = ${e.message}")
             }
         }
     }

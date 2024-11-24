@@ -62,7 +62,7 @@ fun StudioListScreen(viewModel: StudioViewModel = hiltViewModel(), conceptId: In
                     // 선택 후 자동으로 필터 닫힘
                     selectedIndex = -1
                     // 필터링 로직 호출
-                    viewModel.filterStudio(3, selectedFilters)
+                    viewModel.filterStudio(conceptId, selectedFilters)
                     Log.d("Filter", "selectedFilters = ${selectedFilters}")
                 },
                 modifier = Modifier.padding(16.dp)
