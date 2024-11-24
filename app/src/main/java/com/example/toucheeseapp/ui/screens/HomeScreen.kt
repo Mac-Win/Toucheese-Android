@@ -3,6 +3,7 @@ package com.example.toucheeseapp.ui.screens
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,9 +79,10 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
     val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val searchResults by viewModel.searchStudios.collectAsState()
+    var searchText by remember { mutableStateOf("") }
     // 데이터 수신 확인
     Log.d("HomeScreen", "${studios.value}")
-    Log.d("UI State", "isSearching: $isSearching, searchResults: $searchResults")
+    Log.d("HomeScreen", "isSearching: $isSearching, searchResults: $searchResults")
 
 
     Scaffold(
@@ -92,12 +94,13 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                     showCartButton = false  // 홈 화면에서는 장바구니 버튼 없음
                 )
                 SearchBar(
+                    searchText = searchText,
+                    setText =  { searchText = it },
                     viewModel = viewModel,
-
                     keyboardOptions = KeyboardOptions().copy(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done
-                    )
+                    ),
                 ) // 서치바를 탑바 아래에 추가
             }
         },
@@ -128,7 +131,15 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                         .align(Alignment.TopStart)// 화면 상단에 정렬
-                        .background(Color(0xFFFFF2CC))
+                        .background(Color(0xFFFFF2CC)),
+                    onRowClick = {
+                        // 검색창 닫아주기
+                        viewModel.stopSearch(isSearching)
+                        // 검색 내용 클리어
+                        searchText = ""
+                        // TODO: 스튜디오 상세 조회 화면으로 이동
+                        Log.d("HomeScreen", "${it}번 아이템 클릭")
+                    }
                 )
             }
         }
@@ -139,17 +150,19 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
+    searchText: String,
     viewModel: StudioViewModel,
     keyboardOptions: KeyboardOptions,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    setText: (String) -> Unit,
 ) {
-    var searchText by remember { mutableStateOf("") }
+
     TextField(
         value = searchText,
         keyboardOptions = keyboardOptions,
         onValueChange = {
-            searchText = it
-            viewModel.searchStudios(searchText)
+            setText(it)
+            viewModel.searchStudios(it)
         }, // 사용자가 입력한 텍스트를 업데이트
         leadingIcon = { // 왼쪽 아이콘
             Icon(
@@ -352,7 +365,7 @@ fun ReusableTopBar(
 }
 
 @Composable
-fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier = Modifier) {
+fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier = Modifier, onRowClick: (Int) -> Unit) {
     Box(
         modifier = modifier
     ) {
@@ -374,7 +387,11 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(16.dp)
+                            .clickable {
+                                // Studio 고유 번호를 넘겨준다
+                                onRowClick(studio.id)
+                            },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,
                     ) {
@@ -388,7 +405,9 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
                         Column(
                             modifier = Modifier
                                 .padding(start = 16.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
                         ) {
                             Text(
                                 text = studio.name,
@@ -405,7 +424,9 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
                         }
                     }
                     HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth().alpha(0.5f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(0.5f),
                         color = Color.Gray,
                     )
                 }
