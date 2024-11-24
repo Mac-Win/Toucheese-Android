@@ -32,6 +32,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -51,6 +52,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -90,7 +92,7 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                     showCartButton = false  // 홈 화면에서는 장바구니 버튼 없음
                 )
                 SearchBar(
-                    viewModel= viewModel,
+                    viewModel = viewModel,
 
                     keyboardOptions = KeyboardOptions().copy(
                         keyboardType = KeyboardType.Text,
@@ -105,7 +107,7 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                 onTabSelected = { selectedTab = it }
             )
         }
-    ) {  innerPadding ->
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,8 +126,9 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                     searchResults = searchResults,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.TopStart)
-                        .padding(horizontal = 16.dp)// 화면 상단에 정렬
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.TopStart)// 화면 상단에 정렬
+                        .background(Color(0xFFFFF2CC))
                 )
             }
         }
@@ -135,13 +138,19 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(viewModel: StudioViewModel, keyboardOptions: KeyboardOptions, modifier: Modifier = Modifier) {
+fun SearchBar(
+    viewModel: StudioViewModel,
+    keyboardOptions: KeyboardOptions,
+    modifier: Modifier = Modifier
+) {
     var searchText by remember { mutableStateOf("") }
     TextField(
         value = searchText,
         keyboardOptions = keyboardOptions,
-        onValueChange = { searchText = it
-                        viewModel.searchStudios(searchText) }, // 사용자가 입력한 텍스트를 업데이트
+        onValueChange = {
+            searchText = it
+            viewModel.searchStudios(searchText)
+        }, // 사용자가 입력한 텍스트를 업데이트
         leadingIcon = { // 왼쪽 아이콘
             Icon(
                 imageVector = Icons.Default.Menu, // 햄버거 메뉴 아이콘
@@ -171,7 +180,7 @@ fun SearchBar(viewModel: StudioViewModel, keyboardOptions: KeyboardOptions, modi
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .height(50.dp)
@@ -211,7 +220,12 @@ fun CardGrid(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
 }
 
 @Composable
-fun PhotoCard(imageRes: Int, title: String, modifier: Modifier = Modifier, onCardClick: () -> Unit) {
+fun PhotoCard(
+    imageRes: Int,
+    title: String,
+    modifier: Modifier = Modifier,
+    onCardClick: () -> Unit
+) {
     // 기기의 스크린 높이를 계산
     val screenHeight = LocalConfiguration.current.screenHeightDp
     // Card 높이를 기기 높이의 70%로 지정
@@ -341,15 +355,12 @@ fun ReusableTopBar(
 fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .background(Color(0xFFFFF2CC))
-            .padding(16.dp)
     ) {
         if (searchResults.isEmpty()) {
             // 검색 결과가 없을 때 메시지 표시
             Text(
                 text = "검색된 내용이 없습니다.",
-                modifier = Modifier.align(Alignment.TopStart),
+                modifier = modifier,
                 fontSize = 16.sp,
                 color = Color.Gray
             )
@@ -358,47 +369,45 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
             ) {
                 searchResults.forEach { studio ->
-                    Column(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .background(Color.White)
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start,
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(studio.profileImage),
-                                contentDescription = "${studio.name} 프로필 이미지",
-                                modifier = Modifier
-                                    .size(60.dp)
-                            )
+                        Image(
+                            painter = rememberAsyncImagePainter(studio.profileImage),
+                            contentDescription = "${studio.name} 프로필 이미지",
+                            modifier = Modifier
+                                .size(60.dp)
+                        )
 
-                            Column(
-                                modifier = Modifier
-                                    .padding(start = 16.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = studio.name,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black
-                                )
-                                Text(
-                                    text = studio.address,
-                                    fontSize = 14.sp,
-                                    color = Color.Gray,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = studio.name,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = studio.address,
+                                fontSize = 14.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
                         }
                     }
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth().alpha(0.5f),
+                        color = Color.Gray,
+                    )
                 }
             }
         }
@@ -406,9 +415,15 @@ fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier 
 }
 
 @Composable
-fun HomeContent(studios: State<List<Studio>>, onCardClick: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun HomeContent(
+    studios: State<List<Studio>>,
+    onCardClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = modifier.fillMaxSize().padding(8.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp),
     ) {
         CardGrid(onCardClick = onCardClick, modifier = modifier.fillMaxSize()) // 기존 홈 콘텐츠 (카드 그리드)
     }
