@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -55,6 +56,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,7 +89,14 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                     showBackButton = false, // 홈 화면에서는 뒤로가기 버튼 없음
                     showCartButton = false  // 홈 화면에서는 장바구니 버튼 없음
                 )
-                SearchBar(viewModel) // 서치바를 탑바 아래에 추가
+                SearchBar(
+                    viewModel= viewModel,
+
+                    keyboardOptions = KeyboardOptions().copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    )
+                ) // 서치바를 탑바 아래에 추가
             }
         },
         bottomBar = {
@@ -125,10 +135,11 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(viewModel: StudioViewModel) {
+fun SearchBar(viewModel: StudioViewModel, keyboardOptions: KeyboardOptions, modifier: Modifier = Modifier) {
     var searchText by remember { mutableStateOf("") }
     TextField(
         value = searchText,
+        keyboardOptions = keyboardOptions,
         onValueChange = { searchText = it
                         viewModel.searchStudios(searchText) }, // 사용자가 입력한 텍스트를 업데이트
         leadingIcon = { // 왼쪽 아이콘
