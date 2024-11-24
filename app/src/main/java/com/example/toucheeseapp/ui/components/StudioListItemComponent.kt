@@ -44,7 +44,7 @@ fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifie
             studioName = studio.name,
             studioProfileImageUrl = studio.profileImage,
             studioRating = studio.rating,
-            price =  studio .price,
+            price = studio.price,
             isMarked,
             modifier = Modifier.fillMaxWidth()
         )
@@ -57,7 +57,14 @@ fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifie
 }
 
 @Composable
-private fun StudioListItemTitleComponent(studioName: String, studioProfileImageUrl: String, studioRating: Double, price: Int, isMarked: Boolean, modifier: Modifier = Modifier) {
+private fun StudioListItemTitleComponent(
+    studioName: String,
+    studioProfileImageUrl: String,
+    studioRating: Double,
+    price: Int,
+    isMarked: Boolean,
+    modifier: Modifier = Modifier
+) {
     // 윗 부분
     Row(
         modifier = modifier,
@@ -84,7 +91,8 @@ private fun StudioListItemTitleComponent(studioName: String, studioProfileImageU
         ) {
             // 상호명
             Text(
-                text = studioName,
+//                text = studioName,
+                text = titleFilter(studioName),
                 fontSize = 24.sp,
             )
             // 별점
@@ -123,7 +131,7 @@ private fun StudioListItemTitleComponent(studioName: String, studioProfileImageU
             Icon(
                 imageVector = if (isMarked) ImageVector.vectorResource(R.drawable.bookmarkfull_36px) else ImageVector.vectorResource(
                     R.drawable.bookmark_36px
-                ), // 북마크로 변경
+                ),
                 contentDescription = null,
                 tint = if (isMarked) Color(0xFFFFCC00) else Color(0xFF000000),
                 modifier = Modifier
@@ -136,14 +144,17 @@ private fun StudioListItemTitleComponent(studioName: String, studioProfileImageU
 
 // Carousel
 @Composable
-private fun StudioListItemCarouselComponent(imageUrlList: List<String>, modifier: Modifier = Modifier) {
+private fun StudioListItemCarouselComponent(
+    imageUrlList: List<String>,
+    modifier: Modifier = Modifier
+) {
     LazyRow(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(imageUrlList){
+        items(imageUrlList) {
             CarouselItem(imageUrl = it)
         }
 
@@ -165,11 +176,17 @@ private fun CarouselItem(imageUrl: String, modifier: Modifier = Modifier) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
             alignment = Alignment.Center,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(150.dp)
         )
     }
 }
 
+// 제목을 필터링한다
+private fun titleFilter(title: String): String {
+    var filteredTitle = title.replace(oldValue = "스튜디오", newValue = "")
+    filteredTitle = filteredTitle.replace(oldValue = "STUDIO", newValue = "")
+    return filteredTitle.substringBefore('(')
+}
 
 @Preview
 @Composable
