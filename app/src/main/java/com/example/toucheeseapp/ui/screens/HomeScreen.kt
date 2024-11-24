@@ -95,7 +95,7 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                 )
                 SearchBar(
                     searchText = searchText,
-                    setText =  { searchText = it },
+                    setText = { searchText = it },
                     viewModel = viewModel,
                     keyboardOptions = KeyboardOptions().copy(
                         keyboardType = KeyboardType.Text,
@@ -119,7 +119,13 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
             // 홈 화면 콘텐츠
             HomeContent(
                 studios = studios,
-                onCardClick = onCardClick,
+                onCardClick = {
+                    onCardClick(it)
+                    // 검색창 닫아주기
+                    viewModel.stopSearch(isSearching)
+                    // 검색 내용 클리어
+                    searchText = ""
+                },
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -365,7 +371,11 @@ fun ReusableTopBar(
 }
 
 @Composable
-fun SearchResultBox(searchResults: List<SearchResponseItem>, modifier: Modifier = Modifier, onRowClick: (Int) -> Unit) {
+fun SearchResultBox(
+    searchResults: List<SearchResponseItem>,
+    modifier: Modifier = Modifier,
+    onRowClick: (Int) -> Unit
+) {
     Box(
         modifier = modifier
     ) {
