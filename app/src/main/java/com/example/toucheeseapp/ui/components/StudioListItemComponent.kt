@@ -183,9 +183,12 @@ private fun CarouselItem(imageUrl: String, modifier: Modifier = Modifier) {
 
 // 제목을 필터링한다
 private fun titleFilter(title: String): String {
-    var filteredTitle = title.replace(oldValue = "스튜디오", newValue = "")
-    filteredTitle = filteredTitle.replace(oldValue = "STUDIO", newValue = "")
-    return filteredTitle.substringBefore('(')
+    return title
+        .replace(oldValue = "스튜디오", newValue = "")
+        .replace(oldValue = "STUDIO", newValue = "")
+        .trim() // 공백 제거
+        .substringBefore(" ") // 공백 뒤로 날림
+        .substringBefore("(") // 열린 소괄호 뒤로 날림
 }
 
 @Preview
