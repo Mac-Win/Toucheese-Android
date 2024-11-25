@@ -54,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -408,8 +409,9 @@ fun SearchResultBox(
                         Image(
                             painter = rememberAsyncImagePainter(studio.profileImage),
                             contentDescription = "${studio.name} 프로필 이미지",
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(60.dp)
+                                .size(60.dp).clip(RoundedCornerShape(50.dp))
                         )
 
                         Column(
