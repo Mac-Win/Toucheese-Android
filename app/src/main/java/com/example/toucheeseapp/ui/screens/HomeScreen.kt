@@ -121,6 +121,7 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
             HomeContent(
                 studios = studios,
                 onCardClick = {
+                    // 카드 클릭 시 선택된 스튜디오 컨셉 id 전달
                     onCardClick(it)
                     // 검색창 닫아주기
                     viewModel.stopSearch(isSearching)
@@ -191,7 +192,9 @@ fun SearchBar(
                 style = androidx.compose.ui.text.TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp // 한글 텍스트가 잘리지 않도록 설정
-                )
+                ),
+                color = Color.Gray,
+                modifier=Modifier.alpha(0.5f)
             )
         },
         colors = TextFieldDefaults.textFieldColors(
@@ -204,6 +207,7 @@ fun SearchBar(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .height(50.dp)
+            .clip(RoundedCornerShape(50.dp))
     )
 }
 
@@ -377,10 +381,11 @@ fun SearchResultBox(
     modifier: Modifier = Modifier,
     onRowClick: (Int) -> Unit
 ) {
+    var searchedStudios = searchResults
     Box(
         modifier = modifier
     ) {
-        if (searchResults.isEmpty()) {
+        if (searchedStudios.isEmpty()) {
             // 검색 결과가 없을 때 메시지 표시
             Text(
                 text = "검색된 내용이 없습니다.",
@@ -394,12 +399,13 @@ fun SearchResultBox(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                searchResults.forEach { studio ->
+                searchedStudios.forEach { studio ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                             .clickable {
+                                searchedStudios = emptyList()
                                 // Studio 고유 번호를 넘겨준다
                                 onRowClick(studio.id)
                             },
@@ -411,7 +417,7 @@ fun SearchResultBox(
                             contentDescription = "${studio.name} 프로필 이미지",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(60.dp).clip(RoundedCornerShape(50.dp))
+                                .size(60.dp).padding(4.dp).clip(RoundedCornerShape(50.dp))
                         )
 
                         Column(
