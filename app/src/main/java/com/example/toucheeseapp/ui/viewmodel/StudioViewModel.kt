@@ -108,5 +108,6 @@ class StudioViewModel @Inject constructor(
     // 검색 상태 변환
     fun stopSearch(isSearching: Boolean) {
         _isSearching.value = !isSearching
+        _searchStudios.value = emptyList()
     }
 }
