@@ -207,7 +207,7 @@ fun SearchBar(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .height(50.dp)
-            .clip(RoundedCornerShape(50.dp))
+
     )
 }
 
