@@ -129,8 +129,8 @@ private fun StudioListItemTitleComponent(
             }
         ) {
             Icon(
-                imageVector = if (isMarked) ImageVector.vectorResource(R.drawable.bookmarkfull_36px) else ImageVector.vectorResource(
-                    R.drawable.bookmark_36px
+                imageVector = if (isMarked) ImageVector.vectorResource(R.drawable.bookmarkfull_24px) else ImageVector.vectorResource(
+                    R.drawable.bookmark_24px
                 ),
                 contentDescription = null,
                 tint = if (isMarked) Color(0xFFFFCC00) else Color(0xFF000000),
