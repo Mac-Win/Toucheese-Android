@@ -14,6 +14,7 @@ import com.example.toucheeseapp.ui.components.StudioTopAppBarComponent
 import com.example.toucheeseapp.ui.components.TabBarComponent
 import com.example.toucheeseapp.ui.components.ProductList
 import com.example.toucheeseapp.data.model.product_studio.SampleProducts
+import com.example.toucheeseapp.ui.components.BottomActionButtons
 import com.example.toucheeseapp.ui.components.ReviewListComponent
 import com.example.toucheeseapp.ui.components.dummyReviews
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
@@ -87,7 +88,13 @@ fun StudioDetailScreen(
             // 탭 선택에 따른 콘텐츠
             item {
                 when (selectedTab) {
-                    0 -> ProductList(products = SampleProducts.products)
+                    0 -> {
+                        ProductList(products = SampleProducts.products)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        BottomActionButtons(modifier = Modifier)
+                    }
                     1 -> ReviewListComponent(reviews = dummyReviews )
                 }
             }
