@@ -2,11 +2,11 @@ package com.example.toucheeseapp.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.example.toucheeseapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,13 +24,21 @@ fun StudioTopAppBarComponent(
             }
         },
         actions = {
+            // 공유하기 버튼
             IconButton(onClick = onShare) {
-                Icon(Icons.Default.Share, contentDescription = "공유하기")
+                Icon(
+                    painter = painterResource(id = R.drawable.share),
+                    contentDescription = "공유하기"
+                )
             }
+
+            // 북마크 버튼
             IconButton(onClick = onBookmarkToggle) {
                 Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "북마크",
+                    painter = painterResource(
+                        id = if (isBookmarked) R.drawable.bookmarkfull_24px else R.drawable.bookmark_24px
+                    ),
+                    contentDescription = if (isBookmarked) "북마크 설정됨" else "북마크 해제",
                     tint = if (isBookmarked) Color.Yellow else Color.Black
                 )
             }
