@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class) // 애플리케이션 전역 사용
 object RetrofitClient {
 
-    private const val BASE_URL = "https://api.toucheese-macwin.store/api/"
+    private const val BASE_URL = "https://api.toucheese-macwin.store/"
 
     @Singleton
     @Provides

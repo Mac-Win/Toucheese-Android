@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.screens.HomeScreen
 import com.example.toucheeseapp.ui.screens.StudioDetailScreen
+import com.example.toucheeseapp.ui.screens.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.StudioListScreen
 
 val TAG = "ToucheeseApp"
@@ -59,6 +60,11 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onShare = { Log.d(TAG, "공유 클릭") },
                 onBookmark = { bookmarked, passedConceptId -> Log.d(TAG, "북마크 상태: $bookmarked") }
             )
+        }
+
+        // 스튜디오 상품 상세 조회 화면
+        composable("ProductOrderDetailScreen"){
+            ProductOrderDetailScreen()
         }
     }
 }
