@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.screens.HomeScreen
+import com.example.toucheeseapp.ui.screens.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.StudioListScreen
 
 val TAG = "ToucheeseApp"
@@ -36,6 +37,33 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onClickLeadingIcon = { navController.navigateUp() },
                 onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")}
             )
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // 스튜디오 상품 상세 조회 화면
+        composable("ProductOrderDetailScreen"){
+            ProductOrderDetailScreen()
         }
     }
 }
