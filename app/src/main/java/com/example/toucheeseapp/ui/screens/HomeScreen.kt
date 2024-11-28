@@ -9,17 +9,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,7 +28,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -75,7 +71,7 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit) {
+fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit, onStudioClick: (Int,String) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
@@ -140,13 +136,16 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                         .padding(horizontal = 16.dp)
                         .align(Alignment.TopStart)// 화면 상단에 정렬
                         .background(Color(0xFFFFF2CC)),
-                    onRowClick = {
+                    onRowClick = { studio ->
+                        // studioId와 address를 추출
+                        val studioId = studio.id
+                        val address = studio.address
                         // 검색창 닫아주기
                         viewModel.stopSearch(isSearching)
                         // 검색 내용 클리어
                         searchText = ""
-                        // TODO: 스튜디오 상세 조회 화면으로 이동
-                        Log.d("HomeScreen", "${it}번 아이템 클릭")
+                        // StudioDetailScreen으로 이동
+                        onStudioClick(studioId, address)
                     }
                 )
             }
@@ -379,17 +378,15 @@ fun ReusableTopBar(
 fun SearchResultBox(
     searchResults: List<SearchResponseItem>,
     modifier: Modifier = Modifier,
-    onRowClick: (Int) -> Unit
+    onRowClick: (SearchResponseItem) -> Unit // SearchResponseItem을 전달
 ) {
-    var searchedStudios = searchResults
     Box(
         modifier = modifier
     ) {
-        if (searchedStudios.isEmpty()) {
+        if (searchResults.isEmpty()) {
             // 검색 결과가 없을 때 메시지 표시
             Text(
                 text = "검색된 내용이 없습니다.",
-                modifier = modifier,
                 fontSize = 16.sp,
                 color = Color.Gray
             )
@@ -399,15 +396,13 @@ fun SearchResultBox(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                searchedStudios.forEach { studio ->
+                searchResults.forEach { studio ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                             .clickable {
-                                searchedStudios = emptyList()
-                                // Studio 고유 번호를 넘겨준다
-                                onRowClick(studio.id)
+                                onRowClick(studio) // SearchResponseItem 전달
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,
@@ -417,7 +412,9 @@ fun SearchResultBox(
                             contentDescription = "${studio.name} 프로필 이미지",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(60.dp).padding(4.dp).clip(RoundedCornerShape(50.dp))
+                                .size(60.dp)
+                                .padding(4.dp)
+                                .clip(RoundedCornerShape(50.dp))
                         )
 
                         Column(
