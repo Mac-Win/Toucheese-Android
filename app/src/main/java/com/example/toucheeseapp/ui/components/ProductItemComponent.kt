@@ -65,11 +65,17 @@ fun ProductItem(product: Product) {
 
         Spacer(modifier = Modifier.width(16.dp)) // 텍스트와 가격 사이 간격
 
-        // 상품 가격
-        Text(
-            text = "${product.price}원",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary
-        )
+        // 상품 가격 (오른쪽 하단에 배치)
+        Column(
+            modifier = Modifier.padding(top = 32.dp), // 위쪽에 여백 추가
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = "${product.price}원",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), // Bold 설정
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     }
 }
