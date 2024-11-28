@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 fun NoticeSectionComponent(notice: String, expanded: Boolean, onToggleExpand: () -> Unit) {
     Column(
         modifier = Modifier
+            .padding(8.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.LightGray)
             .padding(16.dp)
