@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
-import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
-import com.example.toucheeseapp.data.model.filter_studio.FilterStudio
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.repository.StudioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +25,9 @@ class StudioViewModel @Inject constructor(
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching // 현재 검색중인지 여부를 확인
+
+    private val _isBookmarked = MutableStateFlow(false)
+    val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
     // 검색 스튜디오  조회
     fun searchStudios(keyword: String){
@@ -54,11 +55,31 @@ class StudioViewModel @Inject constructor(
         }
     }
 
+    init {
+        // conceptId가 고정된 경우 초기화 로직 실행
+        loadStudiosByConcept(5) // 테스트용 conceptId
+    }
+
     fun loadStudiosByConcept(conceptId: Int) {
         viewModelScope.launch {
+            Log.d("StudioViewModel", "Loading studios for conceptId: $conceptId")
             try {
-                val result = repository.getStudios(conceptId)
-                _studios.value = result // 업데이트된 스튜디오 리스트
+                // 임시 데이터
+                val mockStudios = listOf(
+                    Studio(
+                        id = 5, // studioId 5와 매칭
+                        name = "Mock Studio",
+                        profileImage = "https://via.placeholder.com/150",
+                        images = listOf(
+                            "https://via.placeholder.com/400x300",
+                            "https://via.placeholder.com/400x300?text=Image2"
+                        ),
+                        rating = 4.5,
+                        price = 50000
+                    )
+                )
+                _studios.value = mockStudios // 임시 데이터를 Flow에 삽입
+                Log.d("StudioViewModel", "Mock studios loaded: $mockStudios")
             } catch (e: Exception) {
                 Log.e("StudioViewModel", "Error loading studios: ${e.message}")
             }
@@ -109,5 +130,10 @@ class StudioViewModel @Inject constructor(
     fun stopSearch(isSearching: Boolean) {
         _isSearching.value = !isSearching
         _searchStudios.value = emptyList()
+    }
+
+    // 북마크 상태 변경 함수
+    fun toggleBookmark() {
+        _isBookmarked.value = !_isBookmarked.value
     }
 }
