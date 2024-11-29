@@ -8,6 +8,7 @@ import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Path
 import retrofit2.http.Query
 

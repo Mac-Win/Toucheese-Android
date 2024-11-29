@@ -27,7 +27,8 @@ fun StudioDetailScreen(
     viewModel: StudioViewModel,
     navigateBack: () -> Unit,
     onShare: () -> Unit,
-    onBookmark: (Boolean, Int) -> Unit
+    onBookmark: (Boolean, Int) -> Unit,
+    onReviewClick: (Int) -> Unit
 ) {
     val studios by viewModel.studios.collectAsState()
     val studio = studios.find { it.id == studioId }
@@ -50,7 +51,7 @@ fun StudioDetailScreen(
                 Box {
                     ImageSliderComponent(images = studio.images)
                     StudioTopAppBarComponent(
-                        isBookmarked = isBookmarked,
+                        isBookmarked = false,
                         onNavigateBack = navigateBack,
                         onShare = onShare,
                         onBookmarkToggle = {
@@ -95,7 +96,11 @@ fun StudioDetailScreen(
 
                         BottomActionButtons(modifier = Modifier)
                     }
-                    1 -> ReviewListComponent(reviews = dummyReviews )
+                    1 -> ReviewListComponent(
+                        reviews = dummyReviews,
+                        onReviewClick = { reviewId ->
+                            onReviewClick(reviewId)
+                        })
                 }
             }
         }
