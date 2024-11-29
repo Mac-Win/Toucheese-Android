@@ -1,7 +1,9 @@
 package com.example.toucheeseapp.data.network
 
+import com.example.toucheeseapp.data.model.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
+import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
 import okhttp3.Response
 import retrofit2.http.Body
@@ -34,5 +36,9 @@ interface ToucheeseServer {
         @Query("locations") locations: List<String>?,
     ): FilterResponse
 
-
+    // 스튜디오 리뷰 목록 조회
+    @GET("v1/studios/{studioId}/reviews")
+    suspend fun loadStudioReviewList(
+        @Path("studioId") studioId: Int,
+    ): StudioReviewResponse
 }
