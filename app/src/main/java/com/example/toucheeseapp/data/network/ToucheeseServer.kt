@@ -41,4 +41,12 @@ interface ToucheeseServer {
     suspend fun loadStudioReviewList(
         @Path("studioId") studioId: Int,
     ): StudioReviewResponse
+
+    // 특정 리뷰 상세 조회
+    @GET("v1/studios/{studioId}/reviews/{reviewId}")
+    suspend fun loadStudioSpecificReview(
+        @Path("studioId") studioId: Int,
+        @Path("reviewId") reviewId: Int,
+    ): ReviewResponse
+
 }
