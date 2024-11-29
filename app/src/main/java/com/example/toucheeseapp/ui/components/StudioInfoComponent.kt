@@ -19,11 +19,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.example.toucheeseapp.data.model.concept_studio.Studio
+import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 
 @Composable
 fun StudioInfoComponent(
-    studio: Studio,
-    address: String
+    studio: StudioDetailResponse,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = Modifier
@@ -55,9 +56,7 @@ fun StudioInfoComponent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "여기 스튜디오는 다양한 스타일의 촬영을 제공합니다. " +
-                        "각기 다른 컨셉의 촬영을 즐기세요. " +
-                        "편안한 분위기에서 최고의 퀄리티를 경험할 수 있습니다.",
+                text = studio.description,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
@@ -84,7 +83,7 @@ fun StudioInfoComponent(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "평점: ${studio.rating} (20 리뷰)",
+                    text = "평점: ${studio.rating} (${studio.reviewCount} 리뷰)",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -94,12 +93,12 @@ fun StudioInfoComponent(
             // 운영시간과 주소
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(
-                    text = "운영시간: 10:00 AM - 8:00 PM",
+                    text = "운영시간: ${studio.operationHour}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "주소: $address",
+                    text = "주소: ${studio.address}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

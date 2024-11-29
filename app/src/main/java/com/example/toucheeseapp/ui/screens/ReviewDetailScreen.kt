@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.R
 import com.example.toucheeseapp.ui.components.ProfileComponent
 import com.example.toucheeseapp.ui.components.ReviewContent
@@ -34,11 +35,11 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewDetailScreen(
-    viewModel: StudioViewModel,
+    viewModel: StudioViewModel = hiltViewModel(),
     studioId: Int,
-    conceptId: Int,
+    reviewId: Int,
     navigateBack: () -> Unit,
-    reviewId: Int) {
+    ) {
 
     // 스튜디오 데이터 로드
     val studios by viewModel.studios.collectAsState()
@@ -50,9 +51,9 @@ fun ReviewDetailScreen(
 
     var isShareSheetVisible by remember { mutableStateOf(false) }
 
-    // 스튜디오 데이터 초기화
-    LaunchedEffect(conceptId) {
-        viewModel.loadStudiosByConcept(conceptId)
+    // 리뷰 상세 데이터 조회
+    LaunchedEffect(studioId, reviewId) {
+        viewModel.loadStudioSpecificReview(studioId, reviewId)
     }
 
     if (isShareSheetVisible) {

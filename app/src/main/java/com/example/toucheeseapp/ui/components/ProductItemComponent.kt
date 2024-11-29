@@ -11,7 +11,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.example.toucheeseapp.data.model.product_studio.Product
+import com.example.toucheeseapp.data.model.studio_detail.Product
 
 @Composable
 fun ProductItem(product: Product) {
@@ -24,7 +24,7 @@ fun ProductItem(product: Product) {
     ) {
         // 상품 이미지
         Image(
-            painter = rememberAsyncImagePainter(model = product.imageUrl),
+            painter = rememberAsyncImagePainter(model = product.productImage),
             contentDescription = "상품 이미지",
             modifier = Modifier
                 .size(80.dp) // 고정된 크기 설정

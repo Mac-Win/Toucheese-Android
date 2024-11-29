@@ -3,7 +3,7 @@ package com.example.toucheeseapp.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.toucheeseapp.data.model.product_studio.Product
+import com.example.toucheeseapp.data.model.studio_detail.Product
 
 @Composable
 fun ProductList(products: List<Product>, modifier: Modifier = Modifier) {

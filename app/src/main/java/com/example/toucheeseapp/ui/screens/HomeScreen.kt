@@ -71,7 +71,7 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit, onStudioClick: (Int,String) -> Unit) {
+fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit, onStudioClick: (Int) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
@@ -139,13 +139,12 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
                     onRowClick = { studio ->
                         // studioId와 address를 추출
                         val studioId = studio.id
-                        val address = studio.address
                         // 검색창 닫아주기
                         viewModel.stopSearch(isSearching)
                         // 검색 내용 클리어
                         searchText = ""
                         // StudioDetailScreen으로 이동
-                        onStudioClick(studioId, address)
+                        onStudioClick(studioId)
                     }
                 )
             }
