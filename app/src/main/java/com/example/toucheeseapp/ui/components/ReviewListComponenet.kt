@@ -1,6 +1,7 @@
 package com.example.toucheeseapp.ui.components
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ReviewListComponent(reviews: List<Review>) {
+fun ReviewListComponent(reviews: List<Review>, onReviewClick: (Int) -> Unit) {
     // 한 줄에 3개의 아이템을 배치
     val chunkedReviews = reviews.chunked(3)
 
@@ -27,7 +28,10 @@ fun ReviewListComponent(reviews: List<Review>) {
                 rowItems.forEach { review ->
                     ReviewItemComponent(
                         review = review,
-                        modifier = Modifier.weight(1f).aspectRatio(1f) // 동일한 크기로 배치
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .clickable { onReviewClick(review.id) }// 동일한 크기로 배치
                     )
                 }
                 // 만약 아이템 개수가 3보다 적다면 빈 공간을 채워 균등 배치
