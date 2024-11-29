@@ -37,5 +37,5 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     suspend fun loadStudioSpecificReview(studioId: Int, reviewId: Int): ReviewResponse = apiService.loadStudioSpecificReview(studioId, reviewId)
 
     // 특정 상품 리뷰 목록 조회
-//    suspend fun loadProductReview(studioId: Int, productId: Int):
+    suspend fun loadProductReview(studioId: Int, productId: Int):StudioReviewResponse = apiService.loadProductReview(studioId, productId)
 }

@@ -51,7 +51,7 @@ interface ToucheeseServer {
     suspend fun loadProductReview(
         @Path("studioId") studioId: Int,
         @Path("productId") productId: Int,
-    )
+    ): StudioReviewResponse
 
     // -------- 스튜디오 API --------
 
