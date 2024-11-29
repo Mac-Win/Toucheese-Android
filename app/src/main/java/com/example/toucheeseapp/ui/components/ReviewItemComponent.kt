@@ -26,18 +26,18 @@ fun ReviewItemComponent(review: Review, modifier: Modifier = Modifier) {
 }
 
 // 임시 데이터 모델
-data class Review(val imageUrl: String)
+data class Review(val imageUrl: String, val id: Int)
 
 // 임시 데이터 리스트
 val dummyReviews = listOf(
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200"),
-    Review(imageUrl = "https://via.placeholder.com/300x200")
+    Review(id = 1, imageUrl = "https://via.placeholder.com/300x200"),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 2),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 3),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 4),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 5),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 6),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 7),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 8),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 9),
+    Review(imageUrl = "https://via.placeholder.com/300x200", id = 10)
 )

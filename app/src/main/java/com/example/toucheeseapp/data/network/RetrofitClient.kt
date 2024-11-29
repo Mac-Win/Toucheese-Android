@@ -1,6 +1,5 @@
 package com.example.toucheeseapp.data.network
 
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +17,6 @@ object RetrofitClient {
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
-
     @Singleton
     @Provides
     fun provideToucheeseServer(retrofit: Retrofit): ToucheeseServer = retrofit.create(ToucheeseServer::class.java)
