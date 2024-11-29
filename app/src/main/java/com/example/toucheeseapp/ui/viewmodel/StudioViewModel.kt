@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
+import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -157,6 +158,20 @@ class StudioViewModel @Inject constructor(
         }
         return review
     }
+
+    // 특정 상품 리뷰 목록 조회
+    fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem>{
+        var reviewList = emptyList<StudioReviewResponseItem>()
+        viewModelScope.launch {
+            try {
+                reviewList = repository.loadProductReview(studioId, productId).toList()
+            } catch (error: Exception){
+                Log.d("StudioViewModel", "${error.message}")
+            }
+        }
+        return reviewList
+    }
+
     // 검색 상태 변환
     fun stopSearch(isSearching: Boolean) {
         _isSearching.value = !isSearching
