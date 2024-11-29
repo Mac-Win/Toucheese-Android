@@ -1,14 +1,11 @@
 package com.example.toucheeseapp.data.network
 
-import com.example.toucheeseapp.data.model.ReviewResponse
+import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
-import okhttp3.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.HTTP
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -49,4 +46,10 @@ interface ToucheeseServer {
         @Path("reviewId") reviewId: Int,
     ): ReviewResponse
 
+    // 특정 상품 리뷰 목록 조회
+    @GET("v1/studios/{studioId}/products/{productId}/reviews")
+    suspend fun loadProductReview(
+        @Path("studioId") studioId: Int,
+        @Path("productId") productId: Int,
+    )
 }
