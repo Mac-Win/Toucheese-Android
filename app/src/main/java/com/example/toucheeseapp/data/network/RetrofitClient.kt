@@ -1,6 +1,5 @@
 package com.example.toucheeseapp.data.network
 
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,12 +12,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class) // 애플리케이션 전역 사용
 object RetrofitClient {
 
-    private const val BASE_URL = "https://api.toucheese-macwin.store/api/"
+    private const val BASE_URL = "https://api.toucheese-macwin.store/"
 
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
-
     @Singleton
     @Provides
     fun provideToucheeseServer(retrofit: Retrofit): ToucheeseServer = retrofit.create(ToucheeseServer::class.java)
