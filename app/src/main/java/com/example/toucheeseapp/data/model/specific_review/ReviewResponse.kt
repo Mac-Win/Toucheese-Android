@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.data.model
+package com.example.toucheeseapp.data.model.specific_review
 
 
 import com.google.gson.annotations.SerializedName
