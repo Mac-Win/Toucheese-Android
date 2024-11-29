@@ -38,7 +38,7 @@ fun StudioDetailScreen(
         var selectedTab by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
-            viewModel.loadStudiosByConcept(conceptId)
+            viewModel.getConceptStudio(conceptId)
         }
 
         LazyColumn(
