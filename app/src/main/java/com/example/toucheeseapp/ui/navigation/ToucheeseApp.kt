@@ -22,6 +22,7 @@ import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
 import com.example.toucheeseapp.ui.screens.HomeScreen
 import com.example.toucheeseapp.ui.screens.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.StudioDetailScreen
+import com.example.toucheeseapp.ui.screens.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.StudioListScreen
 import kotlinx.coroutines.launch
 
@@ -124,6 +125,11 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 navigateBack = { navController.navigateUp() }
 
             )
+        }
+
+        // 스튜디오 상품 상세 조회 화면
+        composable("ProductOrderDetailScreen"){
+            ProductOrderDetailScreen()
         }
     }
 }
