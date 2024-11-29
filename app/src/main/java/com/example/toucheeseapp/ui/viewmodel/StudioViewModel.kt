@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
+import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import com.example.toucheeseapp.data.repository.StudioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -144,6 +145,18 @@ class StudioViewModel @Inject constructor(
         return reviewList
     }
 
+    // 특정 리뷰 상세 조회
+    fun loadStudioSpecificReview(studioId: Int, reviewId: Int): ReviewResponse? {
+        var review: ReviewResponse? = null
+        viewModelScope.launch {
+            try {
+                review = repository.loadStudioSpecificReview(studioId, reviewId)
+            } catch (error: Exception){
+                Log.d("StudioViewModel", "${error.message}")
+            }
+        }
+        return review
+    }
     // 검색 상태 변환
     fun stopSearch(isSearching: Boolean) {
         _isSearching.value = !isSearching
