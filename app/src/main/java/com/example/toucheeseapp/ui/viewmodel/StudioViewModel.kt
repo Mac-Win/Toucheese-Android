@@ -4,7 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
+import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
+import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
+import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import com.example.toucheeseapp.data.repository.StudioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StudioViewModel @Inject constructor(
     private val repository: StudioRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _studios = MutableStateFlow<List<Studio>>(emptyList())
     val studios: StateFlow<List<Studio>> = _studios
@@ -29,80 +32,81 @@ class StudioViewModel @Inject constructor(
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
-    // 검색 스튜디오  조회
-    fun searchStudios(keyword: String){
+    // -------- 스튜디오 API --------
+
+    // 스튜디오 검색
+    fun searchStudios(keyword: String) {
         viewModelScope.launch {
-            if(keyword.isBlank()){
+            if (keyword.isBlank()) {
                 _isSearching.value = false
                 _searchStudios.value = emptyList() // 검색어가 없을 경우 빈 리스트로 초기화
-                Log.d("SearchState", "Cleared search, isSearching: ${_isSearching.value}")
                 return@launch
             }
 
             _isSearching.value = true // 검색 시작
-            Log.d("SearchState", "Searching for keyword: $keyword, isSearching: ${_isSearching.value}")
+            Log.d(
+                "SearchState",
+                "Searching for keyword: $keyword, isSearching: ${_isSearching.value}"
+            )
 
             try {
-                Log.d("Search", "$keyword")
-                val result = repository.searchStudios(keyword= keyword)
+
+                val result = repository.searchStudios(keyword = keyword)
                 _searchStudios.value = result
                 Log.d("Search", "Results: $result")
                 _isSearching.value = true
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.d("Search", "${e.message}")
                 _searchStudios.value = emptyList() // 에러 발생 시 빈 리스트로 초기화
             }
         }
     }
 
-    init {
-        // conceptId가 고정된 경우 초기화 로직 실행
-        loadStudiosByConcept(5) // 테스트용 conceptId
+    // 스튜디오 상세 조회
+    fun loadStudioDetail(studioId: Int): StudioDetailResponse? {
+        var studio: StudioDetailResponse? = null
+        viewModelScope.launch {
+            try {
+                val result = repository.loadStudioDetail(studioId)
+                studio = result
+            } catch (error: Exception) {
+                Log.d("StudioViewModel", "error = ${error.message}")
+            }
+        }
+        return studio
     }
 
-    fun loadStudiosByConcept(conceptId: Int) {
+    // -------- 해당 컨셉 스튜디오 API -------
+
+    // 컨셉 스튜디오 목록 조회
+    fun getConceptStudio(conceptId: Int) {
+        // 추후에 Paging 추가
         viewModelScope.launch {
-            Log.d("StudioViewModel", "Loading studios for conceptId: $conceptId")
             try {
-                // 임시 데이터
-                val mockStudios = listOf(
-                    Studio(
-                        id = 5, // studioId 5와 매칭
-                        name = "Mock Studio",
-                        profileImage = "https://via.placeholder.com/150",
-                        images = listOf(
-                            "https://via.placeholder.com/400x300",
-                            "https://via.placeholder.com/400x300?text=Image2"
-                        ),
-                        rating = 4.5,
-                        price = 50000
-                    )
-                )
-                _studios.value = mockStudios // 임시 데이터를 Flow에 삽입
-                Log.d("StudioViewModel", "Mock studios loaded: $mockStudios")
-            } catch (e: Exception) {
-                Log.e("StudioViewModel", "Error loading studios: ${e.message}")
+                _studios.value = repository.getConceptStudios(conceptId = conceptId, page = 0)
+            } catch (error: Exception) {
+                Log.e("StudioViewModel", "error =  ${error.message}")
             }
         }
     }
 
-    // 스튜디오 필터 데이터 조회
-    fun filterStudio(conceptId: Int, selectedFilters: Map<Int,Int>) {
-        val price = when (selectedFilters[0]){
+    // 필터 적용 후 스튜디오 목록 조회
+    fun filterStudio(conceptId: Int, selectedFilters: Map<Int, Int>) {
+        val price = when (selectedFilters[0]) {
             1 -> 99999
             2 -> 199999
             3 -> 200000
             else -> null
         }
 
-        val rating = when(selectedFilters[1]){
+        val rating = when (selectedFilters[1]) {
             1 -> 3.0
             2 -> 4.0
             3 -> 4.5
             else -> null
         }
 
-        val location = when(selectedFilters[2]){
+        val location = when (selectedFilters[2]) {
             1 -> "강남"
             2 -> "서초"
             3 -> "송파"
@@ -117,13 +121,59 @@ class StudioViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val result = repository.filterStudios(conceptId= conceptId, price = price, rating = rating, locations = listOf(location))
+                val result = repository.filterStudios(
+                    conceptId = conceptId,
+                    price = price,
+                    rating = rating,
+                    locations = listOf(location)
+                )
                 _studios.value = result
                 Log.d("Retrofit", "$result")
             } catch (e: Exception) {
                 Log.d("Retrofit", "error = ${e.message}")
             }
         }
+    }
+
+    // -------- 리뷰 API --------
+
+    // 스튜디오 리뷰 목록 조회
+    fun loadStudioReviewList(studioId: Int): List<StudioReviewResponseItem> {
+        var reviewList = emptyList<StudioReviewResponseItem>()
+        viewModelScope.launch {
+            try {
+                reviewList = repository.loadStudioReviewList(studioId)
+            } catch (error: Exception) {
+                Log.d("StudioViewModel", "${error.message}")
+            }
+        }
+        return reviewList
+    }
+
+    // 특정 리뷰 상세 조회
+    fun loadStudioSpecificReview(studioId: Int, reviewId: Int): ReviewResponse? {
+        var review: ReviewResponse? = null
+        viewModelScope.launch {
+            try {
+                review = repository.loadStudioSpecificReview(studioId, reviewId)
+            } catch (error: Exception) {
+                Log.d("StudioViewModel", "${error.message}")
+            }
+        }
+        return review
+    }
+
+    // 특정 상품 리뷰 목록 조회
+    fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem> {
+        var reviewList = emptyList<StudioReviewResponseItem>()
+        viewModelScope.launch {
+            try {
+                reviewList = repository.loadProductReview(studioId, productId).toList()
+            } catch (error: Exception) {
+                Log.d("StudioViewModel", "${error.message}")
+            }
+        }
+        return reviewList
     }
 
     // 검색 상태 변환
