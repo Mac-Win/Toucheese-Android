@@ -1,8 +1,6 @@
 package com.example.toucheeseapp.data.repository
 
 import com.example.toucheeseapp.data.model.concept_studio.Studio
-import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
-import com.example.toucheeseapp.data.model.filter_studio.FilterStudio
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -15,7 +13,7 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     // -------- 해당 컨셉 스튜디오 API -------
 
     // 컨셉 스튜디오 목록 조회
-    suspend fun getStudios(conceptId: Int, page: Int = 0): List<Studio> = apiService.getStudios(conceptId, page).studioList
+    suspend fun getConceptStudios(conceptId: Int, page: Int = 0): List<Studio> = apiService.getStudios(conceptId, page).studioList
 
     // 필터 적용 후 스튜디오 목록 조회
     suspend fun filterStudios(conceptId: Int, page: Int = 0, price: Int?, rating: Double?, locations: List<String>?): List<Studio> = apiService.filterStudio(conceptId, page, price, rating, locations).filterStudio
