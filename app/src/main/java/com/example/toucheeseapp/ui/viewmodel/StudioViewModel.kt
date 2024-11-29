@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
-import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -19,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StudioViewModel @Inject constructor(
     private val repository: StudioRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _studios = MutableStateFlow<List<Studio>>(emptyList())
     val studios: StateFlow<List<Studio>> = _studios
@@ -33,30 +32,30 @@ class StudioViewModel @Inject constructor(
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
-    private val _studioReviewList = MutableStateFlow<List<StudioReviewResponseItem>>(emptyList())
-    val studioReviewList: StateFlow<List<StudioReviewResponseItem>> = _studioReviewList
-
     // -------- 스튜디오 API --------
 
     // 스튜디오 검색
-    fun searchStudios(keyword: String){
+    fun searchStudios(keyword: String) {
         viewModelScope.launch {
-            if(keyword.isBlank()){
+            if (keyword.isBlank()) {
                 _isSearching.value = false
                 _searchStudios.value = emptyList() // 검색어가 없을 경우 빈 리스트로 초기화
                 return@launch
             }
 
             _isSearching.value = true // 검색 시작
-            Log.d("SearchState", "Searching for keyword: $keyword, isSearching: ${_isSearching.value}")
+            Log.d(
+                "SearchState",
+                "Searching for keyword: $keyword, isSearching: ${_isSearching.value}"
+            )
 
             try {
 
-                val result = repository.searchStudios(keyword= keyword)
+                val result = repository.searchStudios(keyword = keyword)
                 _searchStudios.value = result
                 Log.d("Search", "Results: $result")
                 _isSearching.value = true
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.d("Search", "${e.message}")
                 _searchStudios.value = emptyList() // 에러 발생 시 빈 리스트로 초기화
             }
@@ -70,7 +69,7 @@ class StudioViewModel @Inject constructor(
             try {
                 val result = repository.loadStudioDetail(studioId)
                 studio = result
-            } catch (error: Exception){
+            } catch (error: Exception) {
                 Log.d("StudioViewModel", "error = ${error.message}")
             }
         }
@@ -92,22 +91,22 @@ class StudioViewModel @Inject constructor(
     }
 
     // 필터 적용 후 스튜디오 목록 조회
-    fun filterStudio(conceptId: Int, selectedFilters: Map<Int,Int>) {
-        val price = when (selectedFilters[0]){
+    fun filterStudio(conceptId: Int, selectedFilters: Map<Int, Int>) {
+        val price = when (selectedFilters[0]) {
             1 -> 99999
             2 -> 199999
             3 -> 200000
             else -> null
         }
 
-        val rating = when(selectedFilters[1]){
+        val rating = when (selectedFilters[1]) {
             1 -> 3.0
             2 -> 4.0
             3 -> 4.5
             else -> null
         }
 
-        val location = when(selectedFilters[2]){
+        val location = when (selectedFilters[2]) {
             1 -> "강남"
             2 -> "서초"
             3 -> "송파"
@@ -122,7 +121,12 @@ class StudioViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val result = repository.filterStudios(conceptId= conceptId, price = price, rating = rating, locations = listOf(location))
+                val result = repository.filterStudios(
+                    conceptId = conceptId,
+                    price = price,
+                    rating = rating,
+                    locations = listOf(location)
+                )
                 _studios.value = result
                 Log.d("Retrofit", "$result")
             } catch (e: Exception) {
@@ -134,12 +138,12 @@ class StudioViewModel @Inject constructor(
     // -------- 리뷰 API --------
 
     // 스튜디오 리뷰 목록 조회
-    fun loadStudioReviewList(studioId: Int): List<StudioReviewResponseItem>{
+    fun loadStudioReviewList(studioId: Int): List<StudioReviewResponseItem> {
         var reviewList = emptyList<StudioReviewResponseItem>()
         viewModelScope.launch {
             try {
                 reviewList = repository.loadStudioReviewList(studioId)
-            } catch (error: Exception){
+            } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
             }
         }
@@ -152,7 +156,7 @@ class StudioViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 review = repository.loadStudioSpecificReview(studioId, reviewId)
-            } catch (error: Exception){
+            } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
             }
         }
@@ -160,12 +164,12 @@ class StudioViewModel @Inject constructor(
     }
 
     // 특정 상품 리뷰 목록 조회
-    fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem>{
+    fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem> {
         var reviewList = emptyList<StudioReviewResponseItem>()
         viewModelScope.launch {
             try {
                 reviewList = repository.loadProductReview(studioId, productId).toList()
-            } catch (error: Exception){
+            } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
             }
         }
