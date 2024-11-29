@@ -13,6 +13,7 @@ import retrofit2.http.Query
 
 interface ToucheeseServer {
     // -------- 해당 컨셉 스튜디오 API --------
+
     // 컨셉 스튜디오 목록 조회
     @GET("v1/concepts/{conceptId}/studios") // baseUrl 뒤 상대경로
     suspend fun getStudios(
