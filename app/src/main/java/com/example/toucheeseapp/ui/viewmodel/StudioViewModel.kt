@@ -38,6 +38,9 @@ class StudioViewModel @Inject constructor(
     private val _studioReviews = MutableStateFlow<List<StudioReviewResponseItem>>(emptyList())
     val studioReviews: StateFlow<List<StudioReviewResponseItem>> = _studioReviews
 
+    private val _specificReview = MutableStateFlow<ReviewResponse?>(null)
+    val specificReview: StateFlow<ReviewResponse?> = _specificReview
+
     // -------- 스튜디오 API --------
 
     // 스튜디오 검색
@@ -153,16 +156,16 @@ class StudioViewModel @Inject constructor(
     }
 
     // 특정 리뷰 상세 조회
-    fun loadStudioSpecificReview(studioId: Int, reviewId: Int): ReviewResponse? {
-        var review: ReviewResponse? = null
+    fun loadStudioSpecificReview(studioId: Int, reviewId: Int) {
         viewModelScope.launch {
             try {
-                review = repository.loadStudioSpecificReview(studioId, reviewId)
+                val review = repository.loadStudioSpecificReview(studioId,reviewId)
+                _specificReview.value = review
+                Log.d("StudioViewModel", "Loaded specific review: $review")
             } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
             }
         }
-        return review
     }
 
     // 특정 상품 리뷰 목록 조회
