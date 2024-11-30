@@ -4,6 +4,7 @@ import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
 import com.example.toucheeseapp.data.model.load_concept.ConceptResponse
+import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
@@ -73,6 +74,14 @@ interface ToucheeseServer {
     // 컨셉 조회
     @GET("v1/concepts")
     suspend fun loadConcept(): ConceptResponse
+
+    // -------- 상품 API --------
+
+    // 상품 상세 조회
+    @GET("v1/products/{productId}")
+    suspend fun loadProductDetail(
+        @Path("productId") productId: Int
+    ): ProductDetailResponse
 
 
 }
