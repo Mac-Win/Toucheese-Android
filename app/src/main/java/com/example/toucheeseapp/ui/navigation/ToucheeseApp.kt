@@ -103,7 +103,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 },
                 onProductClicked = { productId ->
                     // 상품 상세 화면으로 이동
-                    navController.navigate(Screen.ProductOrderDetail.route.replace("{productId}", "$productId"))
+                    navController.navigate(Screen.ProductOrderDetail.route.replace("{productId}", "$productId").replace("{studioId}", "$studioId"))
                 }
 
             )
