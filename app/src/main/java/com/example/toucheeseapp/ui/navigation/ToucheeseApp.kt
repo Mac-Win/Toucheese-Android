@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,6 +35,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
     val navController = rememberNavController()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val pageLink = "https://yourwebsite.com/current-page-link" // * 수정필요 *
 
     // 바텀 시트
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -46,6 +48,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
         ) {
             ShareBottomSheetComponent(
                 modifier = Modifier,
+                context = context,
+                pageLink = pageLink,
                 onDismiss = {
                     coroutineScope.launch {
                         sheetState.hide()
