@@ -67,9 +67,3 @@ fun ReviewPhotoComponent(
         }
     }
 }
-
-val dummyPhotoUrls = listOf(
-    "https://via.placeholder.com/600x300",
-    "https://via.placeholder.com/300x300",
-    "https://via.placeholder.com/300x300"
-) // 임의 데이터
