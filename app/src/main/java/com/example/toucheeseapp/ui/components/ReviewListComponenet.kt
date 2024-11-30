@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 
 @Composable
-fun ReviewListComponent(reviews: List<StudioReviewResponseItem>, onReviewClick: (Int) -> Unit) {
+fun ReviewListComponent(modifier: Modifier = Modifier, reviews: List<StudioReviewResponseItem>, onReviewClick: (Int) -> Unit) {
     // 한 줄에 3개의 아이템을 배치
     val chunkedReviews = reviews.chunked(3)
 
