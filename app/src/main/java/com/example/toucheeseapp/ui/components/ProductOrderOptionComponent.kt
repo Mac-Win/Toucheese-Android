@@ -112,7 +112,7 @@ private fun PriceSection(
                 modifier = Modifier.padding(8.dp)
             )
             Text(
-                text = "${productNumOfPeoplePrice}원",
+                text = "${productNumOfPeoplePrice / 1000},000원",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color.Black,
