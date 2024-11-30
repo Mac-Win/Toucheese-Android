@@ -1,8 +1,13 @@
 package com.example.toucheeseapp.ui.screens
 
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.BitmapFactory
+import android.util.Log
+import android.util.Size
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,36 +16,61 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.Bitmap
+import coil3.ImageLoader
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
+import coil3.request.crossfade
+import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
 import com.example.toucheeseapp.ui.components.ProductOrderOptionComponent
-import com.example.toucheeseapp.ui.theme.ToucheeseAppTheme
+import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
-fun ProductOrderDetailScreen() {
+fun ProductOrderDetailScreen(
+    viewModel: StudioViewModel = hiltViewModel(),
+    productId: Int,
+    modifier: Modifier = Modifier,
+    onBackButtonClicked: () -> Unit,
+
+) {
+    var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
+
+    LaunchedEffect(productId) {
+        productDetail = viewModel.loadProductDetail(productId)
+    }
 
     var totalPrice by remember { mutableStateOf(15000) }
 
-    ToucheeseAppTheme {
+    if (productDetail != null){
         Scaffold(
             topBar = {
                 AppBarImageComponent(
-                    productName = "증명사진", // 임시 데이터
-                    productInfo = "신원 확인이 주된 목적의 사진입니다.\n" +
-                            "주로 공식 문서 및 신분증에 사용되는 사진입니다", // 임시 데이터
+                    productName = productDetail!!.name, // 상품명
+                    productInfo = productDetail!!.description, // 상품 설명
+                    productImage= productDetail!!.productImage, // 상품 이미지
                     productImageTargetWidth = 300,
                     productImageTargetHeight = 450,
-                    onBackButtonClicked = { /* 뒤로가기 */ },
+                    onBackButtonClicked = onBackButtonClicked,
                 )
             },
             bottomBar = {
@@ -70,13 +100,9 @@ fun ProductOrderDetailScreen() {
                 item {
                     // 가격 & 옵션
                     ProductOrderOptionComponent(
-                        productNumOfPeople = 1, //
-                        productNumOfPeoplePrice = 75000,
-                        productOptions = listOf(
-                            Option("보정 사진 추가", 30000),
-                            Option("원본 전체 받기", 10000),
-                            Option("액자 프린팅", 15000)
-                        ),
+                        productNumOfPeople = productDetail!!.standard, // 기준 인원
+                        productNumOfPeoplePrice = productDetail!!.price, // 기준 가격
+                        productOptions = productDetail!!.addOptions, // 추가 옵션
                         numOfPeople = 1,
                         onDecreaseClicked = {},
                         onIncreaseClicked = {},
@@ -85,7 +111,7 @@ fun ProductOrderDetailScreen() {
 
                     // 촬영날짜
                     DatePickComponent(
-                        date = "2024-11-28",
+                        date = "2024-11-28", // 임시 데이터
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
@@ -95,22 +121,25 @@ fun ProductOrderDetailScreen() {
             }
 
         }
+    } else {
+       Surface {
+           Box(
+               modifier= Modifier.fillMaxSize(),
+               contentAlignment = Alignment.Center
+           ) {
+               Text(
+                   "화면을 불러오는 중입니다.\n" +
+                       "잠시만 기다려주세요.",
+                   fontSize = 24.sp
+               )
+
+           }
+       }
     }
-
 }
 
-fun resizeImage(resources: Resources, resId: Int, targetWidth: Int, targetHeight: Int): Bitmap {
-    // 이미지 파일을 Bitmap으로 불러옴
-    val originalBitmap = BitmapFactory.decodeResource(resources, resId)
-    // 원본 Bitmap을 대상 크기로 리사이징
-    return Bitmap.createScaledBitmap(originalBitmap, targetWidth, targetHeight, true)
-}
 
-// 임시 옵션 데이터
-data class Option(
-    val optionName: String,
-    val optionPrice: Int
-)
+
 /*
 onDatePicked: () -> Unit // 날짜 선택 시
  */

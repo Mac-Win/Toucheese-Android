@@ -1,7 +1,6 @@
 package com.example.toucheeseapp.ui.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,27 +20,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.toucheeseapp.R
-import com.example.toucheeseapp.ui.screens.resizeImage
+import coil3.compose.AsyncImage
 
 @Composable
 fun AppBarImageComponent(
     productName: String, // 상품명
     productInfo: String, // 상품 상세 설명
-//    productImage: String, // 상품 이미지
+    productImage: String, // 상품 이미지
     productImageTargetWidth: Int,
     productImageTargetHeight: Int,
     modifier: Modifier = Modifier,
     onBackButtonClicked:() -> Unit,
 ) {
-    val resizedBitmap = resizeImage(LocalContext.current.resources, R.drawable.image2, productImageTargetWidth, productImageTargetHeight)
 
     Box(
         modifier = Modifier
@@ -76,14 +71,12 @@ fun AppBarImageComponent(
 
                 ) {
                 // 상품 이미지
-                Image(
-                    bitmap = resizedBitmap.asImageBitmap(),
+                AsyncImage(
+                    model = productImage,
                     contentDescription = "Photo",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .border(BorderStroke(1.dp, Color.Black))
-
-
                 )
 
                 // 상품명
