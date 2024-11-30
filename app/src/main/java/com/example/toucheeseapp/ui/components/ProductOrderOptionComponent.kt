@@ -1,5 +1,6 @@
 package com.example.toucheeseapp.ui.components
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,8 @@ fun ProductOrderOptionComponent(
     productOptions: List<AddOption>, // 옵션으로 바뀔 예정
     numOfPeople: Int,
     reviewCount: Int,
+    isOverFlow: Boolean,
+    isOnlyOne: Boolean,
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
@@ -52,6 +56,8 @@ fun ProductOrderOptionComponent(
             productNumOfPeoplePrice = productNumOfPeoplePrice,
             numOfPeople = numOfPeople,
             reviewCount = reviewCount,
+            isOverFlow = isOverFlow,
+            isOnlyOne = isOnlyOne,
             onDecreaseClicked = onDecreaseClicked,
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
@@ -60,6 +66,7 @@ fun ProductOrderOptionComponent(
         // 추가 구매 옵션
         AdditionalOptions(
             productOptions = productOptions,
+            isOverFlow = isOverFlow,
             modifier = Modifier.padding(horizontal = 16.dp),
             onOptionClicked = { },
         )
@@ -72,6 +79,8 @@ private fun PriceSection(
     productNumOfPeoplePrice: Int,
     numOfPeople: Int, // 참여 인원
     reviewCount: Int,
+    isOverFlow: Boolean,
+    isOnlyOne: Boolean, // 기준 인원이 1명인지 여부
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
@@ -107,7 +116,7 @@ private fun PriceSection(
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "${productNumOfPeople}인 기준",
-                color = Color.Gray,
+                color = if (isOverFlow) Color.Red else Color.Gray,
                 fontSize = 8.sp,
                 modifier = Modifier.padding(8.dp)
             )
@@ -132,6 +141,8 @@ private fun PriceSection(
                 .padding(start = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Toast 메시지를 위한 context 호출
+            val context = LocalContext.current
 
             Text(
                 text = "인원",
@@ -143,7 +154,15 @@ private fun PriceSection(
 
             // minus
             IconButton(
-                onClick = onDecreaseClicked,
+                onClick = {
+                    if (!isOnlyOne){
+                        // 기준 인원이 한 명이 아닌 경우에만 작동한다
+                        onDecreaseClicked()
+                    } else {
+                        // 기준 인원이 1명인 경우 Toast 메시지를 띄워준다
+                        Toast.makeText(context, "1명만 예약이 가능한 상품입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                },
             ) {
                 Icon(
                     painter = painterResource(R.drawable.minus_icon),
@@ -158,7 +177,15 @@ private fun PriceSection(
 
             // plus
             IconButton(
-                onClick = onIncreaseClicked,
+                onClick = {
+                    if (!isOnlyOne){
+                        // 기준 인원이 1명이 아닌 경우에만 작동한다
+                        onIncreaseClicked()
+                    } else {
+                        // 기준 인원이 1명인 경우 Toast 메시지를 띄워준다
+                        Toast.makeText(context, "1명만 예약이 가능한 상품입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                },
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -177,21 +204,24 @@ private fun PriceSection(
 @Composable
 private fun AdditionalOptions(
     productOptions: List<AddOption>,
+    isOverFlow: Boolean,
     modifier: Modifier = Modifier,
     onOptionClicked: () -> Unit,
 ) {
     Column(
         modifier = modifier
     ) {
-        // 기준 인원 공지
-        Text(
-            text = "현재 공지된 가격은 기준인원당 가격입니다. 기준인원 초과시 추가 금액이 부과될 수 있습니다.",
-            fontSize = 8.sp,
-            color = Color.Red,
-            modifier = Modifier
-                .align(Alignment.End)
-                .alpha(0.7f),
-        )
+        if (isOverFlow){
+            // 기준 인원 공지
+            Text(
+                text = "현재 공지된 가격은 기준인원당 가격입니다. 기준인원 초과시 추가 금액이 부과될 수 있습니다.",
+                fontSize = 8.sp,
+                color = Color.Red,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .alpha(0.7f),
+            )
+        }
 
         Text(
             text = "추가 구매",

@@ -1,10 +1,6 @@
 package com.example.toucheeseapp.ui.screens
 
-import android.content.Context
-import android.content.res.Resources
-import android.graphics.BitmapFactory
-import android.util.Log
-import android.util.Size
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,19 +27,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.Bitmap
-import coil3.ImageLoader
-import coil3.request.ImageRequest
-import coil3.request.SuccessResult
-import coil3.request.allowHardware
-import coil3.request.crossfade
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
 import com.example.toucheeseapp.ui.components.ProductOrderOptionComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Composable
 fun ProductOrderDetailScreen(
@@ -53,22 +41,26 @@ fun ProductOrderDetailScreen(
     onBackButtonClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
 
-) {
+    ) {
     var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
-
     LaunchedEffect(productId) {
         productDetail = viewModel.loadProductDetail(productId)
     }
-
+    // 참여 인원
+    val (numOfPerson, setPerson) = remember { mutableStateOf(productDetail?.standard ?: 1) }
+    // 최종 가격
     var totalPrice by remember { mutableStateOf(15000) }
 
-    if (productDetail != null){
+    if (productDetail != null) {
+        // 기준 인원이 1인지 여부
+        val isOnlyOne: Boolean = productDetail!!.standard == 1
+
         Scaffold(
             topBar = {
                 AppBarImageComponent(
                     productName = productDetail!!.name, // 상품명
                     productInfo = productDetail!!.description, // 상품 설명
-                    productImage= productDetail!!.productImage, // 상품 이미지
+                    productImage = productDetail!!.productImage, // 상품 이미지
                     onBackButtonClicked = onBackButtonClicked,
                 )
             },
@@ -98,15 +90,27 @@ fun ProductOrderDetailScreen(
                 modifier = Modifier.padding(it)
             ) {
                 item {
+                    // Toast 메시지 호출을 위한 context
+                    val context = LocalContext.current
                     // 가격 & 옵션
                     ProductOrderOptionComponent(
                         productNumOfPeople = productDetail!!.standard, // 기준 인원
                         productNumOfPeoplePrice = productDetail!!.price, // 기준 가격
                         productOptions = productDetail!!.addOptions, // 추가 옵션
-                        numOfPeople = 1,
+                        numOfPeople = numOfPerson,
                         reviewCount = productDetail!!.reviewCount, // 리뷰 갯수
-                        onDecreaseClicked = {},
-                        onIncreaseClicked = {},
+                        isOverFlow = numOfPerson > productDetail!!.standard,
+                        isOnlyOne = isOnlyOne, // 기준 인원이 1명인지 여부
+                        onDecreaseClicked = {
+                            // 기준 인원보다 큰 경우에만 작동
+                            if (numOfPerson > productDetail!!.standard) {
+                                setPerson(numOfPerson - 1) // 클릭 시 인원 -1
+                            } else {
+                                // Toast 메시지를 띄워줌
+                                Toast.makeText(context, "기준 인원보다 적은 인원을 선택하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        onIncreaseClicked = { setPerson(numOfPerson + 1) }, // 클릭 시 인원 +1
                         onReviewButtonClicked = onReviewButtonClicked,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
@@ -124,22 +128,21 @@ fun ProductOrderDetailScreen(
 
         }
     } else {
-       Surface {
-           Box(
-               modifier= Modifier.fillMaxSize(),
-               contentAlignment = Alignment.Center
-           ) {
-               Text(
-                   "화면을 불러오는 중입니다.\n" +
-                       "잠시만 기다려주세요.",
-                   fontSize = 24.sp
-               )
+        Surface {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "화면을 불러오는 중입니다.\n" +
+                            "잠시만 기다려주세요.",
+                    fontSize = 24.sp
+                )
 
-           }
-       }
+            }
+        }
     }
 }
-
 
 
 /*
