@@ -32,8 +32,6 @@ fun AppBarImageComponent(
     productName: String, // 상품명
     productInfo: String, // 상품 상세 설명
     productImage: String, // 상품 이미지
-    productImageTargetWidth: Int,
-    productImageTargetHeight: Int,
     modifier: Modifier = Modifier,
     onBackButtonClicked:() -> Unit,
 ) {
