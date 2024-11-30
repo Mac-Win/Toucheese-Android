@@ -76,7 +76,8 @@ fun ProductOrderDetailScreen(
             bottomBar = {
                 // 주문 버튼
                 BottomAppBar(
-                    modifier = Modifier.background(Color.White)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    containerColor = Color(0xFFFFFFFF),
                 ) {
                     Button(
                         onClick = { /* 주문 클릭 시 동작 */ },
