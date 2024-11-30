@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.R
@@ -42,6 +43,11 @@ fun ReviewDetailScreen(
     reviewId: Int,
     navigateBack: () -> Unit,
 ) {
+
+    // Context 가져오기 및 pageLink 가져오기
+    val context = LocalContext.current
+    val pageLink = "https://yourwebsite.com/current-page-link" // *수정필요*
+
     // 스튜디오 데이터 및 리뷰 상세 데이터 로드
     val studios by viewModel.studios.collectAsState()
     val specificReview by viewModel.specificReview.collectAsState()
@@ -148,6 +154,8 @@ fun ReviewDetailScreen(
         ) {
             ShareBottomSheetComponent(
                 modifier = Modifier.fillMaxWidth(),
+                context = context,
+                pageLink = pageLink,
                 onDismiss = { isShareSheetVisible = false }
             )
         }
