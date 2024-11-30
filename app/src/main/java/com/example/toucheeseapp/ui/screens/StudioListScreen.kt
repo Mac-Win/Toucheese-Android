@@ -1,6 +1,7 @@
 package com.example.toucheeseapp.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,7 +24,13 @@ import com.example.toucheeseapp.ui.components.TopAppBarComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @Composable
-fun StudioListScreen(viewModel: StudioViewModel = hiltViewModel(), conceptId: Int, onClickLeadingIcon: () -> Unit, onClickTrailingIcon: () -> Unit) {
+fun StudioListScreen(
+    viewModel: StudioViewModel = hiltViewModel(),
+    conceptId: Int,
+    onClickLeadingIcon: () -> Unit,
+    onClickTrailingIcon: () -> Unit,
+    onStudioItemClicked: (Int) -> Unit,
+) {
     var selectedIndex by remember { mutableStateOf(-1) } // 선택된 chip Index
     var selectedFilters by remember { mutableStateOf(mapOf<Int, Int>()) } // 다중 선택을 위한 Set
     val studios by viewModel.studios.collectAsState()
@@ -46,9 +53,9 @@ fun StudioListScreen(viewModel: StudioViewModel = hiltViewModel(), conceptId: In
         ) {
             // 필터
             FilterChipComponent(
-                selectedIndex= selectedIndex,
+                selectedIndex = selectedIndex,
                 selectedFilters = selectedFilters,
-                onSelectedItemChange = { selectedIndex = if(selectedIndex == it) -1 else it},
+                onSelectedItemChange = { selectedIndex = if (selectedIndex == it) -1 else it },
                 onSelectedFilterChange = { chipIndex, selectedFilterIndex ->
                     selectedFilters = selectedFilters.toMutableMap().apply {
                         this[chipIndex] = selectedFilterIndex
@@ -64,7 +71,15 @@ fun StudioListScreen(viewModel: StudioViewModel = hiltViewModel(), conceptId: In
 
             // 스튜디오 리스트
             LazyColumn() {
-                items(studios){ StudioListItemComponent(it, true) }
+                items(studios) { studio ->
+                    StudioListItemComponent(
+                        studio = studio,
+                        isMarked = true,
+                        modifier = Modifier.clickable {
+                            onStudioItemClicked(studio.id)
+                        }
+                    )
+                }
             }
 
         }

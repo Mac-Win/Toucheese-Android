@@ -58,7 +58,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.StudioDetail.route.replace("{studioId}", "1"), // 첫 번째 화면 route 지정
+        startDestination = Screen.Home.route, // 첫 번째 화면 route 지정
     ){ // Builder 부문
 
         // 메인 화면
@@ -80,8 +80,11 @@ fun ToucheeseApp(api: ToucheeseServer) {
             StudioListScreen(
                 conceptId = conceptId,
                 onClickLeadingIcon = { navController.navigateUp() },
-                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")}
-
+                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")},
+                onStudioItemClicked = { studioId ->
+                    // 스튜디오 상세 화면으로 이동
+                    navController.navigate(Screen.StudioDetail.route.replace("{studioId}", "$studioId"))
+                }
             )
         }
 
