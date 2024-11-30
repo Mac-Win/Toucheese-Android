@@ -37,6 +37,7 @@ fun StudioDetailScreen(
     onShare: () -> Unit,
     onBookmark: (Boolean) -> Unit,
     onReviewClick: (Int) -> Unit,
+    onProductClicked: (Int) -> Unit,
 
     ) {
     val studio by viewModel.studioDetail.collectAsState()
@@ -100,7 +101,10 @@ fun StudioDetailScreen(
             item {
                 when (selectedTab) {
                     0 -> {
-                        ProductList(products = studio!!.products)
+                        ProductList(
+                            products = studio!!.products,
+                            onProductClicked = onProductClicked
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 

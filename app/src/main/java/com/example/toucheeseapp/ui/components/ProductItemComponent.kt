@@ -1,5 +1,6 @@
 package com.example.toucheeseapp.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -14,12 +15,9 @@ import coil3.compose.rememberAsyncImagePainter
 import com.example.toucheeseapp.data.model.studio_detail.Product
 
 @Composable
-fun ProductItem(product: Product) {
+fun ProductItem(product: Product, modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth() // 가로는 전체 크기
-            .wrapContentHeight() // 세로는 콘텐츠 크기에 맞게 설정
-            .padding(16.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 상품 이미지

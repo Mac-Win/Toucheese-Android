@@ -101,6 +101,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                     // 리뷰 상세 화면으로 이동
                     navController.navigate(Screen.ReviewDetail.route.replace("{reviewId}", "$reviewId").replace("{studioId}", "$studioId"))
                 },
+                onProductClicked = { productId ->
+                    // 상품 상세 화면으로 이동
+                    navController.navigate(Screen.ProductOrderDetail.route.replace("{productId}", "$productId"))
+                }
 
             )
         }
@@ -124,8 +128,17 @@ fun ToucheeseApp(api: ToucheeseServer) {
         }
 
         // 스튜디오 상품 상세 조회 화면
-        composable(Screen.ProductOrderDetail.route){
-            ProductOrderDetailScreen()
+        composable(
+            Screen.ProductOrderDetail.route,
+            arguments = listOf(
+                navArgument("productId"){type = NavType.IntType},
+                )
+            ){ backStackEntry ->
+            val productId = backStackEntry.arguments?.getInt("productId") ?: 0
+            ProductOrderDetailScreen(
+                productId = productId,
+                onBackButtonClicked = { navController.navigateUp() }
+            )
         }
     }
 }
