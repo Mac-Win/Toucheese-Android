@@ -22,8 +22,7 @@ fun ShareBottomSheetComponent(
     pageLink: String
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -31,10 +30,9 @@ fun ShareBottomSheetComponent(
         Text(
             text = "공유하기",
             style = MaterialTheme.typography.titleMedium,
-            color = Color.Black
+            color = Color.Black,
+            modifier = Modifier.padding(16.dp)
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         // 공유 버튼 행
         Row(
@@ -47,7 +45,8 @@ fun ShareBottomSheetComponent(
                 label = "인스타그램",
                 onClick = {
                     launchApp(context, "com.instagram.android")
-                    onDismiss() }
+                    onDismiss()
+                }
             )
             ShareButton(
                 iconRes = R.drawable.kakaotalk,
@@ -55,7 +54,8 @@ fun ShareBottomSheetComponent(
                 label = "카카오톡",
                 onClick = {
                     launchApp(context, "com.kakao.talk")
-                    onDismiss() }
+                    onDismiss()
+                }
             )
             ShareButton(
                 iconRes = R.drawable.facebook,
@@ -63,7 +63,8 @@ fun ShareBottomSheetComponent(
                 label = "페이스북",
                 onClick = {
                     launchApp(context, "com.facebook.katana")
-                    onDismiss() }
+                    onDismiss()
+                }
             )
             ShareButton(
                 iconRes = R.drawable.link,
