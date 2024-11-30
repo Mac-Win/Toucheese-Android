@@ -24,7 +24,7 @@ interface ToucheeseServer {
     ): StudioResponse
 
     // 필터 적용 후 스튜디오 목록 조회
-    @GET("v1/concepts/{conceptId}/filters")
+    @GET("v1/concepts/{conceptId}/studios/filters")
     suspend fun filterStudio(
         @Path("conceptId") conceptId: Int,
         @Query("page") page: Int,
