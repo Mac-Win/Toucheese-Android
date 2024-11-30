@@ -32,6 +32,15 @@ class StudioViewModel @Inject constructor(
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
+    private val _studioDetail = MutableStateFlow<StudioDetailResponse?>(null)
+    val studioDetail: StateFlow<StudioDetailResponse?> = _studioDetail
+
+    private val _studioReviews = MutableStateFlow<List<StudioReviewResponseItem>>(emptyList())
+    val studioReviews: StateFlow<List<StudioReviewResponseItem>> = _studioReviews
+
+    private val _specificReview = MutableStateFlow<ReviewResponse?>(null)
+    val specificReview: StateFlow<ReviewResponse?> = _specificReview
+
     // -------- 스튜디오 API --------
 
     // 스튜디오 검색
@@ -63,17 +72,15 @@ class StudioViewModel @Inject constructor(
     }
 
     // 스튜디오 상세 조회
-    fun loadStudioDetail(studioId: Int): StudioDetailResponse? {
-        var studio: StudioDetailResponse? = null
+    fun loadStudioDetail(studioId: Int) {
         viewModelScope.launch {
             try {
                 val result = repository.loadStudioDetail(studioId)
-                studio = result
+                _studioDetail.value = result
             } catch (error: Exception) {
                 Log.d("StudioViewModel", "error = ${error.message}")
             }
         }
-        return studio
     }
 
     // -------- 해당 컨셉 스튜디오 API -------
@@ -138,29 +145,27 @@ class StudioViewModel @Inject constructor(
     // -------- 리뷰 API --------
 
     // 스튜디오 리뷰 목록 조회
-    fun loadStudioReviewList(studioId: Int): List<StudioReviewResponseItem> {
-        var reviewList = emptyList<StudioReviewResponseItem>()
+    fun loadStudioReviewList(studioId: Int){
         viewModelScope.launch {
             try {
-                reviewList = repository.loadStudioReviewList(studioId)
+                _studioReviews.value = repository.loadStudioReviewList(studioId)
             } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
             }
         }
-        return reviewList
     }
 
     // 특정 리뷰 상세 조회
-    fun loadStudioSpecificReview(studioId: Int, reviewId: Int): ReviewResponse? {
-        var review: ReviewResponse? = null
+    fun loadStudioSpecificReview(studioId: Int, reviewId: Int) {
         viewModelScope.launch {
             try {
-                review = repository.loadStudioSpecificReview(studioId, reviewId)
+                val review = repository.loadStudioSpecificReview(studioId,reviewId)
+                _specificReview.value = review
+                Log.d("StudioViewModel", "Loaded specific review: $review")
             } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
             }
         }
-        return review
     }
 
     // 특정 상품 리뷰 목록 조회

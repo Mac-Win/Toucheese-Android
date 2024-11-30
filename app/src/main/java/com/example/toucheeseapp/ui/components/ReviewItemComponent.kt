@@ -9,16 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 
 @Composable
-fun ReviewItemComponent(review: Review, modifier: Modifier = Modifier) {
+fun ReviewItemComponent(review: StudioReviewResponseItem, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = modifier.padding(4.dp)
     ) {
         AsyncImage(
-            model = review.imageUrl,
+            model = review.firstImage,
             contentDescription = "Review Image",
             modifier = Modifier.fillMaxSize()
         )

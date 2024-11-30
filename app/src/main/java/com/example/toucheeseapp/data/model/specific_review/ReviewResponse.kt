@@ -9,7 +9,7 @@ data class ReviewResponse(
     @SerializedName("id")
     val reviewId: Int,
     @SerializedName("rating")
-    val rating: Int,
+    val rating: Float,
     @SerializedName("reviewImages")
     val reviewImages: List<String>
 )
