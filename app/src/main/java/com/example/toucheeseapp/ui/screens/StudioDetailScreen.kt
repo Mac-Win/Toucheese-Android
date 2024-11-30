@@ -19,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.toucheeseapp.data.model.product_studio.SampleProducts
-import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.ui.components.BottomActionButtons
 import com.example.toucheeseapp.ui.components.ImageSliderComponent
 import com.example.toucheeseapp.ui.components.NoticeSectionComponent
@@ -29,7 +27,6 @@ import com.example.toucheeseapp.ui.components.ReviewListComponent
 import com.example.toucheeseapp.ui.components.StudioInfoComponent
 import com.example.toucheeseapp.ui.components.StudioTopAppBarComponent
 import com.example.toucheeseapp.ui.components.TabBarComponent
-import com.example.toucheeseapp.ui.components.dummyReviews
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @Composable
@@ -40,6 +37,7 @@ fun StudioDetailScreen(
     onShare: () -> Unit,
     onBookmark: (Boolean) -> Unit,
     onReviewClick: (Int) -> Unit,
+    onProductClicked: (Int) -> Unit,
 
     ) {
     val studio by viewModel.studioDetail.collectAsState()
@@ -103,7 +101,10 @@ fun StudioDetailScreen(
             item {
                 when (selectedTab) {
                     0 -> {
-                        ProductList(products = studio!!.products)
+                        ProductList(
+                            products = studio!!.products,
+                            onProductClicked = onProductClicked
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 

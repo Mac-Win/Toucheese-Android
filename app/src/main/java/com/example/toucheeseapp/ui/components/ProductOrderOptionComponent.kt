@@ -28,13 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.toucheeseapp.R
-import com.example.toucheeseapp.ui.screens.Option
+import com.example.toucheeseapp.data.model.product_detail.AddOption
 
 @Composable
 fun ProductOrderOptionComponent(
     productNumOfPeople: Int, // 상품 기준 인원
     productNumOfPeoplePrice: Int, // 상품 기준(대표) 가격
-    productOptions: List<Option>, // 옵션으로 바뀔 예정
+    productOptions: List<AddOption>, // 옵션으로 바뀔 예정
     numOfPeople: Int,
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
@@ -160,7 +160,7 @@ private fun PriceSection(
 
 @Composable
 private fun AdditionalOptions(
-    productOptions: List<Option>,
+    productOptions: List<AddOption>,
     modifier: Modifier = Modifier,
     onOptionClicked: () -> Unit,
 ) {
@@ -209,7 +209,7 @@ private fun AdditionalOptions(
                 )
                 // 옵션명
                 Text(
-                    text = option.optionName,
+                    text = option.name,
                     fontSize = 16.sp,
                 )
 
@@ -217,7 +217,7 @@ private fun AdditionalOptions(
 
                 // 옵션 가격
                 Text(
-                    text = "${option.optionPrice / 1000},000원",
+                    text = "${option.price / 1000},000원",
                     fontSize = 16.sp,
 
                     )

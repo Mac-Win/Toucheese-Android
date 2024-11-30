@@ -58,7 +58,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.StudioDetail.route.replace("{studioId}", "1"), // 첫 번째 화면 route 지정
+        startDestination = Screen.Home.route, // 첫 번째 화면 route 지정
     ){ // Builder 부문
 
         // 메인 화면
@@ -80,8 +80,11 @@ fun ToucheeseApp(api: ToucheeseServer) {
             StudioListScreen(
                 conceptId = conceptId,
                 onClickLeadingIcon = { navController.navigateUp() },
-                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")}
-
+                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")},
+                onStudioItemClicked = { studioId ->
+                    // 스튜디오 상세 화면으로 이동
+                    navController.navigate(Screen.StudioDetail.route.replace("{studioId}", "$studioId"))
+                }
             )
         }
 
@@ -98,6 +101,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                     // 리뷰 상세 화면으로 이동
                     navController.navigate(Screen.ReviewDetail.route.replace("{reviewId}", "$reviewId").replace("{studioId}", "$studioId"))
                 },
+                onProductClicked = { productId ->
+                    // 상품 상세 화면으로 이동
+                    navController.navigate(Screen.ProductOrderDetail.route.replace("{productId}", "$productId"))
+                }
 
             )
         }
@@ -121,8 +128,17 @@ fun ToucheeseApp(api: ToucheeseServer) {
         }
 
         // 스튜디오 상품 상세 조회 화면
-        composable(Screen.ProductOrderDetail.route){
-            ProductOrderDetailScreen()
+        composable(
+            Screen.ProductOrderDetail.route,
+            arguments = listOf(
+                navArgument("productId"){type = NavType.IntType},
+                )
+            ){ backStackEntry ->
+            val productId = backStackEntry.arguments?.getInt("productId") ?: 0
+            ProductOrderDetailScreen(
+                productId = productId,
+                onBackButtonClicked = { navController.navigateUp() }
+            )
         }
     }
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
+import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -179,6 +180,18 @@ class StudioViewModel @Inject constructor(
             }
         }
         return reviewList
+    }
+
+    // -------- 상품 API --------
+
+    // 상품 상세 조회
+    suspend fun loadProductDetail(productId: Int): ProductDetailResponse? {
+        return try {
+            repository.loadProductDetail(productId)
+        } catch (error: Exception){
+            Log.d("StudioViewModel", "error = ${error.message}")
+            null
+        }
     }
 
     // 검색 상태 변환
