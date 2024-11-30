@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +37,11 @@ fun ProductOrderOptionComponent(
     productNumOfPeoplePrice: Int, // 상품 기준(대표) 가격
     productOptions: List<AddOption>, // 옵션으로 바뀔 예정
     numOfPeople: Int,
+    reviewCount: Int,
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
-    onIncreaseClicked: () -> Unit
+    onIncreaseClicked: () -> Unit,
+    onReviewButtonClicked: () -> Unit,
 ) {
 
     Column(modifier = modifier) {
@@ -48,9 +51,10 @@ fun ProductOrderOptionComponent(
             productNumOfPeople = productNumOfPeople,
             productNumOfPeoplePrice = productNumOfPeoplePrice,
             numOfPeople = numOfPeople,
+            reviewCount = reviewCount,
             onDecreaseClicked = onDecreaseClicked,
             onIncreaseClicked = onIncreaseClicked,
-
+            onReviewButtonClicked = onReviewButtonClicked,
             )
 
         // 추가 구매 옵션
@@ -67,13 +71,25 @@ private fun PriceSection(
     productNumOfPeople: Int,
     productNumOfPeoplePrice: Int,
     numOfPeople: Int, // 참여 인원
+    reviewCount: Int,
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
-    onIncreaseClicked: () -> Unit
+    onIncreaseClicked: () -> Unit,
+    onReviewButtonClicked: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
     ) {
+        // 리뷰 보러가기
+        TextButton(
+            onClick = onReviewButtonClicked,
+        ) {
+            Text(
+                text= "리뷰 ${reviewCount}개 보러가기 >",
+                fontSize = 12.sp
+            )
+        }
+
         // 가격
         Row(
             modifier = Modifier

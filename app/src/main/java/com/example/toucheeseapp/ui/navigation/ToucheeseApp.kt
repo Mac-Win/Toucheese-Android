@@ -132,12 +132,18 @@ fun ToucheeseApp(api: ToucheeseServer) {
             Screen.ProductOrderDetail.route,
             arguments = listOf(
                 navArgument("productId"){type = NavType.IntType},
+                navArgument("studioId"){type = NavType.IntType},
                 )
             ){ backStackEntry ->
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
+            val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
             ProductOrderDetailScreen(
                 productId = productId,
-                onBackButtonClicked = { navController.navigateUp() }
+                onBackButtonClicked = { navController.navigateUp() },
+                onReviewButtonClicked = {
+                    // 스튜디오별 특정 상품 리뷰로 이동
+
+                }
             )
         }
     }
