@@ -2,12 +2,14 @@ package com.example.toucheeseapp.ui.components
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,7 +28,8 @@ fun ProductItem(product: Product, modifier: Modifier = Modifier) {
             contentDescription = "상품 이미지",
             modifier = Modifier
                 .size(80.dp) // 고정된 크기 설정
-                .padding(end = 16.dp),
+                .padding(end = 16.dp)
+                .border(1.dp, Color.Black),
             contentScale = ContentScale.Crop
         )
 
