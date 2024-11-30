@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,15 +38,16 @@ import com.example.toucheeseapp.data.model.product_detail.AddOption
 fun ProductOrderOptionComponent(
     productNumOfPeople: Int, // 상품 기준 인원
     productNumOfPeoplePrice: Int, // 상품 기준(대표) 가격
-    productOptions: List<AddOption>, // 옵션으로 바뀔 예정
-    numOfPeople: Int,
-    reviewCount: Int,
-    isOverFlow: Boolean,
-    isOnlyOne: Boolean,
+    productOptions: List<AddOption>, // 추가 구매 옵션
+    numOfPeople: Int, // 화면에 표시되는 인원 수
+    reviewCount: Int, // 리뷰 갯수
+    isOverFlow: Boolean, // 기준인원보다 선택된 인원수가 넘었는지 여부 (true: 넘음)
+    isOnlyOne: Boolean, // 기준 인원이 1명인지 여부
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
+    onOptionClicked: (Int) -> Unit, // 옵션 클릭 시 동작
 ) {
 
     Column(modifier = modifier) {
@@ -68,7 +70,7 @@ fun ProductOrderOptionComponent(
             productOptions = productOptions,
             isOverFlow = isOverFlow,
             modifier = Modifier.padding(horizontal = 16.dp),
-            onOptionClicked = { },
+            onOptionClicked = onOptionClicked,
         )
     }
 }
@@ -206,8 +208,11 @@ private fun AdditionalOptions(
     productOptions: List<AddOption>,
     isOverFlow: Boolean,
     modifier: Modifier = Modifier,
-    onOptionClicked: () -> Unit,
+    onOptionClicked: (Int) -> Unit,
 ) {
+    // 선택된 옵션들
+    val selectedOption = remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
+
     Column(
         modifier = modifier
     ) {
@@ -229,28 +234,33 @@ private fun AdditionalOptions(
             fontWeight = FontWeight.Normal,
         )
 
-        val selectedOption = remember { mutableStateOf(productOptions[0]) }
-
         // 추가 구매 옵션
-        productOptions.forEach { option ->
+        productOptions.forEachIndexed { index, option ->
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { selectedOption.value = option },
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = selectedOption.value == option,
+                    selected = selectedOption.value.contains(index),
                     colors = RadioButtonColors(
                         selectedColor = Color(0xFFFFE085),
                         unselectedColor = Color(0xFFFFE085),
-                        disabledSelectedColor = Color(0xFFFFE085),
-                        disabledUnselectedColor = Color(0xFFFFE085)
+                        disabledSelectedColor = Color(0xFFFFFFFF),
+                        disabledUnselectedColor = Color(0xFFFFFFFF),
                     ),
                     modifier = Modifier.padding(2.dp),
                     onClick = {
-                        onOptionClicked()
-                        selectedOption.value = option
+                        // 새로운 Set 객체를 생성하여 상태 변경
+                        selectedOption.value = if (selectedOption.value.contains(index)) {
+                            selectedOption.value - index
+                        } else {
+                            selectedOption.value + index
+                        }
+                        // 금액 변경
+                        onOptionClicked(
+                            if (selectedOption.value.contains(index)) option.price else -option.price
+                        )
                     }
                 )
                 // 옵션명

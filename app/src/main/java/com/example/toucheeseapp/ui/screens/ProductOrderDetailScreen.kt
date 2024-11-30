@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,13 +48,13 @@ fun ProductOrderDetailScreen(
         productDetail = viewModel.loadProductDetail(productId)
     }
     // 참여 인원
-    val (numOfPerson, setPerson) = remember { mutableStateOf(productDetail?.standard ?: 1) }
-    // 최종 가격
-    var totalPrice by remember { mutableStateOf(15000) }
+    val (numOfPerson, setPerson) = remember { mutableIntStateOf(productDetail?.standard ?: 1) }
 
     if (productDetail != null) {
         // 기준 인원이 1인지 여부
         val isOnlyOne: Boolean = productDetail!!.standard == 1
+        // 최종 가격
+        var totalPrice by remember { mutableIntStateOf(productDetail!!.price) }
 
         Scaffold(
             topBar = {
@@ -79,7 +80,7 @@ fun ProductOrderDetailScreen(
                     ) {
                         Text(
                             text = "선택 상품 주문 (₩$totalPrice)",
-                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 16.sp,
                         )
                     }
                 }
@@ -99,7 +100,7 @@ fun ProductOrderDetailScreen(
                         productOptions = productDetail!!.addOptions, // 추가 옵션
                         numOfPeople = numOfPerson,
                         reviewCount = productDetail!!.reviewCount, // 리뷰 갯수
-                        isOverFlow = numOfPerson > productDetail!!.standard,
+                        isOverFlow = numOfPerson > productDetail!!.standard, // 화면에 표시된 인원수가 상품 기준인원보다 높은지 여부
                         isOnlyOne = isOnlyOne, // 기준 인원이 1명인지 여부
                         onDecreaseClicked = {
                             // 기준 인원보다 큰 경우에만 작동
@@ -113,6 +114,10 @@ fun ProductOrderDetailScreen(
                         onIncreaseClicked = { setPerson(numOfPerson + 1) }, // 클릭 시 인원 +1
                         onReviewButtonClicked = onReviewButtonClicked,
                         modifier = Modifier.padding(horizontal = 16.dp),
+                        onOptionClicked = { optionPrice ->
+                            // 옵션 상품을 금액에 추가 및 제거한다
+                            totalPrice += optionPrice
+                        }
                     )
 
                     // 촬영날짜
