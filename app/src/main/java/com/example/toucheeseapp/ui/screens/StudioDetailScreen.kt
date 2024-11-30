@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -61,7 +63,10 @@ fun StudioDetailScreen(
             // 이미지 슬라이더 및 상단 바
             item {
                 Box {
-                    ImageSliderComponent(images = studio!!.facilityImageUrls)
+                    ImageSliderComponent(
+                        images = studio!!.facilityImageUrls,
+                        modifier = Modifier.fillMaxWidth().height(300.dp)
+                        )
                     StudioTopAppBarComponent(
                         isBookmarked = false,
                         onNavigateBack = navigateBack,

@@ -17,14 +17,12 @@ fun ImageSliderComponent(images: List<String>, modifier: Modifier = Modifier) {
     HorizontalPager(
         state = pagerState,
         modifier = modifier
-            .fillMaxWidth()
-            .height(200.dp)
     ) { page ->
         Image(
             painter = rememberAsyncImagePainter(model = images[page]),
             contentDescription = "스튜디오 이미지",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            contentScale = ContentScale.FillBounds,
+            modifier = modifier
         )
     }
 }

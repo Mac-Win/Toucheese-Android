@@ -51,6 +51,7 @@ fun ProductOrderDetailScreen(
     productId: Int,
     modifier: Modifier = Modifier,
     onBackButtonClicked: () -> Unit,
+    onReviewButtonClicked: () -> Unit,
 
 ) {
     var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
@@ -68,15 +69,14 @@ fun ProductOrderDetailScreen(
                     productName = productDetail!!.name, // 상품명
                     productInfo = productDetail!!.description, // 상품 설명
                     productImage= productDetail!!.productImage, // 상품 이미지
-                    productImageTargetWidth = 300,
-                    productImageTargetHeight = 450,
                     onBackButtonClicked = onBackButtonClicked,
                 )
             },
             bottomBar = {
                 // 주문 버튼
                 BottomAppBar(
-                    modifier = Modifier.background(Color.White)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    containerColor = Color(0xFFFFFFFF),
                 ) {
                     Button(
                         onClick = { /* 주문 클릭 시 동작 */ },
@@ -104,9 +104,11 @@ fun ProductOrderDetailScreen(
                         productNumOfPeoplePrice = productDetail!!.price, // 기준 가격
                         productOptions = productDetail!!.addOptions, // 추가 옵션
                         numOfPeople = 1,
+                        reviewCount = productDetail!!.reviewCount, // 리뷰 갯수
                         onDecreaseClicked = {},
                         onIncreaseClicked = {},
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        onReviewButtonClicked = onReviewButtonClicked,
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
 
                     // 촬영날짜

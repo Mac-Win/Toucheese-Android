@@ -32,8 +32,6 @@ fun AppBarImageComponent(
     productName: String, // 상품명
     productInfo: String, // 상품 상세 설명
     productImage: String, // 상품 이미지
-    productImageTargetWidth: Int,
-    productImageTargetHeight: Int,
     modifier: Modifier = Modifier,
     onBackButtonClicked:() -> Unit,
 ) {
@@ -71,13 +69,21 @@ fun AppBarImageComponent(
 
                 ) {
                 // 상품 이미지
-                AsyncImage(
-                    model = productImage,
-                    contentDescription = "Photo",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .border(BorderStroke(1.dp, Color.Black))
-                )
+                Column(
+                    modifier= Modifier
+                        .fillMaxWidth(0.33f)
+                        .fillMaxHeight(0.7f)
+                        .padding(8.dp),
+
+                ) {
+                    AsyncImage(
+                        model = productImage,
+                        contentDescription = "Photo",
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .border(BorderStroke(1.dp, Color.Black))
+                    )
+                }
 
                 // 상품명
                 Text(
