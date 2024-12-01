@@ -15,10 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 
 @Composable
@@ -44,7 +44,8 @@ fun StudioInfoComponent(
                     contentDescription = "스튜디오 로고",
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -58,7 +59,6 @@ fun StudioInfoComponent(
             Text(
                 text = studio.description,
                 style = MaterialTheme.typography.bodySmall,
-                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
         }

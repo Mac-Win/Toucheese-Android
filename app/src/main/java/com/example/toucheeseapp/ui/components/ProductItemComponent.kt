@@ -51,7 +51,6 @@ fun ProductItem(product: Product, modifier: Modifier = Modifier) {
             Text(
                 text = product.description,
                 style = MaterialTheme.typography.bodySmall,
-                maxLines = 2, // 최대 두 줄로 제한
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f) // 약간 흐린 색상
             )
