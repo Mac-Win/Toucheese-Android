@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.ui.screens.book_schedule
+package com.example.toucheeseapp.ui.screens.tab_bookSchedule
 
 import androidx.compose.runtime.Composable
 

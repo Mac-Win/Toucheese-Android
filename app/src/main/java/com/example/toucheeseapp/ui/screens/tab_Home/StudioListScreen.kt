@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.ui.screens.home_main
+package com.example.toucheeseapp.ui.screens.tab_Home
 
 import android.util.Log
 import androidx.compose.foundation.clickable

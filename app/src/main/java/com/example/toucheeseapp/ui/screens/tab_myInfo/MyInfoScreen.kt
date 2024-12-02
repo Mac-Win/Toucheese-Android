@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.ui.screens.my_info
+package com.example.toucheeseapp.ui.screens.tab_myInfo
 
 import androidx.compose.runtime.Composable
 

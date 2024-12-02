@@ -29,12 +29,12 @@ import androidx.navigation.navArgument
 import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
-import com.example.toucheeseapp.ui.screens.home_main.HomeScreen
-import com.example.toucheeseapp.ui.screens.home_main.ReviewDetailScreen
-import com.example.toucheeseapp.ui.screens.home_main.StudioDetailScreen
-import com.example.toucheeseapp.ui.screens.home_main.ProductOrderDetailScreen
-import com.example.toucheeseapp.ui.screens.home_main.StudioListScreen
-import com.example.toucheeseapp.ui.screens.home_main.StudioProductReviewScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.HomeScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.ProductOrderDetailScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.StudioListScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.StudioProductReviewScreen
 import kotlinx.coroutines.launch
 
 
