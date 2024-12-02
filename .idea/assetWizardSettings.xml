@@ -62,6 +62,18 @@
                                 <PersistentState>
                                   <option name="children">
                                     <map>
+                                      <entry key="backgroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="imagePath" value="$USER_HOME$/Downloads/res-drawable/toucheese_background.xml" />
+                                                <entry key="scalingPercent" value="118" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="foregroundClipArt">
                                         <value>
                                           <PersistentState>
@@ -79,8 +91,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$USER_HOME$/Desktop/터치즈 logo.png" />
-                                                <entry key="scalingPercent" value="66" />
+                                                <entry key="imagePath" value="$USER_HOME$/Downloads/res-drawable/toucheese.xml" />
+                                                <entry key="scalingPercent" value="71" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -113,7 +125,6 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="eadfdf" />
                                     </map>
                                   </option>
