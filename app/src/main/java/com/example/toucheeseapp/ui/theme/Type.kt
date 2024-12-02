@@ -10,13 +10,13 @@ import com.example.toucheeseapp.R
 
 val NotoSansKr = FontFamily(
     Font(R.font.noto_sans_kr_black),
-    Font(R.font.noto_sans_kr_bold),
-    Font(R.font.noto_sans_kr_extra_bold),
-    Font(R.font.noto_sans_kr_extra_light),
-    Font(R.font.noto_sans_kr_medium),
+    Font(R.font.noto_sans_kr_bold, FontWeight.Bold),
+    Font(R.font.noto_sans_kr_extra_bold, FontWeight.ExtraBold),
+    Font(R.font.noto_sans_kr_extra_light, FontWeight.ExtraLight),
+    Font(R.font.noto_sans_kr_medium, FontWeight.Medium),
     Font(R.font.noto_sans_kr_regular),
-    Font(R.font.noto_sans_kr_semi_bold),
-    Font(R.font.noto_sans_kr_thin)
+    Font(R.font.noto_sans_kr_semi_bold, FontWeight.SemiBold),
+    Font(R.font.noto_sans_kr_thin, FontWeight.Thin)
 )
 
 val Typography = Typography(
