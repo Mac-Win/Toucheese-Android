@@ -40,6 +40,7 @@ fun DatePickComponent(
         // 예약 날짜 선택
         OutlinedTextField(
             value = date,
+            enabled = false,
             maxLines = 1, // 최대 한 줄
             onValueChange = { onValueChanged() },
             placeholder = { Text("예약일자 및 시간 선택") },

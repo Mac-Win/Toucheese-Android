@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,22 +60,7 @@ fun StudioDetailScreen(
     if (studio != null) {
         Scaffold(
             topBar = {
-                // 이미지 슬라이더 및 상단 바
-                Box {
-                    ImageSliderComponent(
-                        images = studio!!.facilityImageUrls,
-                        modifier = Modifier.fillMaxWidth().height(300.dp)
-                    )
-                    StudioTopAppBarComponent(
-                        isBookmarked = false,
-                        onNavigateBack = navigateBack,
-                        onShare = onShare,
-                        onBookmarkToggle = {
-                            viewModel.toggleBookmark()
-                            onBookmark(isBookmarked)
-                        }
-                    )
-                }
+
             },
 
             bottomBar = {
@@ -83,9 +71,31 @@ fun StudioDetailScreen(
             }
         ) { innerPadding ->
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+                item {
+                    // 이미지 슬라이더 및 상단 바
+                    Box {
+                        ImageSliderComponent(
+                            images = studio!!.facilityImageUrls,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                        )
+                        StudioTopAppBarComponent(
+                            isBookmarked = false,
+                            onNavigateBack = navigateBack,
+                            onShare = onShare,
+                            onBookmarkToggle = {
+                                viewModel.toggleBookmark()
+                                onBookmark(isBookmarked)
+                            }
+                        )
+                    }
+                }
 
                 // 스튜디오 정보
                 item {
