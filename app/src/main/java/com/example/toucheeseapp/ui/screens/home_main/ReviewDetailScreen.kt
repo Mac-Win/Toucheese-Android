@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.ui.screens.home
+package com.example.toucheeseapp.ui.screens.home_main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

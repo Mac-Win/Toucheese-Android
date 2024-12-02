@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -30,12 +29,12 @@ import androidx.navigation.navArgument
 import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
-import com.example.toucheeseapp.ui.screens.home.HomeScreen
-import com.example.toucheeseapp.ui.screens.home.ReviewDetailScreen
-import com.example.toucheeseapp.ui.screens.home.StudioDetailScreen
-import com.example.toucheeseapp.ui.screens.home.ProductOrderDetailScreen
-import com.example.toucheeseapp.ui.screens.home.StudioListScreen
-import com.example.toucheeseapp.ui.screens.home.StudioProductReviewScreen
+import com.example.toucheeseapp.ui.screens.home_main.HomeScreen
+import com.example.toucheeseapp.ui.screens.home_main.ReviewDetailScreen
+import com.example.toucheeseapp.ui.screens.home_main.StudioDetailScreen
+import com.example.toucheeseapp.ui.screens.home_main.ProductOrderDetailScreen
+import com.example.toucheeseapp.ui.screens.home_main.StudioListScreen
+import com.example.toucheeseapp.ui.screens.home_main.StudioProductReviewScreen
 import kotlinx.coroutines.launch
 
 
