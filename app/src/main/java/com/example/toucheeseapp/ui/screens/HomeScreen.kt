@@ -66,6 +66,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.example.toucheeseapp.R
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
+import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 
@@ -102,7 +103,7 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
             }
         },
         bottomBar = {
-            BottomNavigationBar(
+            BottomNavigationBarComponent(
                 selectedTab = selectedTab,
                 onTabSelected = { selectedTab = it }
             )
@@ -293,43 +294,6 @@ fun PhotoCard(
     }
 }
 
-@Composable
-fun BottomNavigationBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
-    NavigationBar(
-        containerColor = Color(0xFFFFF2CC) // 바텀 내비의 기본 배경색 설정
-    ) {
-        val items = listOf(
-            BottomNavItem("홈", R.drawable.home_36px),
-            BottomNavItem("예약일정", R.drawable.calendar_36px),
-            BottomNavItem("문의하기", R.drawable.qna_36px),
-            BottomNavItem("내정보", R.drawable.myinfo_36px)
-        )
-
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = item.icon), // painterResource를 사용하여 아이콘 렌더링
-                        contentDescription = item.title
-                    )
-                },
-                label = { Text(item.title) },
-                selected = selectedTab == index,
-                onClick = { onTabSelected(index) },
-                alwaysShowLabel = true,
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.Black, // 선택된 아이콘 색상
-                    selectedTextColor = Color.Black, // 선택된 텍스트 색상
-                    indicatorColor = Color(0xFFFFFCF5), // 선택된 탭 배경색 설정
-                    unselectedIconColor = Color.Gray, // 선택되지 않은 아이콘 색상
-                    unselectedTextColor = Color.Gray  // 선택되지 않은 텍스트 색상
-                )
-            )
-        }
-    }
-}
-
-data class BottomNavItem(val title: String, val icon: Int) // icon 타입을 Int로 유지
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
