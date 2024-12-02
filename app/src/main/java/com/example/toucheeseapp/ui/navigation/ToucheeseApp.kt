@@ -24,6 +24,7 @@ import com.example.toucheeseapp.ui.screens.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.StudioDetailScreen
 import com.example.toucheeseapp.ui.screens.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.StudioListScreen
+import com.example.toucheeseapp.ui.screens.StudioProductReviewScreen
 import kotlinx.coroutines.launch
 
 
@@ -43,7 +44,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = {showBottomSheet = false},
+            onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
         ) {
             ShareBottomSheetComponent(
@@ -63,31 +64,46 @@ fun ToucheeseApp(api: ToucheeseServer) {
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route, // 첫 번째 화면 route 지정
-    ){ // Builder 부문
+    ) { // Builder 부문
 
         // 메인 화면
         composable(Screen.Home.route) {
             HomeScreen(
                 onCardClick = { conceptId ->
                     // 스튜디오 조회 화면으로 이동
-                    navController.navigate(Screen.StudioList.route.replace("{conceptId}", "${conceptId}"))
+                    navController.navigate(
+                        Screen.StudioList.route.replace(
+                            "{conceptId}",
+                            "${conceptId}"
+                        )
+                    )
                 },
                 onStudioClick = { studioId ->
                     // 스튜디오 상세 화면으로 이동
-                    navController.navigate(Screen.StudioDetail.route.replace("{studioId}", "$studioId"))
+                    navController.navigate(
+                        Screen.StudioDetail.route.replace(
+                            "{studioId}",
+                            "$studioId"
+                        )
+                    )
                 }
             )
         }
         // 스튜디오 조회 화면
-        composable(Screen.StudioList.route){ backStackEntry ->
-            val conceptId = backStackEntry.arguments?.getString("conceptId")?.toIntOrNull() ?:0
+        composable(Screen.StudioList.route) { backStackEntry ->
+            val conceptId = backStackEntry.arguments?.getString("conceptId")?.toIntOrNull() ?: 0
             StudioListScreen(
                 conceptId = conceptId,
                 onClickLeadingIcon = { navController.navigateUp() },
-                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭")},
+                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭") },
                 onStudioItemClicked = { studioId ->
                     // 스튜디오 상세 화면으로 이동
-                    navController.navigate(Screen.StudioDetail.route.replace("{studioId}", "$studioId"))
+                    navController.navigate(
+                        Screen.StudioDetail.route.replace(
+                            "{studioId}",
+                            "$studioId"
+                        )
+                    )
                 }
             )
         }
@@ -103,11 +119,21 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onBookmark = { bookmarked -> Log.d(TAG, "북마크 상태: $bookmarked") },
                 onReviewClick = { reviewId ->
                     // 리뷰 상세 화면으로 이동
-                    navController.navigate(Screen.ReviewDetail.route.replace("{reviewId}", "$reviewId").replace("{studioId}", "$studioId"))
+                    navController.navigate(
+                        Screen.ReviewDetail.route.replace(
+                            "{reviewId}",
+                            "$reviewId"
+                        ).replace("{studioId}", "$studioId")
+                    )
                 },
                 onProductClicked = { productId ->
                     // 상품 상세 화면으로 이동
-                    navController.navigate(Screen.ProductOrderDetail.route.replace("{productId}", "$productId").replace("{studioId}", "$studioId"))
+                    navController.navigate(
+                        Screen.ProductOrderDetail.route.replace(
+                            "{productId}",
+                            "$productId"
+                        ).replace("{studioId}", "$studioId")
+                    )
                 }
 
             )
@@ -135,10 +161,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
         composable(
             Screen.ProductOrderDetail.route,
             arguments = listOf(
-                navArgument("productId"){type = NavType.IntType},
-                navArgument("studioId"){type = NavType.IntType},
-                )
-            ){ backStackEntry ->
+                navArgument("productId") { type = NavType.IntType },
+                navArgument("studioId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
             val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
             ProductOrderDetailScreen(
@@ -146,9 +172,41 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onBackButtonClicked = { navController.navigateUp() },
                 onReviewButtonClicked = {
                     // 스튜디오별 특정 상품 리뷰로 이동
-
+                    navController.navigate(
+                        Screen.StudioProductReview.route
+                            .replace("{studioId}", "$studioId")
+                            .replace("{productId}", "$productId")
+                    )
                 }
             )
         }
+
+        // 스튜디오별 특정 상품 리뷰 조회 화면
+        composable(
+            Screen.StudioProductReview.route,
+            arguments = listOf(
+                navArgument("studioId") { type = NavType.IntType },
+                navArgument("productId") { type = NavType.IntType },
+            )
+        )
+        { backStackEntry ->
+            val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
+            val productId = backStackEntry.arguments?.getInt("productId") ?: 0
+            StudioProductReviewScreen(
+                studioId = studioId,
+                productId = productId,
+                onBackButtonClicked = { navController.navigateUp() },
+                onReviewItemClicked = { reviewId ->
+                    // 리뷰 상세 화면으로 이동
+                    navController.navigate(Screen.ReviewDetail.route
+                        .replace("{studioId}", "$studioId")
+                        .replace("{reviewId}", "$reviewId")
+                    )
+                }
+
+            )
+
+        }
+
     }
 }
