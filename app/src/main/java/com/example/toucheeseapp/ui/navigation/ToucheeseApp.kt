@@ -1,8 +1,15 @@
 package com.example.toucheeseapp.ui.navigation
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,21 +17,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.toucheeseapp.data.network.ToucheeseServer
+import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
-import com.example.toucheeseapp.ui.screens.HomeScreen
-import com.example.toucheeseapp.ui.screens.ReviewDetailScreen
-import com.example.toucheeseapp.ui.screens.StudioDetailScreen
-import com.example.toucheeseapp.ui.screens.ProductOrderDetailScreen
-import com.example.toucheeseapp.ui.screens.StudioListScreen
-import com.example.toucheeseapp.ui.screens.StudioProductReviewScreen
+import com.example.toucheeseapp.ui.screens.home.HomeScreen
+import com.example.toucheeseapp.ui.screens.home.ReviewDetailScreen
+import com.example.toucheeseapp.ui.screens.home.StudioDetailScreen
+import com.example.toucheeseapp.ui.screens.home.ProductOrderDetailScreen
+import com.example.toucheeseapp.ui.screens.home.StudioListScreen
+import com.example.toucheeseapp.ui.screens.home.StudioProductReviewScreen
 import kotlinx.coroutines.launch
 
 
@@ -38,6 +49,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val pageLink = "https://yourwebsite.com/current-page-link" // * 수정필요 *
+    var bottomNavSelectedTab by remember { mutableStateOf(0) }
 
     // 바텀 시트
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -69,6 +81,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
         // 메인 화면
         composable(Screen.Home.route) {
             HomeScreen(
+                selectedTab = bottomNavSelectedTab,
                 onCardClick = { conceptId ->
                     // 스튜디오 조회 화면으로 이동
                     navController.navigate(
@@ -86,6 +99,16 @@ fun ToucheeseApp(api: ToucheeseServer) {
                             "$studioId"
                         )
                     )
+                },
+                onTabSelected = { selectedTab ->
+                    // backStack 초기화
+                    navController.navigate("Test"){
+                        popUpTo(navController.graph.id){
+                            inclusive = true
+                        }
+                    }
+                    // 탭 이동
+                    bottomNavSelectedTab = selectedTab
                 }
             )
         }
@@ -203,10 +226,64 @@ fun ToucheeseApp(api: ToucheeseServer) {
                         .replace("{reviewId}", "$reviewId")
                     )
                 }
-
             )
-
         }
 
+        // BottomNav Test 화면
+        composable("Test"){
+            Scaffold(
+                bottomBar = {
+                    BottomNavigationBarComponent(
+                        selectedTab = bottomNavSelectedTab,
+                        onTabSelected = { selectedTab ->
+                            // 탭 이동
+                            bottomNavClicked(
+                                selectedTab = selectedTab,
+                                navController = navController,
+                            )
+                            bottomNavSelectedTab = selectedTab
+                        }
+                    )
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "바텀 내비게이션 테스트 화면",
+                        fontSize = 36.sp
+                    )
+                }
+            }
+        }
+
+    }
+}
+
+fun bottomNavClicked(selectedTab: Int, navController: NavController) {
+    when(selectedTab){
+        // 홈화면으로 이동
+        0 -> {
+            navController.navigate(Screen.Home.route){
+                popUpTo(navController.graph.id){
+                    inclusive = true
+                }
+            }
+
+        }
+        // Test 화면 이동
+        else -> {
+            // backStack 초기화
+            navController.navigate("Test"){
+                popUpTo(navController.graph.id){
+                    inclusive = true
+                }
+            }
+        }
     }
 }

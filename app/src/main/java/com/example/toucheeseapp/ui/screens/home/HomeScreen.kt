@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.ui.screens
+package com.example.toucheeseapp.ui.screens.home
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -32,9 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -72,8 +69,7 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit, onStudioClick: (Int) -> Unit) {
-    var selectedTab by remember { mutableStateOf(0) }
+fun HomeScreen(selectedTab: Int, viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit, onStudioClick: (Int) -> Unit, onTabSelected: (Int) -> Unit) {
     val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val searchResults by viewModel.searchStudios.collectAsState()
@@ -105,7 +101,7 @@ fun HomeScreen(viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) 
         bottomBar = {
             BottomNavigationBarComponent(
                 selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
+                onTabSelected = onTabSelected,
             )
         }
     ) { innerPadding ->
