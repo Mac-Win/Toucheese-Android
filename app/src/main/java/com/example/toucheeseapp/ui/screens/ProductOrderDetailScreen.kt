@@ -106,12 +106,15 @@ fun ProductOrderDetailScreen(
                             // 기준 인원보다 큰 경우에만 작동
                             if (numOfPerson > productDetail!!.standard) {
                                 setPerson(numOfPerson - 1) // 클릭 시 인원 -1
+                                totalPrice -= (totalPrice / productDetail!!.standard)// 기준 인원 금액으로 감소
                             } else {
                                 // Toast 메시지를 띄워줌
                                 Toast.makeText(context, "기준 인원보다 적은 인원을 선택하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                             }
                         },
-                        onIncreaseClicked = { setPerson(numOfPerson + 1) }, // 클릭 시 인원 +1
+                        onIncreaseClicked = {
+                            setPerson(numOfPerson + 1)
+                            totalPrice += (totalPrice / productDetail!!.standard) }, // 클릭 시 인원 +1
                         onReviewButtonClicked = onReviewButtonClicked,
                         modifier = Modifier.padding(horizontal = 16.dp),
                         onOptionClicked = { optionPrice ->
