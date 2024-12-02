@@ -170,16 +170,13 @@ class StudioViewModel @Inject constructor(
     }
 
     // 특정 상품 리뷰 목록 조회
-    fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem> {
-        var reviewList = emptyList<StudioReviewResponseItem>()
-        viewModelScope.launch {
-            try {
-                reviewList = repository.loadProductReview(studioId, productId).toList()
+    suspend fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem>? {
+        return try {
+                repository.loadProductReview(studioId, productId).toList()
             } catch (error: Exception) {
                 Log.d("StudioViewModel", "${error.message}")
+                null
             }
-        }
-        return reviewList
     }
 
     // -------- 상품 API --------
