@@ -7,10 +7,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +33,10 @@ fun StudioInfoComponent(
     studio: StudioDetailResponse,
     modifier: Modifier = Modifier
 ) {
+
+    var isExpanded by remember { mutableStateOf(false) } // 펼치기/접기
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth() // 화면 너비를 채움
@@ -56,11 +67,26 @@ fun StudioInfoComponent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = studio.description,
-                style = MaterialTheme.typography.bodySmall,
-                overflow = TextOverflow.Ellipsis
-            )
+            // 스튜디오 설명 - 펼치기/접기 기능 추가
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = if (isExpanded) studio.description else studio.description.take(50) + "...",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = { isExpanded = !isExpanded }) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = if (isExpanded) "접기" else "펼치기"
+                    )
+                }
+            }
         }
 
         // 하얀색 배경 영역
