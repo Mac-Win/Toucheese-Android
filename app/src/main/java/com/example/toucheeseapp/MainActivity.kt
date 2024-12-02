@@ -4,11 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Surface
-import com.example.toucheeseapp.data.network.RetrofitClient
+import com.example.toucheeseApp.ui.theme.ToucheeseAppTheme
 import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.navigation.ToucheeseApp
-import com.example.toucheeseapp.ui.theme.ToucheeseAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

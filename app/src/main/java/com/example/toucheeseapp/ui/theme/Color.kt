@@ -1,4 +1,4 @@
-package com.example.woof.ui.theme
+package com.example.toucheeseapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
