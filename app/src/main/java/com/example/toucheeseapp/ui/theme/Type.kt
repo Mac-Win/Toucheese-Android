@@ -18,3 +18,26 @@ val NotoSansKr = FontFamily(
     Font(R.font.noto_sans_kr_semi_bold),
     Font(R.font.noto_sans_kr_thin)
 )
+
+val Typography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = NotoSansKr,
+        fontWeight = FontWeight.Normal,
+        fontSize = 36.sp
+    ),
+    displayMedium = TextStyle(
+        fontFamily = NotoSansKr,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = NotoSansKr,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = NotoSansKr,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp
+    )
+)
