@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,19 +55,14 @@ fun StudioDetailScreen(
     }
 
     if (studio != null) {
-
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            // 이미지 슬라이더 및 상단 바
-            item {
+        Scaffold(
+            topBar = {
+                // 이미지 슬라이더 및 상단 바
                 Box {
                     ImageSliderComponent(
                         images = studio!!.facilityImageUrls,
                         modifier = Modifier.fillMaxWidth().height(300.dp)
-                        )
+                    )
                     StudioTopAppBarComponent(
                         isBookmarked = false,
                         onNavigateBack = navigateBack,
@@ -76,57 +73,67 @@ fun StudioDetailScreen(
                         }
                     )
                 }
+            },
+
+            bottomBar = {
+                if (selectedTab == 0){
+                    // 예약바
+                    BottomActionButtons(modifier = Modifier)
+                }
             }
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
 
-            // 스튜디오 정보
-            item {
-                StudioInfoComponent(studio = studio!!)
-            }
+                // 스튜디오 정보
+                item {
+                    StudioInfoComponent(studio = studio!!)
+                }
 
-            // 탭 컴포넌트
-            item {
-                TabBarComponent(
-                    selectedTabIndex = selectedTab,
-                    onTabSelected = { selectedTab = it },
-                    tabTitles = listOf("가격", "리뷰")
-                )
-            }
+                // 탭 컴포넌트
+                item {
+                    TabBarComponent(
+                        selectedTabIndex = selectedTab,
+                        onTabSelected = { selectedTab = it },
+                        tabTitles = listOf("가격", "리뷰")
+                    )
+                }
 
-            // 공지사항: 항상 마지막에 표시
-            item {
-                NoticeSectionComponent(
-                    notice = studio!!.notice,
-                    expanded = expandedNotice,
-                    onToggleExpand = { expandedNotice = !expandedNotice }
-                )
-            }
+                // 공지사항: 항상 마지막에 표시
+                item {
+                    NoticeSectionComponent(
+                        notice = studio!!.notice,
+                        expanded = expandedNotice,
+                        onToggleExpand = { expandedNotice = !expandedNotice }
+                    )
+                }
 
-            // 탭 선택에 따른 콘텐츠
-            item {
-                when (selectedTab) {
-                    0 -> {
-                        ProductList(
-                            products = studio!!.products,
-                            onProductClicked = onProductClicked
-                        )
+                // 탭 선택에 따른 콘텐츠
+                item {
+                    when (selectedTab) {
+                        0 -> {
+                            ProductList(
+                                products = studio!!.products,
+                                onProductClicked = onProductClicked
+                            )
+                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        BottomActionButtons(modifier = Modifier)
-                    }
-
-                    1 -> {
-                        Log.d("StudioDetailScreen", "reviews: ${studioReviews}")
-                        ReviewListComponent(
-                            reviews = studioReviews,
-                            onReviewClick = { reviewId ->
-                                onReviewClick(reviewId)
-                            }
-                        )
+                        1 -> {
+                            Log.d("StudioDetailScreen", "reviews: ${studioReviews}")
+                            ReviewListComponent(
+                                reviews = studioReviews,
+                                onReviewClick = { reviewId ->
+                                    onReviewClick(reviewId)
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
+
     } else {
         Box(
             modifier = Modifier.fillMaxSize(),
