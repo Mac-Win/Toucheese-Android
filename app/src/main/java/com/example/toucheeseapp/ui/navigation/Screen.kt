@@ -1,6 +1,7 @@
 package com.example.toucheeseapp.ui.navigation
 
 sealed class Screen(val route: String) {
+    object Login: Screen("LoginScreen")
     object Home : Screen("HomeScreen")
     object StudioList : Screen("StudioListScreen/{conceptId}")
     object StudioDetail : Screen("StudioDetailScreen/{studioId}")

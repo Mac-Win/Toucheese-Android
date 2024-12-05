@@ -29,6 +29,7 @@ import androidx.navigation.navArgument
 import com.example.toucheeseapp.data.network.ToucheeseServer
 import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
+import com.example.toucheeseapp.ui.screens.login.LoginScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.HomeScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
@@ -74,9 +75,21 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route, // 첫 번째 화면 route 지정
+        startDestination = Screen.Login.route, // 첫 번째 화면 route 지정
     ) { // Builder 부문
 
+        // 로그인 화면
+        composable(Screen.Login.route) {
+            LoginScreen(
+                modifier = Modifier,
+                onLoginClicked = {
+                    // 홈 화면으로 이동
+                    navController.navigate(
+                        Screen.Home.route
+                    )
+                }
+            )
+        }
         // 메인 화면
         composable(Screen.Home.route) {
             HomeScreen(
