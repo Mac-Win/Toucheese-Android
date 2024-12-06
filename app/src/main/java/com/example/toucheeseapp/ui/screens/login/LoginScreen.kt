@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.toucheeseapp.R
@@ -92,7 +93,8 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginClicked: () -> Unit) {
                 modifier = Modifier
                     .height(IntrinsicSize.Max)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
+                visualTransformation = PasswordVisualTransformation(), // 입력 시 가려지도록
             )
 
             // 자동 로그인, 회원 가입, 아이디 및 비번 찾기
