@@ -71,6 +71,9 @@ dependencies {
     // Coil
     implementation("io.coil-kt.coil3:coil-compose:3.0.3")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.3")
+    // Compose Calendar
+    implementation("io.github.boguszpawlowski.composecalendar:composecalendar:1.3.0")
+    implementation("io.github.boguszpawlowski.composecalendar:kotlinx-datetime:1.3.0")
 }
 
 // Allow references to generated code

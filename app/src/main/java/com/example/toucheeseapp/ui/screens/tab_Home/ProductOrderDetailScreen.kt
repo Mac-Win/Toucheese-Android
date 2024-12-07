@@ -32,7 +32,9 @@ import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
 import com.example.toucheeseapp.ui.components.ProductOrderOptionComponent
+import com.example.toucheeseapp.ui.components.calendar.CustomDatePickerComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
+import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 
 @Composable
 fun ProductOrderDetailScreen(
@@ -49,12 +51,15 @@ fun ProductOrderDetailScreen(
     }
     // 참여 인원
     val (numOfPerson, setPerson) = remember { mutableIntStateOf(productDetail?.standard ?: 1) }
+    val calendarState = rememberSelectableCalendarState()
 
     if (productDetail != null) {
         // 기준 인원이 1인지 여부
         val isOnlyOne: Boolean = productDetail!!.standard == 1
         // 최종 가격
         var totalPrice by remember { mutableIntStateOf(productDetail!!.price) }
+        val (showDialog, setDialog) = remember { mutableStateOf(false) }
+
 
         Scaffold(
             topBar = {
@@ -109,12 +114,17 @@ fun ProductOrderDetailScreen(
                                 totalPrice -= (totalPrice / productDetail!!.standard)// 기준 인원 금액으로 감소
                             } else {
                                 // Toast 메시지를 띄워줌
-                                Toast.makeText(context, "기준 인원보다 적은 인원을 선택하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "기준 인원보다 적은 인원을 선택하실 수 없습니다.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         },
                         onIncreaseClicked = {
                             setPerson(numOfPerson + 1)
-                            totalPrice += (totalPrice / productDetail!!.standard) }, // 클릭 시 인원 +1
+                            totalPrice += (totalPrice / productDetail!!.standard)
+                        }, // 클릭 시 인원 +1
                         onReviewButtonClicked = onReviewButtonClicked,
                         modifier = Modifier.padding(horizontal = 16.dp),
                         onOptionClicked = { optionPrice ->
@@ -129,11 +139,27 @@ fun ProductOrderDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        onValueChanged = { },
+                        onDateClicked = {
+                            setDialog(true)
+                        },
                     )
+
                 }
             }
 
+
+            if (showDialog) {
+                CustomDatePickerComponent(
+                    calendarSate = calendarState,
+                    isDateClicked = true,
+                    onDateClicked = {
+                        // 서버 API 호출
+                    },
+                    onDismissRequest = {},
+                    onConfirmClicked = {},
+                    onCancelClicked = {}
+                )
+            }
         }
     } else {
         Surface {

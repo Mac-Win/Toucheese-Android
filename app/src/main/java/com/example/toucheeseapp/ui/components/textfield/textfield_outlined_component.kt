@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun TextFieldOutlinedComponent(
@@ -19,6 +21,7 @@ fun TextFieldOutlinedComponent(
     keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier,
     onValueChanged: (String) -> Unit,
+    visualTransformation: VisualTransformation = VisualTransformation.None, // 압력 시 효과 적용
 ) {
     OutlinedTextField(
         value = textFieldValue,
@@ -42,7 +45,8 @@ fun TextFieldOutlinedComponent(
             )
         },
         keyboardOptions = keyboardOptions,
-        modifier = modifier
+        modifier = modifier,
+        visualTransformation = visualTransformation
     )
 
 }
