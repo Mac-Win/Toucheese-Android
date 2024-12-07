@@ -29,6 +29,7 @@ fun ChangeOptionBottomSheetComponent(
     reviewCount: Int,
     isOverFlow: Boolean,
     isOnlyOne: Boolean,
+    selectedOption: Set<Int>,
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
@@ -37,6 +38,7 @@ fun ChangeOptionBottomSheetComponent(
     onOptionChangeClick: () -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
+    selectedOptionChanged: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -89,10 +91,12 @@ fun ChangeOptionBottomSheetComponent(
             reviewCount = reviewCount,
             isOverFlow = isOverFlow,
             isOnlyOne = isOnlyOne,
+            selectedOption = selectedOption,
             onDecreaseClicked = onDecreaseClicked,
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
-            onOptionClicked = onOptionClicked
+            onOptionClicked = onOptionClicked,
+            selectedOptionChanged = selectedOptionChanged
         )
     }
 }
@@ -121,6 +125,7 @@ fun ChangeOptionBottomSheetPreview() {
         reviewCount = 5,
         isOverFlow = false,
         isOnlyOne = false,
+        selectedOption = setOf(),
         onDecreaseClicked = { /* 감소 로직 */ },
         onIncreaseClicked = { /* 증가 로직 */ },
         onReviewButtonClicked = { /* 리뷰 보기 로직 */ },
@@ -128,6 +133,7 @@ fun ChangeOptionBottomSheetPreview() {
         onDeleteClick = { /* 삭제 로직 */ },
         onOptionChangeClick = { /* 옵션 변경 로직 */ },
         onClose = { /* 닫기 로직 */ },
-        onConfirm = { /* 확인 로직 */ }
+        onConfirm = { /* 확인 로직 */ },
+        selectedOptionChanged = {}
     )
 }

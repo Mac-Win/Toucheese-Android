@@ -43,11 +43,13 @@ fun ProductOrderOptionComponent(
     reviewCount: Int, // 리뷰 갯수
     isOverFlow: Boolean, // 기준인원보다 선택된 인원수가 넘었는지 여부 (true: 넘음)
     isOnlyOne: Boolean, // 기준 인원이 1명인지 여부
+    selectedOption: Set<Int>,
     modifier: Modifier = Modifier,
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
     onOptionClicked: (Int) -> Unit, // 옵션 클릭 시 동작
+    selectedOptionChanged: (Int) -> Unit,
 ) {
 
     Column(modifier = modifier) {
@@ -69,8 +71,10 @@ fun ProductOrderOptionComponent(
         AdditionalOptions(
             productOptions = productOptions,
             isOverFlow = isOverFlow,
+            selectedOption = selectedOption,
             modifier = Modifier.padding(horizontal = 16.dp),
             onOptionClicked = onOptionClicked,
+            selectedOptionChanged = selectedOptionChanged
         )
     }
 }
@@ -205,13 +209,13 @@ private fun PriceSection(
 
 @Composable
 private fun AdditionalOptions(
+    selectedOption: Set<Int>,
     productOptions: List<AddOption>,
     isOverFlow: Boolean,
     modifier: Modifier = Modifier,
     onOptionClicked: (Int) -> Unit,
+    selectedOptionChanged: (Int) -> Unit,
 ) {
-    // 선택된 옵션들
-    val selectedOption = remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
 
     Column(
         modifier = modifier
@@ -242,7 +246,7 @@ private fun AdditionalOptions(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = selectedOption.value.contains(index),
+                    selected = selectedOption.contains(index),
                     colors = RadioButtonColors(
                         selectedColor = Color(0xFFFFE085),
                         unselectedColor = Color(0xFFFFE085),
@@ -251,16 +255,12 @@ private fun AdditionalOptions(
                     ),
                     modifier = Modifier.padding(2.dp),
                     onClick = {
-                        // 새로운 Set 객체를 생성하여 상태 변경
-                        selectedOption.value = if (selectedOption.value.contains(index)) {
-                            selectedOption.value - index
-                        } else {
-                            selectedOption.value + index
-                        }
                         // 금액 변경
                         onOptionClicked(
-                            if (selectedOption.value.contains(index)) option.price else -option.price
+                            if (selectedOption.contains(index)) -option.price else option.price
                         )
+                        // 새로운 Set 객체를 생성하여 상태 변경
+                        selectedOptionChanged(index)
                     }
                 )
                 // 옵션명
