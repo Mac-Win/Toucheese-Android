@@ -3,6 +3,7 @@ package com.example.toucheeseapp.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.reservation.ProductReservation
@@ -85,6 +86,15 @@ class StudioViewModel @Inject constructor(
         }
     }
 
+    // 캘린더 휴무일 및 예약 시간
+    suspend fun loadCalendarTime(studioId: Int, yearMonth: String): List<CalendarTimeResponseItem> {
+        return try {
+            repository.loadCalendarTime(studioId, yearMonth).toList()
+        } catch (error: Exception) {
+            emptyList()
+        }
+    }
+
     // -------- 해당 컨셉 스튜디오 API -------
 
     // 컨셉 스튜디오 목록 조회
@@ -147,7 +157,7 @@ class StudioViewModel @Inject constructor(
     // -------- 리뷰 API --------
 
     // 스튜디오 리뷰 목록 조회
-    fun loadStudioReviewList(studioId: Int){
+    fun loadStudioReviewList(studioId: Int) {
         viewModelScope.launch {
             try {
                 _studioReviews.value = repository.loadStudioReviewList(studioId)
@@ -161,7 +171,7 @@ class StudioViewModel @Inject constructor(
     fun loadStudioSpecificReview(studioId: Int, reviewId: Int) {
         viewModelScope.launch {
             try {
-                val review = repository.loadStudioSpecificReview(studioId,reviewId)
+                val review = repository.loadStudioSpecificReview(studioId, reviewId)
                 _specificReview.value = review
                 Log.d("StudioViewModel", "Loaded specific review: $review")
             } catch (error: Exception) {
@@ -173,11 +183,11 @@ class StudioViewModel @Inject constructor(
     // 특정 상품 리뷰 목록 조회
     suspend fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem>? {
         return try {
-                repository.loadProductReview(studioId, productId).toList()
-            } catch (error: Exception) {
-                Log.d("StudioViewModel", "${error.message}")
-                null
-            }
+            repository.loadProductReview(studioId, productId).toList()
+        } catch (error: Exception) {
+            Log.d("StudioViewModel", "${error.message}")
+            null
+        }
     }
 
     // -------- 상품 API --------
@@ -186,7 +196,7 @@ class StudioViewModel @Inject constructor(
     suspend fun loadProductDetail(productId: Int): ProductDetailResponse? {
         return try {
             repository.loadProductDetail(productId)
-        } catch (error: Exception){
+        } catch (error: Exception) {
             Log.d("StudioViewModel", "error = ${error.message}")
             null
         }
@@ -195,7 +205,7 @@ class StudioViewModel @Inject constructor(
     // -------- 예약 API --------
 
     // 기능: 예약 정보 저장
-    suspend fun setReservationData(reservation: ProductReservation){
+    suspend fun setReservationData(reservation: ProductReservation) {
         try {
             repository.setReservationData(reservation = reservation)
         } catch (error: Exception) {

@@ -1,5 +1,6 @@
 package com.example.toucheeseapp.data.network
 
+import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
@@ -73,6 +74,13 @@ interface ToucheeseServer {
     suspend fun loadStudioDetail(
         @Path("studioId") studioId: Int
     ): StudioDetailResponse
+
+    // 캘린더 휴무일 및 예약 희망 시간
+    @GET("v1/studios/{studioId}/calendars")
+    suspend fun loadCalendarTime(
+        @Path("studioId") studioId: Int,
+        @Query("yearMonth") yearMonth: String,
+    ): CalendarTimeResponse
 
     // -------- 컨셉 API --------
 
