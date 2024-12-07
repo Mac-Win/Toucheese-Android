@@ -2,6 +2,7 @@ package com.example.toucheeseapp.data.repository
 
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
+import com.example.toucheeseapp.data.model.reservation.ProductReservation
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -42,4 +43,9 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
 
     // 상품 상세 조회
     suspend fun loadProductDetail(productId: Int): ProductDetailResponse = apiService.loadProductDetail(productId)
+
+    // -------- 예약 API --------
+
+    // 기능: 예약 정보 저장
+    suspend fun setReservationData(reservation: ProductReservation) = apiService.setReservationData(reservation)
 }

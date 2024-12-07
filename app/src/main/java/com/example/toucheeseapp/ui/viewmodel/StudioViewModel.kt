@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
+import com.example.toucheeseapp.data.model.reservation.ProductReservation
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -188,6 +189,17 @@ class StudioViewModel @Inject constructor(
         } catch (error: Exception){
             Log.d("StudioViewModel", "error = ${error.message}")
             null
+        }
+    }
+
+    // -------- 예약 API --------
+
+    // 기능: 예약 정보 저장
+    suspend fun setReservationData(reservation: ProductReservation){
+        try {
+            repository.setReservationData(reservation = reservation)
+        } catch (error: Exception) {
+            Log.d("StudioViewModel", "error = ${error.message}")
         }
     }
 
