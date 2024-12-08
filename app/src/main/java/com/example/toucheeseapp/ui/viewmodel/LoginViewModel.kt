@@ -29,8 +29,8 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                 val response = repository.requestLogin(loginRequest)
                 if (response.isSuccessful) { // 응답 성공
                     // Authorization 헤더에서 토큰 추출
-                    val authorizatioinHeader = response.headers()["Authorization"]
-                    val token = authorizatioinHeader?.removePrefix("Bearer ")
+                    val authorizationHeader = response.headers()["Authorization"]
+                    val token = authorizationHeader?.removePrefix("Bearer ")
 
                     if (token != null) {
                         tokenManager.saveAccessToken(token)
@@ -41,6 +41,8 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                 } else { // 응답 실패
                     Log.d(TAG, "Login failed: ${response.code()} - ${response.message()}")
                 }
+//                tokenManager.clearAccessToken()
+                Log.d(TAG, "token = ${tokenManager.getAccessToken()}")
             } catch (error: Exception) {
                 Log.d(TAG, "Login Error: ${error.message}")
             }

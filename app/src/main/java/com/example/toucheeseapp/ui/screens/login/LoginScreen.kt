@@ -1,10 +1,9 @@
 package com.example.toucheeseapp.ui.screens.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,19 +30,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.R
 import com.example.toucheeseapp.data.token_manager.TokenManager
-import com.example.toucheeseapp.ui.components.textbutton.TextButtonCheckboxComponent
 import com.example.toucheeseapp.ui.components.textfield.TextFieldOutlinedComponent
 import com.example.toucheeseapp.ui.theme.Shapes
 import com.example.toucheeseapp.ui.viewmodel.LoginViewModel
+import com.example.toucheeseapp.ui.viewmodel.TAG
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), modifier: Modifier = Modifier, onLoginClicked: (Boolean) -> Unit) {
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    onLoginClicked: (Boolean) -> Unit
+) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
     // 비밀번호 정보
@@ -55,7 +57,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), modifier: Modifier 
     // Context
     val context = LocalContext.current
     // SnackBar
-    val hostState = remember{ SnackbarHostState() }
+    val hostState = remember { SnackbarHostState() }
 
 
     Scaffold(
@@ -81,7 +83,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), modifier: Modifier 
         ) {
             // Id 입력
             TextFieldOutlinedComponent(
-                textFieldValue= textFieldId,
+                textFieldValue = textFieldId,
                 onValueChanged = setId,
                 placeholder = "email@naver.com",
                 leadingIcon = Icons.Default.Person,
@@ -97,7 +99,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), modifier: Modifier 
 
             // 비밀번호 입력
             TextFieldOutlinedComponent(
-                textFieldValue= textFieldPw,
+                textFieldValue = textFieldPw,
                 onValueChanged = setPw,
                 placeholder = "비밀번호 입력",
                 leadingIcon = Icons.Default.Lock,
@@ -118,18 +120,24 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), modifier: Modifier 
             // 로그인 버튼
             Button(
                 onClick = {
+                    var result = false
                     // 로그인 요청
                     viewModel.requestLogin(
                         tokenManager = TokenManager(context),
                         email = textFieldId,
-                        password =  textFieldPw
+                        password = textFieldPw
                     )
+                    result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
                     // 로그인 여부 확인
-                    val result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
+
+                    Log.d(TAG, "result = $result")
                     onLoginClicked(result)
-                    // 로그인 실패 시 snackbar host 전달
-                    coroutine.launch {
-                        hostState.showSnackbar("로그인 실패, 이메일과 비밀번호를 확인해주세요.")
+
+                    if (!result) {
+                        // 로그인 실패 시 snackbar host 전달
+                        coroutine.launch {
+                            hostState.showSnackbar("로그인 실패, 이메일과 비밀번호를 확인해주세요.")
+                        }
                     }
                 },
                 modifier = Modifier.padding(16.dp),
