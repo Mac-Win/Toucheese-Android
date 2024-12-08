@@ -41,7 +41,12 @@ fun TabBarComponent(
                         if (selectedTabIndex == index) Color(0xFFFFC000) else Color(0xFFFFF2CC)
                     )
             ) {
-                Text(title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(8.dp),
+                    color = Color.White
+                )
             }
         }
     }
