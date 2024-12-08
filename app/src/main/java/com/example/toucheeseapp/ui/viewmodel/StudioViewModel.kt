@@ -56,10 +56,6 @@ class StudioViewModel @Inject constructor(
             }
 
             _isSearching.value = true // 검색 시작
-            Log.d(
-                "SearchState",
-                "Searching for keyword: $keyword, isSearching: ${_isSearching.value}"
-            )
 
             try {
 
