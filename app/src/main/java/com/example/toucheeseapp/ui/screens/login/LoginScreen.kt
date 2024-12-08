@@ -16,32 +16,46 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.R
+import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.textbutton.TextButtonCheckboxComponent
 import com.example.toucheeseapp.ui.components.textfield.TextFieldOutlinedComponent
 import com.example.toucheeseapp.ui.theme.Shapes
+import com.example.toucheeseapp.ui.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, onLoginClicked: () -> Unit) {
+fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), modifier: Modifier = Modifier, onLoginClicked: (Boolean) -> Unit) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
     // 비밀번호 정보
     val (textFieldPw, setPw) = remember { mutableStateOf("") }
     // 자동 로그인 여부
     val (autoLogin, setLogin) = remember { mutableStateOf(false) }
+    // Coroutine
+    val coroutine = rememberCoroutineScope()
+    // Context
+    val context = LocalContext.current
+    // SnackBar
+    val hostState = remember{ SnackbarHostState() }
 
 
     Scaffold(
@@ -56,7 +70,8 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginClicked: () -> Unit) {
                         vertical = 150.dp
                     )
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = hostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -102,7 +117,21 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginClicked: () -> Unit) {
 
             // 로그인 버튼
             Button(
-                onClick = onLoginClicked,
+                onClick = {
+                    // 로그인 요청
+                    viewModel.requestLogin(
+                        tokenManager = TokenManager(context),
+                        email = textFieldId,
+                        password =  textFieldPw
+                    )
+                    // 로그인 여부 확인
+                    val result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
+                    onLoginClicked(result)
+                    // 로그인 실패 시 snackbar host 전달
+                    coroutine.launch {
+                        hostState.showSnackbar("로그인 실패, 이메일과 비밀번호를 확인해주세요.")
+                    }
+                },
                 modifier = Modifier.padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFFCC00),

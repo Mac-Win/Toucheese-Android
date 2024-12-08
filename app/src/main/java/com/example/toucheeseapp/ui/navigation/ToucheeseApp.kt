@@ -53,6 +53,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     // 바텀 시트
     var showBottomSheet by remember { mutableStateOf(false) }
+    // 로그인 상태
+    val (isLoggedIn, setLoginState) = remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -82,11 +84,16 @@ fun ToucheeseApp(api: ToucheeseServer) {
         composable(Screen.Login.route) {
             LoginScreen(
                 modifier = Modifier,
-                onLoginClicked = {
-                    // 홈 화면으로 이동
-                    navController.navigate(
-                        Screen.Home.route
-                    )
+                onLoginClicked = { result ->
+                    // 로그인 상태 저장
+                    setLoginState(result)
+                    // 로그인 성공
+                    if (isLoggedIn){
+                        // 홈 화면으로 이동
+                        navController.navigate(
+                            Screen.Home.route
+                        )
+                    }
                 }
             )
         }
