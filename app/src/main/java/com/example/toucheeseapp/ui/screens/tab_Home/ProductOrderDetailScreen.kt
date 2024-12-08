@@ -1,5 +1,7 @@
 package com.example.toucheeseapp.ui.screens.tab_Home
 
+import android.nfc.Tag
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,13 +32,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
+import com.example.toucheeseapp.data.model.reservation.TimeReservation
+import com.example.toucheeseapp.data.model.reservation.ProductReservation
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
 import com.example.toucheeseapp.ui.components.ProductOrderOptionComponent
 import com.example.toucheeseapp.ui.components.calendar.CustomDatePickerComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
+import kotlinx.coroutines.launch
 
+val TAG = "ProductOrderDetailScreen"
 @Composable
 fun ProductOrderDetailScreen(
     viewModel: StudioViewModel = hiltViewModel(),
@@ -45,6 +52,7 @@ fun ProductOrderDetailScreen(
     onReviewButtonClicked: () -> Unit,
 
     ) {
+    val coroutineScope = rememberCoroutineScope()
     var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
     LaunchedEffect(productId) {
         productDetail = viewModel.loadProductDetail(productId)
@@ -52,6 +60,8 @@ fun ProductOrderDetailScreen(
     // 참여 인원
     val (numOfPerson, setPerson) = remember { mutableIntStateOf(productDetail?.standard ?: 1) }
     val calendarState = rememberSelectableCalendarState()
+    // 선택된 옵션들
+    var selectedOption by remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
 
     if (productDetail != null) {
         // 기준 인원이 1인지 여부
@@ -77,7 +87,45 @@ fun ProductOrderDetailScreen(
                     containerColor = Color(0xFFFFFFFF),
                 ) {
                     Button(
-                        onClick = { /* 주문 클릭 시 동작 */ },
+                        onClick = {
+                            // 예약 정보 데이터를 수집한다
+                            val reservationProductId = productId // 상품 Id
+                            val reservationStudioId = viewModel.studioDetail.value?.id ?: 0 // 스튜디오 Id
+                            val reservationTotalPrice = totalPrice // 최종 가격
+                            val reservationMemberId = 1 // 임시 데이터
+                            val reservationCreateDate = "2024-12-07" // 임시 데이터
+                            val reservationCreateTime = TimeReservation(9, 30) // 임시 데이터
+                            val reservationPersonnel = numOfPerson
+                            val reservationAddOptions = selectedOption.toList()
+
+                            // 예약 정보 데이터로 만든다
+                            val productReservation = ProductReservation(
+                                productId= reservationProductId,
+                                studioId = reservationStudioId,
+                                memberId = reservationMemberId,
+                                totalPrice = reservationTotalPrice,
+                                createDate = reservationCreateDate,
+                                createTime = reservationCreateTime,
+                                personnel = reservationPersonnel,
+                                addOptions = reservationAddOptions
+                            )
+
+                            // 예약 정보를 서버로 전송한다
+                            coroutineScope.launch {
+                                try {
+                                    // 서버로 데이터 전송
+                                    viewModel.setReservationData(reservation = productReservation)
+                                    Log.d(TAG, "서버 전송 클릭")
+                                } catch (error: Exception) {
+                                    Log.d(TAG, "전송 실패 error = ${error.message}")
+                                }
+                            }
+
+
+
+
+                            // 장바구니 화면으로 이동한다
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
@@ -126,10 +174,18 @@ fun ProductOrderDetailScreen(
                             totalPrice += (totalPrice / productDetail!!.standard)
                         }, // 클릭 시 인원 +1
                         onReviewButtonClicked = onReviewButtonClicked,
+                        selectedOption = selectedOption,
                         modifier = Modifier.padding(horizontal = 16.dp),
                         onOptionClicked = { optionPrice ->
                             // 옵션 상품을 금액에 추가 및 제거한다
                             totalPrice += optionPrice
+                        },
+                        selectedOptionChanged = { index ->
+                            selectedOption = if (selectedOption.contains(index)) {
+                                selectedOption - index
+                            } else {
+                                selectedOption + index
+                            }
                         }
                     )
 
@@ -178,7 +234,5 @@ fun ProductOrderDetailScreen(
     }
 }
 
-
-/*
-onDatePicked: () -> Unit // 날짜 선택 시
- */
+// 예약 정보 서버에 저장
+fun setReservationData() { }

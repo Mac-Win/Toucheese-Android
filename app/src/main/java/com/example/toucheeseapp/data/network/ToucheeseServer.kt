@@ -1,15 +1,22 @@
 package com.example.toucheeseapp.data.network
 
+import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
 import com.example.toucheeseapp.data.model.load_concept.ConceptResponse
+import com.example.toucheeseapp.data.model.login.Login
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
+import com.example.toucheeseapp.data.model.reservation.ProductReservation
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.HTTP
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -69,6 +76,13 @@ interface ToucheeseServer {
         @Path("studioId") studioId: Int
     ): StudioDetailResponse
 
+    // 캘린더 휴무일 및 예약 희망 시간
+    @GET("v1/studios/{studioId}/calendars")
+    suspend fun loadCalendarTime(
+        @Path("studioId") studioId: Int,
+        @Query("yearMonth") yearMonth: String,
+    ): CalendarTimeResponse
+
     // -------- 컨셉 API --------
 
     // 컨셉 조회
@@ -83,5 +97,14 @@ interface ToucheeseServer {
         @Path("productId") productId: Int
     ): ProductDetailResponse
 
+    // -------- 메세지 API --------
+
+    // 문자 메시지 발송 관련 솔라피 API
+
+    // -------- 예약 API --------
+
+    // 기능: 예약 정보 저장
+    @POST("v1/reservations")
+    suspend fun setReservationData(@Body reservation: ProductReservation)
 
 }

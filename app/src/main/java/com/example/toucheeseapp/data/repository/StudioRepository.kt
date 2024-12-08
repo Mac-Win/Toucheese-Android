@@ -1,7 +1,9 @@
 package com.example.toucheeseapp.data.repository
 
+import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
+import com.example.toucheeseapp.data.model.reservation.ProductReservation
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -27,6 +29,8 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     // 스튜디오 상세 조회
     suspend fun loadStudioDetail(studioId: Int): StudioDetailResponse = apiService.loadStudioDetail(studioId)
 
+    // 캘린더 휴무일 및 예약 희망 시간
+    suspend fun loadCalendarTime(studioId: Int, yearMonth: String): CalendarTimeResponse = apiService.loadCalendarTime(studioId, yearMonth)
     // -------- 리뷰 API --------
 
     // 스튜디오 리뷰 목록 조회
@@ -42,4 +46,9 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
 
     // 상품 상세 조회
     suspend fun loadProductDetail(productId: Int): ProductDetailResponse = apiService.loadProductDetail(productId)
+
+    // -------- 예약 API --------
+
+    // 기능: 예약 정보 저장
+    suspend fun setReservationData(reservation: ProductReservation) = apiService.setReservationData(reservation)
 }
