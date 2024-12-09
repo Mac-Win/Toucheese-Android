@@ -49,8 +49,6 @@ fun CustomDatePickerComponent(
     isDateClicked: Boolean,
     onDismissRequest: () -> Unit,
     onDateClicked: (LocalDate) -> Unit = {},
-    onCancelClicked: () -> Unit,
-    onConfirmClicked: () -> Unit,
 ) {
 
 
@@ -193,8 +191,6 @@ fun CustomDatePickerComponent(
                     // 취소
                     TextButton(
                         onClick = {
-                            // 취소
-                            onCancelClicked()
                             // 닫아준다
                             onDismissRequest()
                         },
@@ -207,8 +203,6 @@ fun CustomDatePickerComponent(
                     // 확인
                     TextButton(
                         onClick = {
-                            // 확인
-                            onConfirmClicked()
                             // 닫아준다
                             onDismissRequest()
                         },

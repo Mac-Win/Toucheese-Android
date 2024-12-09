@@ -211,9 +211,9 @@ fun ProductOrderDetailScreen(
                     onDateClicked = {
                         // 서버 API 호출
                     },
-                    onDismissRequest = {},
-                    onConfirmClicked = {},
-                    onCancelClicked = {}
+                    onDismissRequest = {
+                        setDialog(false)
+                    },
                 )
             }
         }
