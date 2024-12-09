@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -60,6 +61,8 @@ fun LoginScreen(
     val context = LocalContext.current
     // SnackBar
     val hostState = remember { SnackbarHostState() }
+    // 키보드
+    val imeController = LocalSoftwareKeyboardController.current
 
 
     Scaffold(
@@ -141,6 +144,8 @@ fun LoginScreen(
                             hostState.showSnackbar("로그인 실패, 이메일과 비밀번호를 확인해주세요.")
                         }
                     }
+                    // 키보드 내리기
+                    imeController?.hide()
                 },
                 modifier = Modifier.padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
