@@ -21,7 +21,9 @@ data class ProductItem( // 임의 테스트 데이터
     val price: Int,
     val studioName: String,
     val imageUrl: String,
-    val people: Int
+    val people: Int,
+    val reservationDate: String,
+    val reservationTime: String
 )
 
 @Composable
@@ -36,7 +38,7 @@ fun OrderPayProductItemComponent(product: ProductItem) {
         Image(
             painter = rememberAsyncImagePainter(product.imageUrl),
             contentDescription = null,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(150.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -87,6 +89,28 @@ fun OrderPayProductItemComponent(product: ProductItem) {
                         fontWeight = FontWeight.Bold
                     )
                 }
+            }
+
+            // 예약 날짜와 시간
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "예약 날짜: ${product.reservationDate}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "예약 시간: ${product.reservationTime}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                )
             }
 
             // 인원 정보
