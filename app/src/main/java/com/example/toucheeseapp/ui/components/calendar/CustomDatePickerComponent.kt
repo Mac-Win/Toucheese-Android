@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -147,19 +150,19 @@ fun CustomDatePickerComponent(
                             },
                         colors = CardDefaults.cardColors(
                             containerColor = if (selectionState.isDateSelected(date)) Color(
-                                0xFFFFCC00
+                                0xFFFFF2CC
                             ) else Color.Transparent,
                             disabledContainerColor = Color.Gray,
                         ),
                         shape = RoundedCornerShape(50.dp),
                     ) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
                                 text = date.dayOfMonth.toString(),
+                                color = Color.Black
                             )
                         }
                     }
@@ -190,55 +193,40 @@ fun CustomDatePickerComponent(
                     val availableTime = reservationDate.times
 
                     if (availableTime.isNotEmpty()) {
-                        // 예약시간 칩
-                        // 한 줄에 3개의 아이템을 배치
-                        val chunkedTimes = availableTime.chunked(3)
-
-                        Column(
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                                 .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            chunkedTimes.forEach { rowItems ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween, // 아이템 간 간격
-                                ) {
-                                    rowItems.forEach { time ->
-                                        SuggestionChip(
-                                            enabled = isPastTime(selectedDate, time),
-                                            onClick = {
-                                                Log.d("DatePicker", "clicked Time: $time")
-                                                // 캘린더 종료
-                                                onDismissRequest()
-                                                // 선택한 시간 보내주기
-                                                onTimeClicked(selectedDate, time)
-                                            },
-                                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                                containerColor = Color(0xFFFFF2CC),
-                                                disabledContainerColor = Color.Gray,
-                                            ),
-                                            label = {
-                                                Text(
-                                                    text = time,
-                                                    maxLines = 1,
-                                                    color = Color.Black,
-                                                    textAlign = TextAlign.Center,
-                                                    modifier = Modifier.width(60.dp)
-                                                )
-                                            },
-                                            modifier = Modifier
-                                                .width(80.dp)
-                                                .padding(horizontal = 4.dp)
+                            items(availableTime) { time ->
+                                SuggestionChip(
+                                    enabled = isPastTime(selectedDate, time),
+                                    onClick = {
+                                        Log.d("DatePicker", "clicked Time: $time")
+                                        onDismissRequest()
+                                        onTimeClicked(selectedDate, time)
+                                    },
+                                    colors = SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = Color(0xFFFFF2CC),
+                                        disabledContainerColor = Color.Gray,
+                                    ),
+                                    label = {
+                                        Text(
+                                            text = time,
+                                            maxLines = 1,
+                                            color = Color.Black,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.width(60.dp)
                                         )
-                                    }
-                                    // 만약 아이템 개수가 3보다 적다면 빈 공간을 채워 균등 배치
-                                    repeat(3 - rowItems.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
+                                    },
+                                    modifier = Modifier
+                                        .width(80.dp)
+                                        .padding(horizontal = 4.dp)
+                                )
                             }
                         }
                     } else {
