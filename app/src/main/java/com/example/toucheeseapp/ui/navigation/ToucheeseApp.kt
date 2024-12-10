@@ -1,7 +1,9 @@
 package com.example.toucheeseapp.ui.navigation
 
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +46,7 @@ import kotlinx.coroutines.launch
 
 val TAG = "ToucheeseApp"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToucheeseApp(api: ToucheeseServer) {
@@ -227,6 +230,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
             val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
             ProductOrderDetailScreen(
+                studioId = studioId,
                 productId = productId,
                 onBackButtonClicked = { navController.navigateUp() },
                 onReviewButtonClicked = {
