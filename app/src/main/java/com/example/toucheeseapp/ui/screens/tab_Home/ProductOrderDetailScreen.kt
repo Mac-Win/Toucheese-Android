@@ -45,6 +45,7 @@ import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.Month
 import java.time.format.DateTimeFormatter
 
 val TAG = "ProductOrderDetailScreen"
@@ -206,7 +207,7 @@ fun ProductOrderDetailScreen(
 
                     // 촬영날짜
                     DatePickComponent(
-                        date = if (selectedTime.isNotEmpty()) "${selectedDate} | ${selectedTime}" else "예약일자 및 시간 선택",
+                        date = if (selectedTime.isNotEmpty()) "${selectedDate.year}년 ${monthToKorea(selectedDate.month)}월 ${selectedDate.dayOfMonth}일 ( ${selectedTime} )" else "예약일자 및 시간 선택",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
@@ -291,5 +292,21 @@ fun ProductOrderDetailScreen(
     }
 }
 
-// 예약 정보 서버에 저장
-fun setReservationData() { }
+// 월을 한글로 표시한다
+@RequiresApi(Build.VERSION_CODES.O)
+fun monthToKorea(month: Month): Int {
+    return when (month) {
+        Month.JANUARY -> 1
+        Month.FEBRUARY -> 2
+        Month.MARCH -> 3
+        Month.APRIL -> 4
+        Month.MAY -> 5
+        Month.JUNE -> 6
+        Month.JULY -> 7
+        Month.AUGUST -> 8
+        Month.SEPTEMBER -> 9
+        Month.OCTOBER -> 10
+        Month.NOVEMBER -> 11
+        Month.DECEMBER -> 12
+    }
+}
