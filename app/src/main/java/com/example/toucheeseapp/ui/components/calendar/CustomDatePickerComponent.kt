@@ -211,11 +211,10 @@ fun CustomDatePickerComponent(
                                             enabled = isPastTime(selectedDate, time),
                                             onClick = {
                                                 Log.d("DatePicker", "clicked Time: $time")
-                                                // 선택한 시간 보내주기
-                                                onTimeClicked(selectedDate, time)
-
                                                 // 캘린더 종료
                                                 onDismissRequest()
+                                                // 선택한 시간 보내주기
+                                                onTimeClicked(selectedDate, time)
                                             },
                                             colors = SuggestionChipDefaults.suggestionChipColors(
                                                 containerColor = Color(0xFFFFF2CC),

@@ -256,7 +256,6 @@ fun ProductOrderDetailScreen(
                     },
                     onDismissRequest = {
                         setDialog(false)
-                        setSelectedDate(LocalDate.now())
                         setDateClicked(false)
                         setOperationHours(emptyList())
                     },
