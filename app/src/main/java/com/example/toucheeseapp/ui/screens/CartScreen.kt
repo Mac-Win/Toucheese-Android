@@ -35,6 +35,22 @@ fun CartScreen(
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<CartListItem?>(null) }
 
+    // 인원 변경 관련
+    var numOfPeople by remember { mutableStateOf(1) }
+    var selectedOptions by remember { mutableStateOf(setOf<Int>()) }
+    var totalPrice by remember { mutableStateOf(0) }
+
+// selectedItem이 바뀔 때 해당 아이템의 정보를 상태에 반영
+    LaunchedEffect(selectedItem) {
+        selectedItem?.let { item ->
+            numOfPeople = item.personnel
+            totalPrice = item.totalPrice
+            // addOptions 리스트를 인덱스로 관리한다면, 초기 선택 옵션 세팅 가능
+            // 예: 모든 옵션 선택 가정 시 selectedOptions = item.addOptions.indices.toSet()
+            // 또는 조건에 맞게 selectedOptions를 초기화
+            selectedOptions = setOf()
+        }
+    }
 
 
     Scaffold(
@@ -91,7 +107,6 @@ fun CartScreen(
                 } else {
                     items(
                         items = cartItems,
-                        key = { it.cartId } // 고유 키 설정
                     ) { cartItem ->
                         CartItemComponent(
                             cartItem = cartItem,
@@ -109,32 +124,78 @@ fun CartScreen(
 
     if (isBottomSheetVisible) {
         selectedItem?.let { item ->
+            // 재계산 함수 정의
+            fun recalcTotalPrice() {
+                val productNumOfPeople = item.personnel
+                val productNumOfPeoplePrice = 75000
+                val productOptions = item.addOptions
+
+                // 기준 인원당 가격
+                val basePricePerPerson = productNumOfPeoplePrice.toFloat() / productNumOfPeople
+                // 현재 인원에 따른 기본 가격
+                val basePrice = basePricePerPerson * numOfPeople
+                // 옵션 가격 합산
+                val optionsTotal = selectedOptions.sumOf { productOptions[it].price }
+                // 총 가격 계산
+                totalPrice = (basePrice + optionsTotal).toInt()
+            }
+
             ChangeOptionBottomSheetComponent(
                 cartItem = item,
-                productNumOfPeople = 1,
+                productNumOfPeople = item.personnel,
                 productNumOfPeoplePrice = 75000,
                 productOptions = item.addOptions,
-                numOfPeople = item.personnel,
+                numOfPeople = numOfPeople,
                 reviewCount = 5,
-                isOverFlow = false,
-                isOnlyOne = false,
-                selectedOption = setOf(),
-                onDecreaseClicked = { /* 감소 로직 */ },
-                onIncreaseClicked = { /* 증가 로직 */ },
-                onReviewButtonClicked = { /* 리뷰 보기 로직 */ },
-                onOptionClicked = { /* 옵션 선택 로직 */ },
+                isOverFlow = numOfPeople > item.personnel,
+                isOnlyOne = item.personnel == 1,
+                selectedOption = selectedOptions,
+                onDecreaseClicked = {
+                    if (numOfPeople > 1) { // 기준 인원보다 적어질 수 없다는 등의 조건 처리
+                        numOfPeople -= 1
+                        recalcTotalPrice()
+                    } else {
+                        // Toast나 다른 UI 피드백 제공 가능
+                    }
+                },
+                onIncreaseClicked = {
+                    numOfPeople += 1
+                    recalcTotalPrice()
+                },
+                onOptionClicked = { optionIndex ->
+                    if (selectedOptions.contains(optionIndex)) {
+                        selectedOptions = selectedOptions - optionIndex
+                    } else {
+                        selectedOptions = selectedOptions + optionIndex
+                    }
+                    recalcTotalPrice()
+                },
                 onDeleteClick = {
                     onDeleteCartItem(item)
                     isBottomSheetVisible = false
                 },
                 onOptionChangeClick = { updatedCartItem: CartListItem ->
-                    onOptionChangeClick(updatedCartItem)
+                    onOptionChangeClick(
+                        updatedCartItem.copy(
+                        personnel = numOfPeople,
+                        addOptions = selectedOptions.map { item.addOptions[it] },
+                        totalPrice = totalPrice
+                        )
+                    )
                     isBottomSheetVisible = false
                 },
                 onClose = { isBottomSheetVisible = false },
                 onConfirm = { isBottomSheetVisible = false },
-                selectedOptionChanged = { /* 옵션 변경 처리 */ }
+                selectedOptionChanged = { /* 옵션 변경 처리 */ },
+                showReviewButton = false,
+                onReviewButtonClicked = {}
             )
+
+            // 아이템을 처음 선택했을 때 초기 계산 한 번 수행
+            // (이미 LaunchedEffect에서 totalPrice를 초기화했지만 기준/옵션 계산을 한 번 더 정확히 하려면 아래 호출)
+            LaunchedEffect(item) {
+                recalcTotalPrice()
+            }
         }
     }
 }
@@ -162,6 +223,30 @@ fun CartScreenPreview() {
             reservationDate = "2024-12-15",
             reservationTime = ReservationTime(16, 0,0,0),
             totalPrice = 250000,
+            addOptions = emptyList(),
+            cartId = 1,
+            studioImageUrl = "",
+            productImageUrl = ""
+        ),
+        CartListItem(
+            studioName = "거지스튜디오",
+            personnel = 2,
+            productName = "손사진",
+            reservationDate = "2024-12-24",
+            reservationTime = ReservationTime(11, 0,0,0),
+            totalPrice = 12000,
+            addOptions = emptyList(),
+            cartId = 1,
+            studioImageUrl = "",
+            productImageUrl = ""
+        ),
+        CartListItem(
+            studioName = "하이디라오",
+            personnel = 3,
+            productName = "발사진",
+            reservationDate = "2024-12-31",
+            reservationTime = ReservationTime(10, 0,0,0),
+            totalPrice = 20000,
             addOptions = emptyList(),
             cartId = 1,
             studioImageUrl = "",
