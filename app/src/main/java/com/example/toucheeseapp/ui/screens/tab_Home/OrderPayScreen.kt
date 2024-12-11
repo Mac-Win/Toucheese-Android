@@ -32,8 +32,8 @@ fun OrderPayScreen(
     selectedCartIds: List<Int>, // 선택한 장바구니 아이템의 id 리스트
     viewModel: StudioViewModel = hiltViewModel(),
     tokenManager: TokenManager,
-    selectedPaymentMethod: String,
-    onPaymentMethodSelected: (String) -> Unit,
+    selectedPaymentMethod: Int,
+    onPaymentMethodSelected: (Int) -> Unit,
     onConfirmOrder: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -62,7 +62,12 @@ fun OrderPayScreen(
     val email = memberContactInfo?.email ?: "test@email.com"
     val phone = memberContactInfo?.phone ?: "010-XXXX-XXXX"
     // 결제 수단
-    val paymentMethods: List<String> = listOf("신용/체크카드", "카카오 페이", "네이버 페이", "휴대폰 결제")
+    val paymentMethods: List<PaymentMethod> = listOf(
+            PaymentMethod(1, "신용/체크카드"),
+            PaymentMethod(2, "카카오 페이"),
+            PaymentMethod(3, "네이버 페이"),
+            PaymentMethod(4, "휴대폰 결제")
+        )
     Scaffold(
         topBar = {
             OrderPayTopAppBarComponent (onClickLeadingIcon = onBackClick)
@@ -139,12 +144,12 @@ fun OrderPayScreen(
                 ) {
                     item {
                         Row(
-                            modifier = Modifier.clickable { onPaymentMethodSelected(paymentMethod) }, // 전체 Row 클릭 가능
+                            modifier = Modifier.clickable { onPaymentMethodSelected(paymentMethod.paymentId) }, // 전체 Row 클릭 가능
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = selectedPaymentMethod == paymentMethod,
-                                onClick = { onPaymentMethodSelected(paymentMethod) },
+                                selected = selectedPaymentMethod == paymentMethod.paymentId,
+                                onClick = { onPaymentMethodSelected(paymentMethod.paymentId) },
                                 colors = RadioButtonDefaults.colors(
                                     selectedColor = Color(0xFFFFC000),
                                     unselectedColor = Color(0xFFFFE085)
@@ -153,7 +158,7 @@ fun OrderPayScreen(
                             Spacer(modifier = Modifier.width(8.dp)) // 버튼과 텍스트 간 간격
 
                             Text(
-                                text = paymentMethod,
+                                text = paymentMethod.paymentMethod,
                                 fontSize = 16.sp
                             )
                         }
@@ -163,3 +168,8 @@ fun OrderPayScreen(
         }
     }
 }
+
+data class PaymentMethod(
+    val paymentId: Int,
+    val paymentMethod: String,
+)

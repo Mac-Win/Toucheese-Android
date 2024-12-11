@@ -289,13 +289,27 @@ fun ToucheeseApp(api: ToucheeseServer) {
         composable(
             Screen.OrderPay.route
         ){
+            var selectedPaymentMethod by remember { mutableStateOf(0) }
             OrderPayScreen(
-                selectedCartIds = listOf(149, 150, 151),
+                selectedCartIds = listOf(156, 157),
                 tokenManager = tokenManager,
-                selectedPaymentMethod = "뭐야 이건",
-                onPaymentMethodSelected = { },
-                onConfirmOrder = { },
-                onBackClick = { }
+                selectedPaymentMethod = selectedPaymentMethod,
+                onPaymentMethodSelected = { index ->
+                    selectedPaymentMethod = index
+                },
+                onConfirmOrder = {
+                    // 예약 일정 탭으로 이동
+                    navController.navigate("Test"){
+                        // 백스택 제거
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onBackClick = {
+                    // 뒤로가기(장바구니 화면으로 이동)
+                    navController.navigateUp()
+                }
             )
 
         }
