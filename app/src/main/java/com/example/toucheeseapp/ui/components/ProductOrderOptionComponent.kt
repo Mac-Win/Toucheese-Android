@@ -50,6 +50,7 @@ fun ProductOrderOptionComponent(
     onReviewButtonClicked: () -> Unit,
     onOptionClicked: (Int) -> Unit, // 옵션 클릭 시 동작
     selectedOptionChanged: (Int) -> Unit,
+    showReviewButton: Boolean = true // 리뷰 버튼이 필요없는 화면에서 제거하기 위함
 ) {
 
     Column(modifier = modifier) {
@@ -65,6 +66,7 @@ fun ProductOrderOptionComponent(
             onDecreaseClicked = onDecreaseClicked,
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
+            showReviewButton = showReviewButton
             )
 
         // 추가 구매 옵션
@@ -91,18 +93,21 @@ private fun PriceSection(
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
+    showReviewButton: Boolean = true
 ) {
     Column(
         modifier = modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
     ) {
         // 리뷰 보러가기
-        TextButton(
-            onClick = onReviewButtonClicked,
-        ) {
-            Text(
-                text= "리뷰 ${reviewCount}개 보러가기 >",
-                fontSize = 12.sp
-            )
+        if (showReviewButton) {
+            TextButton(
+                onClick = onReviewButtonClicked,
+            ) {
+                Text(
+                    text= "리뷰 ${reviewCount}개 보러가기 >",
+                    fontSize = 12.sp
+                )
+            }
         }
 
         // 가격
