@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.ui.screens
+package com.example.toucheeseapp.ui.screens.tab_Home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,8 +13,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.toucheeseapp.data.model.carts_list.AddOption
-import com.example.toucheeseapp.ui.components.CartItemListComponent
 import com.example.toucheeseapp.ui.components.CartTopAppBarComponent
 import com.example.toucheeseapp.ui.components.ChangeOptionBottomSheetComponent
 import com.example.toucheeseapp.data.model.carts_list.CartListItem
