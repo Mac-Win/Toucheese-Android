@@ -14,6 +14,7 @@ import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import com.example.toucheeseapp.data.repository.StudioRepository
 import com.example.toucheeseapp.data.model.carts_list.CartListItem
+import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -261,6 +262,22 @@ class StudioViewModel @Inject constructor(
                 Log.e("StudioViewModel", "장바구니 삭제 중 오류 발생: ${error.localizedMessage}")
             }
         }
+    }
+
+    // 장바구니 옵션 및 인원 변경
+    fun updateCartItem(token: String?, cartId: Int, changedCartItem: ChangedCartItem) {
+        viewModelScope.launch {
+            try {
+                repository.updateCartItem(
+                    token = token,
+                    cartId = cartId,
+                    changedCartItem = changedCartItem
+                )
+            } catch (error: Exception) {
+                Log.e("StudioViewModel", "장바구니 옵션 및 인원 변경 error: ${error.message}")
+            }
+        }
+
     }
 
 
