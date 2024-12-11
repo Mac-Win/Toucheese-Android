@@ -10,7 +10,7 @@ import com.example.toucheeseapp.data.model.load_concept.ConceptResponse
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.saveCartData.CartData
-import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
+import com.example.toucheeseapp.data.model.saveReservationData.SaveReservationRequest
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
@@ -118,7 +118,7 @@ interface ToucheeseServer {
     @POST("v1/members/reservations")
     suspend fun saveReservationData(
         @Header("Authorization") token: String?,
-        @Body reservationData: ReservationData
+        @Body cartIds: SaveReservationRequest
     )
 
     // 장바구니 목록 조회

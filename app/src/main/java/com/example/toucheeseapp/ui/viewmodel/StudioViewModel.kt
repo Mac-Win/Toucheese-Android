@@ -11,7 +11,7 @@ import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.saveCartData.CartData
-import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
+import com.example.toucheeseapp.data.model.saveReservationData.SaveReservationRequest
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
@@ -222,12 +222,13 @@ class StudioViewModel @Inject constructor(
     }
 
     // 예약 정보 저장 기능
-    suspend fun saveReservationData(token: String?, saveReservationData: ReservationData){
+    suspend fun saveReservationData(token: String?, cartIds: String){
         try {
-            repository.saveReservationData(
+            val result = repository.saveReservationData(
                 token = "Bearer $token",
-                reservationData = saveReservationData
+                saveReservationRequest = SaveReservationRequest(cartIds)
             )
+            Log.d("StudioViewModel", "예약 정보 저장 기능: ${result}")
         } catch (error: Exception) {
             Log.d("StudioViewModel","error = ${error.message}")
         }
