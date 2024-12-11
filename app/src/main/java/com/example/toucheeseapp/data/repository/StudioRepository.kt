@@ -1,6 +1,7 @@
 package com.example.toucheeseapp.data.repository
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
+import com.example.toucheeseapp.data.model.cart_order_pay.OrderPayResponse
 import com.example.toucheeseapp.data.model.carts_list.CartListResponse
 import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import com.example.toucheeseapp.data.model.concept_studio.Studio
@@ -69,8 +70,6 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     // 해당  장바구니 삭제
     suspend fun deleteCartItem(token:String?, cartId: Int) = apiService.deleteCartItem(token, cartId)
 
-    // -------- 회원 API --------
-
-    // 회원 정보
-    suspend fun loadUserData(token: String?): UserInfoResponse = apiService.loadUserData(token)
+    // 장바구니 결제 조회
+    suspend fun loadOrderPayData(token: String?, cartIds: String): OrderPayResponse = apiService.loadOrderPayData(token, cartIds)
 }

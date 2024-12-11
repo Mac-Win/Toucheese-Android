@@ -1,6 +1,7 @@
 package com.example.toucheeseapp.data.network
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
+import com.example.toucheeseapp.data.model.cart_order_pay.OrderPayResponse
 import com.example.toucheeseapp.data.model.carts_list.CartListResponse
 import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
@@ -141,11 +142,12 @@ interface ToucheeseServer {
         @Path("cartId") cartId: Int
     )
 
-    // -------- 회원 API --------
+    // 장바구니 결제 조회
+    @GET("v1/members/carts/checkout-items")
+    suspend fun loadOrderPayData(
+        @Header("Authorization") token: String?,
+        @Query("cartIds") cartIds: String,
+    ): OrderPayResponse
 
-    // 회원 정보
-    @GET("v1/members/infos")
-    suspend fun loadUserData(
-        @Header("Authorization") token: String?
-    ): UserInfoResponse
+
 }

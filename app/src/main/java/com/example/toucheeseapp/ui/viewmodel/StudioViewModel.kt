@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
+import com.example.toucheeseapp.data.model.cart_order_pay.OrderPayResponse
 import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import com.example.toucheeseapp.data.model.concept_studio.Studio
@@ -239,6 +240,7 @@ class StudioViewModel @Inject constructor(
             try {
                 val cartData = repository.loadCartList(token = "Bearer $token").toList()
                 _cartItems.value = cartData
+                Log.d("StudioViewModel", "cardData: ${cartData}")
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "Error fetching cart list: ${error.message}", error)
             } finally {
@@ -281,19 +283,16 @@ class StudioViewModel @Inject constructor(
 
     }
 
-    // -------- 회원 API --------
-
-    // 회원 정보
-    suspend fun loadUserData(token: String?): UserInfoResponse {
+    // 장바구니 결제 조회
+    suspend fun loadOrderPayData(token: String?, cartIds: String): OrderPayResponse? {
         return try {
-            repository.loadUserData(token)
+            Log.d("StudioViewModel", "cardIds=$cartIds")
+            val result = repository.loadOrderPayData("Bearer $token", cartIds)
+            Log.d("StudioViewModel", "장바구니 결제 조회 result: ${result}")
+            result
         } catch (error: Exception) {
-            Log.d("StudioViewModel", "사용자 정보 조회 error: ${error.message}")
-            UserInfoResponse(
-                email = "test@email.com",
-                name = "testName",
-                phone = "010-XXXX-XXXX"
-            )
+            Log.e("StudioViewModel", "장바구니 결제 조회 error: ${error}")
+            null
         }
     }
 
