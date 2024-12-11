@@ -47,7 +47,7 @@ import kotlinx.coroutines.runBlocking
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
-    onLoginClicked: (String, Boolean) -> Unit
+    onLoginClicked: (Int, String, Boolean) -> Unit
 ) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
@@ -138,7 +138,7 @@ fun LoginScreen(
                         if (result) {
                             Log.d(TAG, "result = $result")
                             // 로그인 성공 시 화면 전환
-                            onLoginClicked(viewModel.memberName.value, result)
+                            onLoginClicked(viewModel.memberId.value, viewModel.memberName.value, result)
                         } else {
                             // 로그인 실패 시 snackbar host 전달
                             hostState.showSnackbar("로그인 실패, 이메일과 비밀번호를 확인해주세요.")

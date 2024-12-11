@@ -16,6 +16,7 @@ import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.HTTP
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -104,7 +105,10 @@ interface ToucheeseServer {
     // -------- 예약 API --------
 
     // 기능: 예약 정보 저장
-    @POST("v1/reservations")
-    suspend fun setReservationData(@Body reservation: ProductReservation)
+    @POST("v1/members/carts")
+    suspend fun setReservationData(
+        @Header("Authorization") token: String?,
+        @Body reservation: ProductReservation
+    )
 
 }

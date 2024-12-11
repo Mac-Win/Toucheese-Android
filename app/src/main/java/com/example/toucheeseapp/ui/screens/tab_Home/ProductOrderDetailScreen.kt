@@ -36,6 +36,7 @@ import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseI
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.reservation.ProductReservation
 import com.example.toucheeseapp.data.model.reservation.TimeReservation
+import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
 import com.example.toucheeseapp.ui.components.ProductOrderOptionComponent
@@ -44,7 +45,6 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
 
@@ -52,6 +52,8 @@ val TAG = "ProductOrderDetailScreen"
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOrderDetailScreen(
+    tokenManager: TokenManager,
+    memberId: Int,
     studioId: Int,
     viewModel: StudioViewModel = hiltViewModel(),
     productId: Int,
@@ -106,11 +108,12 @@ fun ProductOrderDetailScreen(
                         onClick = {
                             // 예약 정보 데이터를 수집한다
                             val reservationProductId = productId // 상품 Id
-                            val reservationStudioId = viewModel.studioDetail.value?.id ?: 0 // 스튜디오 Id
+                            val reservationStudioId = studioId // 스튜디오 Id
+                            val reservationMemberId = memberId // 회원 Id
                             val reservationTotalPrice = totalPrice // 최종 가격
-                            val reservationMemberId = 1 // 임시 데이터
-                            val reservationCreateDate = "2024-12-07" // 임시 데이터
-                            val reservationCreateTime = TimeReservation(9, 30) // 임시 데이터
+                            val reservationCreateDate = selectedDate // 예약 날짜
+                            val reservationCreateTime = selectedTime
+//                            val reservationCreateTime = TimeReservation(selectedTime.substringBefore(":").toInt(), selectedTime.substringAfter(":").toInt()) // 예약 시간
                             val reservationPersonnel = numOfPerson
                             val reservationAddOptions = selectedOption.toList()
 
@@ -120,27 +123,23 @@ fun ProductOrderDetailScreen(
                                 studioId = reservationStudioId,
                                 memberId = reservationMemberId,
                                 totalPrice = reservationTotalPrice,
-                                createDate = reservationCreateDate,
+                                createDate = reservationCreateDate.toString(),
                                 createTime = reservationCreateTime,
                                 personnel = reservationPersonnel,
                                 addOptions = reservationAddOptions
                             )
-
+                            Log.d(TAG, "productReservation: ${productReservation}")
+                            val token = tokenManager.getAccessToken()
+                            Log.d(TAG, "token: ${token}")
                             // 예약 정보를 서버로 전송한다
                             coroutineScope.launch {
-                                try {
-                                    // 서버로 데이터 전송
-                                    viewModel.setReservationData(reservation = productReservation)
-                                    Log.d(TAG, "서버 전송 클릭")
-                                } catch (error: Exception) {
-                                    Log.d(TAG, "전송 실패 error = ${error.message}")
-                                }
+                                // 서버로 데이터 전송
+                                viewModel.setReservationData(token= token, reservation = productReservation)
+                                Log.d(TAG, "서버 전송 클릭")
                             }
 
-
-
-
                             // 장바구니 화면으로 이동한다
+
                         },
                         modifier = Modifier
                             .fillMaxWidth()
