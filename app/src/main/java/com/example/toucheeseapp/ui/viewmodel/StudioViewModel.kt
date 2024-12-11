@@ -218,19 +218,6 @@ class StudioViewModel @Inject constructor(
         }
     }
 
-    // 검색 상태 변환
-    fun stopSearch(isSearching: Boolean) {
-        _isSearching.value = !isSearching
-        _searchStudios.value = emptyList()
-    }
-
-    // 북마크 상태 변경 함수
-    fun toggleBookmark() {
-        _isBookmarked.value = !_isBookmarked.value
-    }
-
-    // -------- 장바구니 API --------
-
     // 예약 정보 저장 기능
     suspend fun saveReservationData(token: String?, saveReservationData: ReservationData){
         try {
@@ -243,12 +230,12 @@ class StudioViewModel @Inject constructor(
         }
     }
 
-    // 기능 : 장바구니 목록 조회 (회원)
-    fun cartList(memberId: Int) {
+    // 장바구니 목록 조회
+    fun loadCartList(token: String?) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val cartData = repository.cartList(memberId)
+                val cartData = repository.loadCartList(token = "Bearer $token")
                 _cartItems.value = cartData
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "Error fetching cart list: ${error.localizedMessage}", error)
@@ -273,4 +260,15 @@ class StudioViewModel @Inject constructor(
         }
     }
 
+
+    // 검색 상태 변환
+    fun stopSearch(isSearching: Boolean) {
+        _isSearching.value = !isSearching
+        _searchStudios.value = emptyList()
+    }
+
+    // 북마크 상태 변경 함수
+    fun toggleBookmark() {
+        _isBookmarked.value = !_isBookmarked.value
+    }
 }

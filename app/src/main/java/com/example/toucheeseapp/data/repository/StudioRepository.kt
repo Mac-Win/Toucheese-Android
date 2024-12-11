@@ -59,9 +59,7 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     suspend fun saveReservationData(token: String?, reservationData: ReservationData) = apiService.saveReservationData(token, reservationData)
 
     // 장바구니 목록 조회
-    suspend fun cartList(memberId: Int): CartList {
-        return apiService.loadCartList(memberId)
-    }
+    suspend fun loadCartList(token: String?): CartList = apiService.loadCartList(token)
 
     // 장바구니 옵션 및 인원 변경
     suspend fun updateCartOption(cartId: Int): CartOptionChange {
