@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
+import com.example.toucheeseapp.data.model.carts_request.SaveCartsRequest
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.reservation.ProductReservation
@@ -12,6 +13,7 @@ import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import com.example.toucheeseapp.data.repository.StudioRepository
+import com.example.toucheeseapp.data.model.carts_list.CartListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,6 +45,13 @@ class StudioViewModel @Inject constructor(
 
     private val _specificReview = MutableStateFlow<ReviewResponse?>(null)
     val specificReview: StateFlow<ReviewResponse?> = _specificReview
+
+    private val _cartItems = MutableStateFlow<List<CartListItem>>(emptyList())
+    val cartItems: StateFlow<List<CartListItem>> = _cartItems
+
+    // 로딩 상태를 관리
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     // -------- 스튜디오 API --------
 
@@ -223,4 +232,46 @@ class StudioViewModel @Inject constructor(
     fun toggleBookmark() {
         _isBookmarked.value = !_isBookmarked.value
     }
+
+    // -------- 장바구니 API --------
+
+    // 기능 : 장바구니 저장 (회원)
+    suspend fun saveCartsRequest(saveRequest: SaveCartsRequest){
+        try {
+            repository.saveCartsRequest(saveRequest = saveRequest)
+        } catch (error: Exception) {
+            Log.d("StudioViewModel","error = ${error.message}")
+        }
+    }
+
+    // 기능 : 장바구니 목록 조회 (회원)
+    fun cartList(memberId: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val cartData = repository.cartList(memberId)
+                _cartItems.value = cartData
+            } catch (error: Exception) {
+                Log.e("StudioViewModel", "Error fetching cart list: ${error.localizedMessage}", error)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    // 기능 : 장바구니 삭제
+    fun deleteCartItem(cartId: Int) {
+        viewModelScope.launch {
+            try {
+                // API 호출을 통해 서버에서 항목 삭제
+                repository.cartDelete(cartId)
+
+                // 로컬 상태에서 삭제된 항목 제거
+                _cartItems.value = _cartItems.value.filter { it.cartId != cartId }
+            } catch (error: Exception) {
+                Log.e("StudioViewModel", "장바구니 삭제 중 오류 발생: ${error.localizedMessage}")
+            }
+        }
+    }
+
 }
