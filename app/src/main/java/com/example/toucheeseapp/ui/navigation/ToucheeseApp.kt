@@ -67,8 +67,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
     // 첫 화면
     val firstScreen = if (tokenManager.getAccessToken() != null){
         isLoggedIn = true
-        Screen.Home.route
-//        Screen.OrderPay.route
+//        Screen.Home.route
+        Screen.OrderPay.route
     } else {
         isLoggedIn = false
         Screen.Login.route
@@ -290,7 +290,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
             Screen.OrderPay.route
         ){
             OrderPayScreen(
-                selectedCartIds = listOf(1, 2, 3),
+                selectedCartIds = listOf(149, 150, 151),
                 tokenManager = tokenManager,
                 selectedPaymentMethod = "뭐야 이건",
                 onPaymentMethodSelected = { },
