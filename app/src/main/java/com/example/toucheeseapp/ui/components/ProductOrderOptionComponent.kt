@@ -251,7 +251,7 @@ private fun AdditionalOptions(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = selectedOption.contains(index),
+                    selected = selectedOption.contains(option.id),
                     colors = RadioButtonColors(
                         selectedColor = Color(0xFFFFE085),
                         unselectedColor = Color(0xFFFFE085),
@@ -262,10 +262,10 @@ private fun AdditionalOptions(
                     onClick = {
                         // 금액 변경
                         onOptionClicked(
-                            if (selectedOption.contains(index)) -option.price else option.price
+                            if (selectedOption.contains(option.id)) -option.price else option.price
                         )
                         // 새로운 Set 객체를 생성하여 상태 변경
-                        selectedOptionChanged(index)
+                        selectedOptionChanged(option.id)
                     }
                 )
                 // 옵션명
