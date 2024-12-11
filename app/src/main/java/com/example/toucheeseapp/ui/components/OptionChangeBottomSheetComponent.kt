@@ -6,22 +6,22 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.toucheeseapp.data.model.carts_list.CartListItem
+import com.example.toucheeseapp.data.model.carts_list.ReservationTime
 import com.example.toucheeseapp.data.model.product_detail.AddOption
 
 @Composable
 fun ChangeOptionBottomSheetComponent(
-    studioName: String,
-    studioProfileImageUrl: String,
-    productImageUrl: String,
-    productName: String,
-    reservationPeople: Int,
-    reservationDate: String,
-    reservationTime: String,
-    totalPrice: String,
+    cartItem: CartListItem,
     productNumOfPeople: Int,
     productNumOfPeoplePrice: Int,
     productOptions: List<AddOption>,
@@ -34,12 +34,16 @@ fun ChangeOptionBottomSheetComponent(
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
     onOptionClicked: (Int) -> Unit,
-    onDeleteClick: () -> Unit,
-    onOptionChangeClick: () -> Unit,
+    onDeleteClick: (Int) -> Unit,
+    onOptionChangeClick: (CartListItem) -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
     selectedOptionChanged: (Int) -> Unit,
 ) {
+
+    var updatedOptions by remember { mutableStateOf(cartItem.addOptions) } // 변경된 옵션 상태 관리
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,7 +63,10 @@ fun ChangeOptionBottomSheetComponent(
                     contentDescription = "Close"
                 )
             }
-            IconButton(onClick = onConfirm) {
+            IconButton(onClick = {
+                onOptionChangeClick(cartItem.copy(addOptions = updatedOptions))
+                onConfirm()
+            }) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Confirm"
@@ -69,17 +76,28 @@ fun ChangeOptionBottomSheetComponent(
 
         // CartItemComponent 표시
         CartItemComponent(
-            studioName = studioName,
-            studioProfileImageUrl = studioProfileImageUrl,
-            productImageUrl = productImageUrl,
-            productName = productName,
-            reservationPeople = reservationPeople,
-            reservationDate = reservationDate,
-            reservationTime = reservationTime,
-            totalPrice = totalPrice,
+            cartItem = cartItem,
             onDeleteClick = onDeleteClick,
-            onOptionChangeClick = onOptionChangeClick,
-            modifier = Modifier.padding(bottom = 16.dp)
+            onOptionChangeClick = {
+                val updatedOptions = cartItem.addOptions.toMutableList() // 기존 옵션 가져오기
+
+                // 임시 로직: 첫 번째 옵션을 선택된 상태로 토글
+                if (updatedOptions.isNotEmpty()) {
+                    val firstOption = updatedOptions[0]
+                    if (updatedOptions.contains(firstOption)) {
+                        updatedOptions.remove(firstOption) // 옵션 제거
+                    } else {
+                        updatedOptions.add(firstOption) // 옵션 추가
+                    }
+                }
+
+                // 변경된 옵션이 반영된 새로운 CartListItem 생성
+                val updatedCartItem = cartItem.copy(addOptions = updatedOptions)
+
+                // 상위 콜백에 CartListItem 전달
+                onOptionChangeClick(updatedCartItem)
+            },
+            modifier = Modifier.padding(bottom = 16.dp),
         )
 
         // ProductOrderOptionComponent 표시
@@ -101,6 +119,7 @@ fun ChangeOptionBottomSheetComponent(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun ChangeOptionBottomSheetPreview() {
@@ -109,31 +128,38 @@ fun ChangeOptionBottomSheetPreview() {
         AddOption(name = "원본 전체 받기", price = 10000),
         AddOption(name = "액자 프린팅", price = 15000)
     )
-    ChangeOptionBottomSheetComponent(
+
+    val sampleCartItem = com.example.toucheeseapp.data.model.carts_list.CartListItem(
         studioName = "공원스튜디오",
-        studioProfileImageUrl = "https://via.placeholder.com/40",
-        productImageUrl = "https://via.placeholder.com/80",
+        personnel = 1,
         productName = "증명사진",
-        reservationPeople = 1,
         reservationDate = "2024-01-10",
-        reservationTime = "12:00",
-        totalPrice = "105,000원",
+        reservationTime = ReservationTime(12, 0,0,0),
+        totalPrice = 105000,
+        addOptions = sampleOptions,
+        studioImageUrl = "",
+        productImageUrl = "",
+        cartId = 1
+    )
+
+    ChangeOptionBottomSheetComponent(
+        cartItem = sampleCartItem,
         productNumOfPeople = 1,
         productNumOfPeoplePrice = 75000,
         productOptions = sampleOptions,
-        numOfPeople = 1,
+        numOfPeople = sampleCartItem.personnel,
         reviewCount = 5,
         isOverFlow = false,
         isOnlyOne = false,
-        selectedOption = setOf(),
+        selectedOption = setOf(0, 1),
         onDecreaseClicked = { /* 감소 로직 */ },
         onIncreaseClicked = { /* 증가 로직 */ },
         onReviewButtonClicked = { /* 리뷰 보기 로직 */ },
         onOptionClicked = { /* 옵션 선택 로직 */ },
-        onDeleteClick = { /* 삭제 로직 */ },
-        onOptionChangeClick = { /* 옵션 변경 로직 */ },
         onClose = { /* 닫기 로직 */ },
         onConfirm = { /* 확인 로직 */ },
-        selectedOptionChanged = {}
+        selectedOptionChanged = { index -> println("옵션 변경: $index") },
+        onOptionChangeClick = {},
+        onDeleteClick = {}
     )
 }
