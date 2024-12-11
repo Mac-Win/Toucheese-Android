@@ -7,7 +7,7 @@ import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseI
 import com.example.toucheeseapp.data.model.carts_request.SaveCartsRequest
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
-import com.example.toucheeseapp.data.model.reservation.ProductReservation
+import com.example.toucheeseapp.data.model.saveCartData.CartData
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -209,10 +209,10 @@ class StudioViewModel @Inject constructor(
 
     // -------- 예약 API --------
 
-    // 기능: 예약 정보 저장
-    suspend fun setReservationData(token: String?, reservation: ProductReservation) {
+    // 장바구니 저장 기능
+    suspend fun saveCartData(token: String?, reservation: CartData) {
         try {
-            repository.setReservationData(token = "Bearer $token", reservation = reservation)
+            repository.saveCartData(token = "Bearer $token", reservation = reservation)
         } catch (error: Exception) {
             Log.d("StudioViewModel", "error = ${error.message}")
         }

@@ -9,14 +9,13 @@ import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
 import com.example.toucheeseapp.data.model.load_concept.ConceptResponse
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
-import com.example.toucheeseapp.data.model.reservation.ProductReservation
+import com.example.toucheeseapp.data.model.saveCartData.CartData
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -106,23 +105,24 @@ interface ToucheeseServer {
 
     // -------- 예약 API --------
 
-    // 기능: 예약 정보 저장
+    // 장바구니 저장 기능
     @POST("v1/members/carts")
-    suspend fun setReservationData(
+    suspend fun saveCartData(
         @Header("Authorization") token: String?,
-        @Body reservation: ProductReservation
+        @Body reservation: CartData
     )
 
-    // -------- 장바구니 API --------
+    // 예약 정보 저장 기능
+    @POST("v1/members/reservations")
+    suspend fun saveReservationData(
+        @Header("Authorization") token: String?,
+        @Body saveRequest: SaveCartsRequest
+    )
 
-    // 기능: 장바구니 저장 (회원)
-    @POST("v1/members/cart")
-    suspend fun saveCartsRequest(saveRequest: SaveCartsRequest)
-
-    // 장바구니 목록 조회 (회원)
-    @GET("v1/members/{memberId}/cart")
-    suspend fun cartList(
-        @Path("memberId") memberId:Int
+    // 장바구니 목록 조회
+    @GET("v1/members/carts/list")
+    suspend fun loadCartList(
+        @Header("Authorization") token: String?,
         ): CartList
 
     // 장바구니 옵션 및 인원 변경
@@ -131,7 +131,7 @@ interface ToucheeseServer {
         @Path("cartId") cartId:Int
     ): CartOptionChange
 
-    // 장바구니 삭제
+    // 해당 장바구니 삭제
     @DELETE("v1/members/carts/{cartId]")
     suspend fun cartDelete(
         @Path("cartId") cartId: Int
