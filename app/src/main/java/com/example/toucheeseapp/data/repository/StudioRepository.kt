@@ -1,6 +1,10 @@
 package com.example.toucheeseapp.data.repository
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
+import com.example.toucheeseapp.data.model.carts_list.CartList
+import com.example.toucheeseapp.data.model.carts_list.CartListItem
+import com.example.toucheeseapp.data.model.carts_optionChange.CartOptionChange
+import com.example.toucheeseapp.data.model.carts_request.SaveCartsRequest
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.reservation.ProductReservation
@@ -51,4 +55,22 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
 
     // 기능: 예약 정보 저장
     suspend fun setReservationData(reservation: ProductReservation) = apiService.setReservationData(reservation)
+
+    // -------- 장바구니 API --------
+
+    // 기능 : 장바구니 저장 (회원)
+    suspend fun saveCartsRequest(saveRequest: SaveCartsRequest) = apiService.saveCartsRequest(saveRequest)
+
+    // 장바구니 목록 조회
+    suspend fun cartList(memberId: Int): CartList {
+        return apiService.cartList(memberId)
+    }
+
+    // 장바구니 옵션 및 인원 변경
+    suspend fun updateCartOption(cartId: Int): CartOptionChange {
+        return apiService.cartOptionChange(cartId)
+    }
+
+    // 기능 : 장바구니 삭제
+    suspend fun cartDelete(cartId: Int) : Unit = apiService.cartDelete(cartId)
 }
