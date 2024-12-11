@@ -1,7 +1,9 @@
 package com.example.toucheeseapp.ui.navigation
 
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +46,7 @@ import kotlinx.coroutines.launch
 
 val TAG = "ToucheeseApp"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToucheeseApp(api: ToucheeseServer) {
@@ -68,6 +71,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
         isLoggedIn = false
         Screen.Login.route
     }
+    // 멤버 Id
+    var memberId by remember { mutableStateOf(0) }
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -97,7 +102,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
         composable(Screen.Login.route) {
             LoginScreen(
                 modifier = Modifier,
-                onLoginClicked = { memberName, result ->
+                onLoginClicked = { memberLoginId: Int, memberName: String, result: Boolean ->
                     Log.d("ToucheeseApp", "result = $result")
                     // 로그인 상태 저장
                     isLoggedIn = result
@@ -108,6 +113,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
                         navController.navigate(
                             Screen.Home.route
                         )
+                        // 멤버 Id 저장
+                        memberId = memberLoginId
                         // 환영 메시지
                         Toast.makeText(context, "${memberName}님 반갑습니다.", Toast.LENGTH_LONG).show()
                     }
@@ -227,6 +234,9 @@ fun ToucheeseApp(api: ToucheeseServer) {
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
             val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
             ProductOrderDetailScreen(
+                tokenManager = tokenManager,
+                memberId = memberId,
+                studioId = studioId,
                 productId = productId,
                 onBackButtonClicked = { navController.navigateUp() },
                 onReviewButtonClicked = {
