@@ -135,7 +135,10 @@ fun OrderPayScreenPreview() {
             price = 105000,
             studioName = "공원스튜디오",
             imageUrl = "https://via.placeholder.com/80",
-            people = 1
+            people = 1,
+            reservationDate = "2024-12-10",
+            reservationTime = "14:00"
+
         ),
         ProductItem(
             name = "증명 사진",
@@ -143,7 +146,9 @@ fun OrderPayScreenPreview() {
             price = 75000,
             studioName = "강남스튜디오",
             imageUrl = "https://via.placeholder.com/80",
-            people = 2
+            people = 2,
+            reservationDate = "2024-12-11",
+            reservationTime = "16:00"
         )
     )
     val paymentMethods = listOf("신용/체크카드", "카카오페이", "네이버페이", "휴대폰 결제")

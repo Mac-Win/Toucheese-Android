@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,8 +20,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartTopAppBarComponent(modifier: Modifier = Modifier,
-                           onClickLeadingIcon: () -> Unit){
+fun CartTopAppBarComponent(
+    modifier: Modifier = Modifier,
+    onClickLeadingIcon: () -> Unit,
+    onClickTrailingIcon: () -> Unit
+) {
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(
@@ -28,16 +32,15 @@ fun CartTopAppBarComponent(modifier: Modifier = Modifier,
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
+                    contentDescription = "뒤로가기",
                 )
             }
         },
         title = {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier.fillMaxSize()
-            ){
-
+            ) {
                 Text(
                     text = "장바구니",
                     textAlign = TextAlign.Center,
@@ -46,7 +49,16 @@ fun CartTopAppBarComponent(modifier: Modifier = Modifier,
                     modifier = modifier.weight(1f),
                 )
             }
+        },
+        actions = {
+            IconButton(
+                onClick = onClickTrailingIcon,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Delete, // 쓰레기통 아이콘
+                    contentDescription = "장바구니 비우기",
+                )
+            }
         }
     )
 }
-

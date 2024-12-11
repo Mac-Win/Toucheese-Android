@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,20 +31,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-
+import com.example.toucheeseapp.data.model.carts_list.CartListItem
+import com.example.toucheeseapp.data.model.carts_list.ReservationTime
 
 @Composable
 fun CartItemComponent(
-    studioName: String,
-    studioProfileImageUrl: String,
-    productImageUrl: String,
-    productName: String,
-    reservationPeople: Int,
-    reservationDate: String,
-    reservationTime: String,
-    totalPrice: String,
-    onDeleteClick: () -> Unit,
-    onOptionChangeClick: () -> Unit,
+    cartItem: CartListItem,
+    onDeleteClick: (Int) -> Unit,
+    onOptionChangeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -67,25 +58,24 @@ fun CartItemComponent(
                     .background(Color(0xFFFFF2CC))
                     .padding(8.dp)
             ) {
-                // 스튜디오 프로필 이미지와 이름
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                     Image(
-                        painter = rememberAsyncImagePainter(model = studioProfileImageUrl),
+                        painter = rememberAsyncImagePainter(model = cartItem.studioImageUrl),
                         contentDescription = "Studio Profile Image",
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(52.dp)
                             .clip(RoundedCornerShape(20.dp)), // 원형 모양
                         contentScale = ContentScale.Crop
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = studioName,
+                        text = cartItem.studioName,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
 
                 // 삭제 버튼
-                IconButton(onClick = onDeleteClick) {
+                IconButton(onClick = { onDeleteClick(cartItem.cartId) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete Item",
@@ -104,52 +94,43 @@ fun CartItemComponent(
             ) {
                 // 상품 이미지
                 Image(
-                    painter = rememberAsyncImagePainter(model = productImageUrl),
+                    painter = rememberAsyncImagePainter(model = cartItem.productImageUrl),
                     contentDescription = "Product Image",
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(140.dp)
                         .clip(RoundedCornerShape(8.dp)), // 이미지 모서리 둥글게
                     contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.weight(0.6f))
+                Spacer(modifier = Modifier.weight(0.1f))
 
                 // 상품 정보
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
-                    modifier = Modifier.weight(1f)) {
+                    modifier = Modifier.weight(1f)
+                        .padding(8.dp)){
 
                     Text(
-                        text = productName,
+                        text = cartItem.productName,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold
                     )
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = Color.Gray)
-                        Text("예약인원: $reservationPeople 명", style = MaterialTheme.typography.bodyMedium)
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        Text("예약 인원: ${cartItem.personnel}명", style = MaterialTheme.typography.bodyMedium)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.DateRange, contentDescription = null, tint = Color.Gray)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("예약날짜: $reservationDate", style = MaterialTheme.typography.bodyMedium)
+                        Text("예약 날짜: ${cartItem.reservationDate}", style = MaterialTheme.typography.bodyMedium)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = Color.Gray)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("예약시간: $reservationTime", style = MaterialTheme.typography.bodyMedium)
+                        Text("예약 시간: ${cartItem.reservationTime}", style = MaterialTheme.typography.bodyMedium)
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
-
-
-                    Text(
-                        text = "전체가격: $totalPrice",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("전체 가격: ${cartItem.totalPrice}", style = MaterialTheme.typography.titleMedium)
+                    }
                 }
             }
 
@@ -160,7 +141,7 @@ fun CartItemComponent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = onOptionChangeClick) {
+                TextButton(onClick = {onOptionChangeClick(cartItem.cartId)}) {
                     Text(
                         text = "옵션변경",
                         color = MaterialTheme.colorScheme.primary
@@ -174,16 +155,22 @@ fun CartItemComponent(
 @Preview(showBackground = true)
 @Composable
 fun CartItemPreview() {
-    CartItemComponent(
+    val sampleItem = CartListItem(
         studioName = "공원스튜디오",
-        studioProfileImageUrl = "https://via.placeholder.com/40",
-        productImageUrl = "https://via.placeholder.com/80",
+        personnel = 1,
         productName = "증명사진",
-        reservationPeople = 1,
-        reservationDate = "2024-01-10",
-        reservationTime = "12:00",
-        totalPrice = "105,000원",
-        onDeleteClick = { /* 삭제 로직 */ },
-        onOptionChangeClick = { /* 옵션 변경 로직 */ },
+        reservationDate = "2024-12-10",
+        reservationTime = ReservationTime(14, 0, 0, 0),
+        totalPrice = 105000,
+        addOptions = emptyList(),
+        cartId = 1,
+        productImageUrl = "https://via.placeholder.com/140",
+        studioImageUrl = "https://via.placeholder.com/52"
+    )
+
+    CartItemComponent(
+        cartItem = sampleItem,
+        onDeleteClick = { cartId -> println("Delete cartId: $cartId") },
+        onOptionChangeClick = { cartId -> println("Change Option cartId: $cartId") }
     )
 }
