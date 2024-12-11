@@ -133,7 +133,7 @@ fun ProductOrderDetailScreen(
                             // 예약 정보를 서버로 전송한다
                             coroutineScope.launch {
                                 // 서버로 데이터 전송
-                                viewModel.saveCartData(token= token, reservation = cartData)
+                                viewModel.saveCartData(token= token, cartData = cartData)
                                 Log.d(TAG, "서버 전송 클릭")
                             }
 

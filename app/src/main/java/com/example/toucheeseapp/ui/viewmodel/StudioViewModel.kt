@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
-import com.example.toucheeseapp.data.model.carts_request.SaveCartsRequest
+import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.saveCartData.CartData
@@ -210,9 +210,9 @@ class StudioViewModel @Inject constructor(
     // -------- 예약 API --------
 
     // 장바구니 저장 기능
-    suspend fun saveCartData(token: String?, reservation: CartData) {
+    suspend fun saveCartData(token: String?, cartData: CartData) {
         try {
-            repository.saveCartData(token = "Bearer $token", reservation = reservation)
+            repository.saveCartData(token = "Bearer $token", reservation = cartData)
         } catch (error: Exception) {
             Log.d("StudioViewModel", "error = ${error.message}")
         }
@@ -231,10 +231,13 @@ class StudioViewModel @Inject constructor(
 
     // -------- 장바구니 API --------
 
-    // 기능 : 장바구니 저장 (회원)
-    suspend fun saveCartsRequest(saveRequest: SaveCartsRequest){
+    // 예약 정보 저장 기능
+    suspend fun saveReservationData(token: String?, saveReservationData: ReservationData){
         try {
-            repository.saveCartsRequest(saveRequest = saveRequest)
+            repository.saveReservationData(
+                token = "Bearer $token",
+                reservationData = saveReservationData
+            )
         } catch (error: Exception) {
             Log.d("StudioViewModel","error = ${error.message}")
         }

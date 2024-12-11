@@ -3,7 +3,7 @@ package com.example.toucheeseapp.data.repository
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
 import com.example.toucheeseapp.data.model.carts_list.CartList
 import com.example.toucheeseapp.data.model.carts_optionChange.CartOptionChange
-import com.example.toucheeseapp.data.model.carts_request.SaveCartsRequest
+import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.saveCartData.CartData
@@ -56,7 +56,7 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     suspend fun saveCartData(token: String?, reservation: CartData) = apiService.saveCartData(token, reservation)
 
     // 장바구니 저장 기능
-    suspend fun saveCartsRequest(saveRequest: SaveCartsRequest) = apiService.saveReservationData(saveRequest)
+    suspend fun saveReservationData(token: String?, reservationData: ReservationData) = apiService.saveReservationData(token, reservationData)
 
     // 장바구니 목록 조회
     suspend fun cartList(memberId: Int): CartList {

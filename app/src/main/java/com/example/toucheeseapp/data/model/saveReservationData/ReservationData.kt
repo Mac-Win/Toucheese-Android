@@ -1,6 +1,6 @@
-package com.example.toucheeseapp.data.model.carts_request
+package com.example.toucheeseapp.data.model.saveReservationData
 
-data class SaveCartsRequest(
+data class ReservationData(
     val addOptions: List<Int>,
     val createDate: String,
     val createTime: CreateTime,

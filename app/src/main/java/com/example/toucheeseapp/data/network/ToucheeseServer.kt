@@ -3,7 +3,7 @@ package com.example.toucheeseapp.data.network
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
 import com.example.toucheeseapp.data.model.carts_list.CartList
 import com.example.toucheeseapp.data.model.carts_optionChange.CartOptionChange
-import com.example.toucheeseapp.data.model.carts_request.SaveCartsRequest
+import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
@@ -116,7 +116,7 @@ interface ToucheeseServer {
     @POST("v1/members/reservations")
     suspend fun saveReservationData(
         @Header("Authorization") token: String?,
-        @Body saveRequest: SaveCartsRequest
+        @Body reservationData: ReservationData
     )
 
     // 장바구니 목록 조회
