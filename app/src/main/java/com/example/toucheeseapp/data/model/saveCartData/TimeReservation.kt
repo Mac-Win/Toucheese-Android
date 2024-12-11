@@ -1,4 +1,4 @@
-package com.example.toucheeseapp.data.model.reservation
+package com.example.toucheeseapp.data.model.saveCartData
 
 data class TimeReservation(
     val hour: Int,

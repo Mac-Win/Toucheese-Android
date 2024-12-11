@@ -34,8 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
-import com.example.toucheeseapp.data.model.reservation.ProductReservation
-import com.example.toucheeseapp.data.model.reservation.TimeReservation
+import com.example.toucheeseapp.data.model.saveCartData.CartData
 import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
@@ -118,7 +117,7 @@ fun ProductOrderDetailScreen(
                             val reservationAddOptions = selectedOption.toList()
 
                             // 예약 정보 데이터로 만든다
-                            val productReservation = ProductReservation(
+                            val cartData = CartData(
                                 productId= reservationProductId,
                                 studioId = reservationStudioId,
                                 memberId = reservationMemberId,
@@ -128,13 +127,13 @@ fun ProductOrderDetailScreen(
                                 personnel = reservationPersonnel,
                                 addOptions = reservationAddOptions
                             )
-                            Log.d(TAG, "productReservation: ${productReservation}")
+                            Log.d(TAG, "productReservation: ${cartData}")
                             val token = tokenManager.getAccessToken()
                             Log.d(TAG, "token: ${token}")
                             // 예약 정보를 서버로 전송한다
                             coroutineScope.launch {
                                 // 서버로 데이터 전송
-                                viewModel.setReservationData(token= token, reservation = productReservation)
+                                viewModel.saveCartData(token= token, cartData = cartData)
                                 Log.d(TAG, "서버 전송 클릭")
                             }
 
