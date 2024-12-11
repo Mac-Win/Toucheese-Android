@@ -21,7 +21,7 @@ data class CartListResponseItem(
     @SerializedName("reservationDate")
     val reservationDate: String,
     @SerializedName("reservationTime")
-    val reservationTime: ReservationTime,
+    val reservationTime: String,
     @SerializedName("selectAddOptions")
     val selectAddOptions: List<SelectAddOption>,
     @SerializedName("studioImage")
