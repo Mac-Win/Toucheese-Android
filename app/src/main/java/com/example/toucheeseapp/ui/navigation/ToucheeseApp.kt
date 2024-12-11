@@ -35,6 +35,7 @@ import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
 import com.example.toucheeseapp.ui.screens.login.LoginScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.CartScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.HomeScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.OrderPayScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.ProductOrderDetailScreen
@@ -281,6 +282,14 @@ fun ToucheeseApp(api: ToucheeseServer) {
         composable(
             Screen.Cart.route
         ) {
+            CartScreen(
+                onBackClick = {navController.navigateUp()},
+                onClearCartClick = {},
+                onCheckoutClick = {
+                    navController.navigate(Screen.OrderPay.route)
+                },
+                tokenManager = tokenManager,
+            )
 
         }
 
