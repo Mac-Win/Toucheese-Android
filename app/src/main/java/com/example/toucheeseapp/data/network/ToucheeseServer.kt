@@ -1,7 +1,7 @@
 package com.example.toucheeseapp.data.network
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
-import com.example.toucheeseapp.data.model.carts_list.CartList
+import com.example.toucheeseapp.data.model.carts_list.CartItemList
 import com.example.toucheeseapp.data.model.carts_optionChange.CartOptionChange
 import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
@@ -123,7 +123,7 @@ interface ToucheeseServer {
     @GET("v1/members/carts/list")
     suspend fun loadCartList(
         @Header("Authorization") token: String?,
-        ): CartList
+        ): CartItemList
 
     // 장바구니 옵션 및 인원 변경
     @PUT("v1/members/carts/{cartId}")
@@ -132,8 +132,9 @@ interface ToucheeseServer {
     ): CartOptionChange
 
     // 해당 장바구니 삭제
-    @DELETE("v1/members/carts/{cartId]")
-    suspend fun cartDelete(
+    @DELETE("v1/members/carts/{cartId}")
+    suspend fun deleteCartItem(
+        @Header("Authorization") token: String?,
         @Path("cartId") cartId: Int
-    ): Unit // 응답이 없는 경우 Unit 사용
+    )
 }

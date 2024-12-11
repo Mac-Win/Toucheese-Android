@@ -1,7 +1,7 @@
 package com.example.toucheeseapp.data.repository
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
-import com.example.toucheeseapp.data.model.carts_list.CartList
+import com.example.toucheeseapp.data.model.carts_list.CartItemList
 import com.example.toucheeseapp.data.model.carts_optionChange.CartOptionChange
 import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.concept_studio.Studio
@@ -59,7 +59,7 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     suspend fun saveReservationData(token: String?, reservationData: ReservationData) = apiService.saveReservationData(token, reservationData)
 
     // 장바구니 목록 조회
-    suspend fun loadCartList(token: String?): CartList = apiService.loadCartList(token)
+    suspend fun loadCartList(token: String?): CartItemList = apiService.loadCartList(token)
 
     // 장바구니 옵션 및 인원 변경
     suspend fun updateCartOption(cartId: Int): CartOptionChange {
@@ -67,5 +67,5 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     }
 
     // 해당  장바구니 삭제
-    suspend fun cartDelete(cartId: Int) : Unit = apiService.cartDelete(cartId)
+    suspend fun deleteCartItem(token:String?, cartId: Int) = apiService.deleteCartItem(token, cartId)
 }

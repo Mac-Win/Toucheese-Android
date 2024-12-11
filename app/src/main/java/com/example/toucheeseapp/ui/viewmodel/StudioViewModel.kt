@@ -245,12 +245,15 @@ class StudioViewModel @Inject constructor(
         }
     }
 
-    // 기능 : 장바구니 삭제
-    fun deleteCartItem(cartId: Int) {
+    // 해당 장바구니 삭제
+    fun deleteCartItem(token:String?, cartId: Int) {
         viewModelScope.launch {
             try {
                 // API 호출을 통해 서버에서 항목 삭제
-                repository.cartDelete(cartId)
+                repository.deleteCartItem(
+                    token= token,
+                    cartId = cartId
+                )
 
                 // 로컬 상태에서 삭제된 항목 제거
                 _cartItems.value = _cartItems.value.filter { it.cartId != cartId }
