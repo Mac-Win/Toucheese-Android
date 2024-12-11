@@ -25,6 +25,7 @@ import com.example.toucheeseapp.data.model.userInfo.UserInfoResponse
 import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.*
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun OrderPayScreen(
@@ -36,14 +37,16 @@ fun OrderPayScreen(
     onConfirmOrder: () -> Unit,
     onBackClick: () -> Unit
 ) {
+    // 토큰 받아오기
+    val token = tokenManager.getAccessToken()
+    // 코루틴
+    val coroutine = rememberCoroutineScope()
     // 선택한 상품들
     var orderPayResponse by remember { mutableStateOf<OrderPayResponse?>(null) }
     // cartIds List<Int> -> String
     val cartIds = selectedCartIds.joinToString(separator = ",")
     LaunchedEffect(selectedCartIds) {
         Log.d("OrderPayScreen", "cartIds: ${cartIds}")
-        // 토큰 받아오기
-        val token = tokenManager.getAccessToken()
         // 장바구니 결제 조회
         orderPayResponse = viewModel.loadOrderPayData(token, cartIds)
     }
@@ -69,7 +72,14 @@ fun OrderPayScreen(
                 containerColor = Color(0xFFFFFCF5)
             ) {
                 Button(
-                    onClick = onConfirmOrder,
+                    onClick = {
+                        coroutine.launch {
+                            // 서버에 데이터를 전송
+                            viewModel.saveReservationData(token, cartIds)
+                        }
+                        // 예약일정 화면으로 이동
+                        onConfirmOrder()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
