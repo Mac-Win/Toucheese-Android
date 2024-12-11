@@ -39,6 +39,7 @@ fun ChangeOptionBottomSheetComponent(
     onClose: () -> Unit,
     onConfirm: () -> Unit,
     selectedOptionChanged: (Int) -> Unit,
+    showReviewButton: Boolean = true
 ) {
 
     var updatedOptions by remember { mutableStateOf(cartItem.addOptions) } // 변경된 옵션 상태 관리
@@ -114,7 +115,8 @@ fun ChangeOptionBottomSheetComponent(
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
             onOptionClicked = onOptionClicked,
-            selectedOptionChanged = selectedOptionChanged
+            selectedOptionChanged = selectedOptionChanged,
+            showReviewButton = showReviewButton
         )
     }
 }
