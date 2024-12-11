@@ -4,17 +4,18 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
-import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
+import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
+import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
-import com.example.toucheeseapp.data.model.saveCartData.CartData
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponseItem
+import com.example.toucheeseapp.data.model.saveCartData.CartData
+import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
+import com.example.toucheeseapp.data.model.userInfo.UserInfoResponse
 import com.example.toucheeseapp.data.repository.StudioRepository
-import com.example.toucheeseapp.data.model.carts_list.CartListItem
-import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,8 +48,8 @@ class StudioViewModel @Inject constructor(
     private val _specificReview = MutableStateFlow<ReviewResponse?>(null)
     val specificReview: StateFlow<ReviewResponse?> = _specificReview
 
-    private val _cartItems = MutableStateFlow<List<CartListItem>>(emptyList())
-    val cartItems: StateFlow<List<CartListItem>> = _cartItems
+    private val _cartItems = MutableStateFlow<List<CartListResponseItem>>(emptyList())
+    val cartItems: StateFlow<List<CartListResponseItem>> = _cartItems
 
     // 로딩 상태를 관리
     private val _isLoading = MutableStateFlow(false)
@@ -236,10 +237,10 @@ class StudioViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val cartData = repository.loadCartList(token = "Bearer $token")
+                val cartData = repository.loadCartList(token = "Bearer $token").toList()
                 _cartItems.value = cartData
             } catch (error: Exception) {
-                Log.e("StudioViewModel", "Error fetching cart list: ${error.localizedMessage}", error)
+                Log.e("StudioViewModel", "Error fetching cart list: ${error.message}", error)
             } finally {
                 _isLoading.value = false
             }
@@ -278,6 +279,22 @@ class StudioViewModel @Inject constructor(
             }
         }
 
+    }
+
+    // -------- 회원 API --------
+
+    // 회원 정보
+    suspend fun loadUserData(token: String?): UserInfoResponse {
+        return try {
+            repository.loadUserData(token)
+        } catch (error: Exception) {
+            Log.d("StudioViewModel", "사용자 정보 조회 error: ${error.message}")
+            UserInfoResponse(
+                email = "test@email.com",
+                name = "testName",
+                phone = "010-XXXX-XXXX"
+            )
+        }
     }
 
 

@@ -13,25 +13,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 import com.example.toucheeseapp.ui.components.CartTopAppBarComponent
 import com.example.toucheeseapp.ui.components.ChangeOptionBottomSheetComponent
-import com.example.toucheeseapp.data.model.carts_list.CartListItem
-import com.example.toucheeseapp.data.model.carts_list.ReservationTime
 import com.example.toucheeseapp.ui.components.CartItemComponent
 
 @Composable
 fun CartScreen(
-    cartItems: List<CartListItem>,
+    cartItems: List<CartListResponseItem>,
     totalAmount: String,
     onBackClick: () -> Unit,
     onClearCartClick: () -> Unit,
-    onDeleteCartItem: (CartListItem) -> Unit,
-    onOptionChangeClick: (CartListItem) -> Unit,
+    onDeleteCartItem: (CartListResponseItem) -> Unit,
+    onOptionChangeClick: (CartListResponseItem) -> Unit,
     onCheckoutClick: () -> Unit
 ) {
     // 바텀시트 상태 관리
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf<CartListItem?>(null) }
+    var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
 
 
 
@@ -125,7 +124,7 @@ fun CartScreen(
                     onDeleteCartItem(item)
                     isBottomSheetVisible = false
                 },
-                onOptionChangeClick = { updatedCartItem: CartListItem ->
+                onOptionChangeClick = { updatedCartItem: CartListResponseItem ->
                     onOptionChangeClick(updatedCartItem)
                     isBottomSheetVisible = false
                 },
@@ -140,40 +139,40 @@ fun CartScreen(
 @Preview(showBackground = true)
 @Composable
 fun CartScreenPreview() {
-    val sampleCartItems = listOf(
-        CartListItem(
-            studioName = "공원스튜디오",
-            personnel = 1,
-            productName = "증명사진",
-            reservationDate = "2024-12-10",
-            reservationTime = ReservationTime(14, 0,0,0),
-            totalPrice = 105000,
-            addOptions = emptyList(),
-            studioImageUrl = "",
-            cartId = 1,
-            productImageUrl = ""
-        ),
-        CartListItem(
-            studioName = "바다스튜디오",
-            personnel = 4,
-            productName = "가족사진",
-            reservationDate = "2024-12-15",
-            reservationTime = ReservationTime(16, 0,0,0),
-            totalPrice = 250000,
-            addOptions = emptyList(),
-            cartId = 1,
-            studioImageUrl = "",
-            productImageUrl = ""
-        )
-    )
-
-    CartScreen(
-        cartItems = sampleCartItems,
-        totalAmount = "₩355,000",
-        onBackClick = { /* 뒤로가기 로직 */ },
-        onClearCartClick = { /* 장바구니 비우기 로직 */ },
-        onDeleteCartItem = { /* 삭제 로직 */ },
-        onOptionChangeClick = { /* 옵션 변경 로직 */ },
-        onCheckoutClick = { /* 예약하기 로직 */ }
-    )
+//    val sampleCartItems = listOf(
+//        CartListItem(
+//            studioName = "공원스튜디오",
+//            personnel = 1,
+//            productName = "증명사진",
+//            reservationDate = "2024-12-10",
+//            reservationTime = ReservationTime(14, 0,0,0),
+//            totalPrice = 105000,
+//            addOptions = emptyList(),
+//            studioImageUrl = "",
+//            cartId = 1,
+//            productImageUrl = ""
+//        ),
+//        CartListItem(
+//            studioName = "바다스튜디오",
+//            personnel = 4,
+//            productName = "가족사진",
+//            reservationDate = "2024-12-15",
+//            reservationTime = ReservationTime(16, 0,0,0),
+//            totalPrice = 250000,
+//            addOptions = emptyList(),
+//            cartId = 1,
+//            studioImageUrl = "",
+//            productImageUrl = ""
+//        )
+//    )
+//
+//    CartScreen(
+//        cartItems = sampleCartItems,
+//        totalAmount = "₩355,000",
+//        onBackClick = { /* 뒤로가기 로직 */ },
+//        onClearCartClick = { /* 장바구니 비우기 로직 */ },
+//        onDeleteCartItem = { /* 삭제 로직 */ },
+//        onOptionChangeClick = { /* 옵션 변경 로직 */ },
+//        onCheckoutClick = { /* 예약하기 로직 */ }
+//    )
 }

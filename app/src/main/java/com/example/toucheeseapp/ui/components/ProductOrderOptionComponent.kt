@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.toucheeseapp.R
-import com.example.toucheeseapp.data.model.product_detail.AddOption
+import com.example.toucheeseapp.data.model.carts_list.AddOption
 
 @Composable
 fun ProductOrderOptionComponent(

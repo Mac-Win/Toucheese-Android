@@ -15,13 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.toucheeseapp.data.model.carts_list.CartListItem
-import com.example.toucheeseapp.data.model.carts_list.ReservationTime
-import com.example.toucheeseapp.data.model.product_detail.AddOption
+import com.example.toucheeseapp.data.model.carts_list.AddOption
+import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 
 @Composable
 fun ChangeOptionBottomSheetComponent(
-    cartItem: CartListItem,
+    cartItem: CartListResponseItem,
     productNumOfPeople: Int,
     productNumOfPeoplePrice: Int,
     productOptions: List<AddOption>,
@@ -35,7 +34,7 @@ fun ChangeOptionBottomSheetComponent(
     onReviewButtonClicked: () -> Unit,
     onOptionClicked: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
-    onOptionChangeClick: (CartListItem) -> Unit,
+    onOptionChangeClick: (CartListResponseItem) -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
     selectedOptionChanged: (Int) -> Unit,
@@ -100,22 +99,22 @@ fun ChangeOptionBottomSheetComponent(
             modifier = Modifier.padding(bottom = 16.dp),
         )
 
-        // ProductOrderOptionComponent 표시
-        ProductOrderOptionComponent(
-            productNumOfPeople = productNumOfPeople,
-            productNumOfPeoplePrice = productNumOfPeoplePrice,
-            productOptions = productOptions,
-            numOfPeople = numOfPeople,
-            reviewCount = reviewCount,
-            isOverFlow = isOverFlow,
-            isOnlyOne = isOnlyOne,
-            selectedOption = selectedOption,
-            onDecreaseClicked = onDecreaseClicked,
-            onIncreaseClicked = onIncreaseClicked,
-            onReviewButtonClicked = onReviewButtonClicked,
-            onOptionClicked = onOptionClicked,
-            selectedOptionChanged = selectedOptionChanged
-        )
+//        // ProductOrderOptionComponent 표시
+//        ProductOrderOptionComponent(
+//            productNumOfPeople = productNumOfPeople,
+//            productNumOfPeoplePrice = productNumOfPeoplePrice,
+//            productOptions = productOptions,
+//            numOfPeople = numOfPeople,
+//            reviewCount = reviewCount,
+//            isOverFlow = isOverFlow,
+//            isOnlyOne = isOnlyOne,
+//            selectedOption = selectedOption,
+//            onDecreaseClicked = onDecreaseClicked,
+//            onIncreaseClicked = onIncreaseClicked,
+//            onReviewButtonClicked = onReviewButtonClicked,
+//            onOptionClicked = onOptionClicked,
+//            selectedOptionChanged = selectedOptionChanged
+//        )
     }
 }
 
@@ -123,43 +122,43 @@ fun ChangeOptionBottomSheetComponent(
 @Preview(showBackground = true)
 @Composable
 fun ChangeOptionBottomSheetPreview() {
-    val sampleOptions = listOf(
-        AddOption(name = "보정 사진 추가", price = 30000),
-        AddOption(name = "원본 전체 받기", price = 10000),
-        AddOption(name = "액자 프린팅", price = 15000)
-    )
+//    val sampleOptions = listOf(
+//        AddOption(name = "보정 사진 추가", price = 30000),
+//        AddOption(name = "원본 전체 받기", price = 10000),
+//        AddOption(name = "액자 프린팅", price = 15000)
+//    )
 
-    val sampleCartItem = com.example.toucheeseapp.data.model.carts_list.CartListItem(
-        studioName = "공원스튜디오",
-        personnel = 1,
-        productName = "증명사진",
-        reservationDate = "2024-01-10",
-        reservationTime = ReservationTime(12, 0,0,0),
-        totalPrice = 105000,
-        addOptions = sampleOptions,
-        studioImageUrl = "",
-        productImageUrl = "",
-        cartId = 1
-    )
+//    val sampleCartItem = com.example.toucheeseapp.data.model.carts_list.CartListItem(
+//        studioName = "공원스튜디오",
+//        personnel = 1,
+//        productName = "증명사진",
+//        reservationDate = "2024-01-10",
+//        reservationTime = ReservationTime(12, 0,0,0),
+//        totalPrice = 105000,
+//        addOptions = sampleOptions,
+//        studioImageUrl = "",
+//        productImageUrl = "",
+//        cartId = 1
+//    )
 
-    ChangeOptionBottomSheetComponent(
-        cartItem = sampleCartItem,
-        productNumOfPeople = 1,
-        productNumOfPeoplePrice = 75000,
-        productOptions = sampleOptions,
-        numOfPeople = sampleCartItem.personnel,
-        reviewCount = 5,
-        isOverFlow = false,
-        isOnlyOne = false,
-        selectedOption = setOf(0, 1),
-        onDecreaseClicked = { /* 감소 로직 */ },
-        onIncreaseClicked = { /* 증가 로직 */ },
-        onReviewButtonClicked = { /* 리뷰 보기 로직 */ },
-        onOptionClicked = { /* 옵션 선택 로직 */ },
-        onClose = { /* 닫기 로직 */ },
-        onConfirm = { /* 확인 로직 */ },
-        selectedOptionChanged = { index -> println("옵션 변경: $index") },
-        onOptionChangeClick = {},
-        onDeleteClick = {}
-    )
+//    ChangeOptionBottomSheetComponent(
+//        cartItem = sampleCartItem,
+//        productNumOfPeople = 1,
+//        productNumOfPeoplePrice = 75000,
+//        productOptions = sampleOptions,
+//        numOfPeople = sampleCartItem.personnel,
+//        reviewCount = 5,
+//        isOverFlow = false,
+//        isOnlyOne = false,
+//        selectedOption = setOf(0, 1),
+//        onDecreaseClicked = { /* 감소 로직 */ },
+//        onIncreaseClicked = { /* 증가 로직 */ },
+//        onReviewButtonClicked = { /* 리뷰 보기 로직 */ },
+//        onOptionClicked = { /* 옵션 선택 로직 */ },
+//        onClose = { /* 닫기 로직 */ },
+//        onConfirm = { /* 확인 로직 */ },
+//        selectedOptionChanged = { index -> println("옵션 변경: $index") },
+//        onOptionChangeClick = {},
+//        onDeleteClick = {}
+//    )
 }

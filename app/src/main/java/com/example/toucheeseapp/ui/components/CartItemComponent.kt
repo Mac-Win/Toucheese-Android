@@ -31,12 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.example.toucheeseapp.data.model.carts_list.CartListItem
-import com.example.toucheeseapp.data.model.carts_list.ReservationTime
+import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 
 @Composable
 fun CartItemComponent(
-    cartItem: CartListItem,
+    cartItem: CartListResponseItem,
     onDeleteClick: (Int) -> Unit,
     onOptionChangeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -60,7 +59,7 @@ fun CartItemComponent(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                     Image(
-                        painter = rememberAsyncImagePainter(model = cartItem.studioImageUrl),
+                        painter = rememberAsyncImagePainter(model = cartItem.studioImage),
                         contentDescription = "Studio Profile Image",
                         modifier = Modifier
                             .size(52.dp)
@@ -94,7 +93,7 @@ fun CartItemComponent(
             ) {
                 // 상품 이미지
                 Image(
-                    painter = rememberAsyncImagePainter(model = cartItem.productImageUrl),
+                    painter = rememberAsyncImagePainter(model = cartItem.productImage),
                     contentDescription = "Product Image",
                     modifier = Modifier
                         .size(140.dp)
@@ -155,22 +154,22 @@ fun CartItemComponent(
 @Preview(showBackground = true)
 @Composable
 fun CartItemPreview() {
-    val sampleItem = CartListItem(
-        studioName = "공원스튜디오",
-        personnel = 1,
-        productName = "증명사진",
-        reservationDate = "2024-12-10",
-        reservationTime = ReservationTime(14, 0, 0, 0),
-        totalPrice = 105000,
-        addOptions = emptyList(),
-        cartId = 1,
-        productImageUrl = "https://via.placeholder.com/140",
-        studioImageUrl = "https://via.placeholder.com/52"
-    )
-
-    CartItemComponent(
-        cartItem = sampleItem,
-        onDeleteClick = { cartId -> println("Delete cartId: $cartId") },
-        onOptionChangeClick = { cartId -> println("Change Option cartId: $cartId") }
-    )
+//    val sampleItem = CartListItem(
+//        studioName = "공원스튜디오",
+//        personnel = 1,
+//        productName = "증명사진",
+//        reservationDate = "2024-12-10",
+//        reservationTime = ReservationTime(14, 0, 0, 0),
+//        totalPrice = 105000,
+//        addOptions = emptyList(),
+//        cartId = 1,
+//        productImageUrl = "https://via.placeholder.com/140",
+//        studioImageUrl = "https://via.placeholder.com/52"
+//    )
+//
+//    CartItemComponent(
+//        cartItem = sampleItem,
+//        onDeleteClick = { cartId -> println("Delete cartId: $cartId") },
+//        onOptionChangeClick = { cartId -> println("Change Option cartId: $cartId") }
+//    )
 }
