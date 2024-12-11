@@ -16,8 +16,8 @@ data class StudioDetailResponse(
     val name: String,
     @SerializedName("notice")
     val notice: String,
-    @SerializedName("operationHour")
-    val operationHour: String,
+    @SerializedName("operatingHours")
+    val operatingHours: List<OperatingHour>,
     @SerializedName("products")
     val products: List<Product>,
     @SerializedName("profileImage")

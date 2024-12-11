@@ -65,10 +65,6 @@ class StudioViewModel @Inject constructor(
             }
 
             _isSearching.value = true // 검색 시작
-            Log.d(
-                "SearchState",
-                "Searching for keyword: $keyword, isSearching: ${_isSearching.value}"
-            )
 
             try {
 
@@ -214,9 +210,9 @@ class StudioViewModel @Inject constructor(
     // -------- 예약 API --------
 
     // 기능: 예약 정보 저장
-    suspend fun setReservationData(reservation: ProductReservation) {
+    suspend fun setReservationData(token: String?, reservation: ProductReservation) {
         try {
-            repository.setReservationData(reservation = reservation)
+            repository.setReservationData(token = "Bearer $token", reservation = reservation)
         } catch (error: Exception) {
             Log.d("StudioViewModel", "error = ${error.message}")
         }

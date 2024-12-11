@@ -54,7 +54,7 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     // -------- 예약 API --------
 
     // 기능: 예약 정보 저장
-    suspend fun setReservationData(reservation: ProductReservation) = apiService.setReservationData(reservation)
+    suspend fun setReservationData(token: String?, reservation: ProductReservation) = apiService.setReservationData(token, reservation)
 
     // -------- 장바구니 API --------
 

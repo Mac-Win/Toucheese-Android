@@ -16,6 +16,8 @@ import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -105,8 +107,11 @@ interface ToucheeseServer {
     // -------- 예약 API --------
 
     // 기능: 예약 정보 저장
-    @POST("v1/reservations")
-    suspend fun setReservationData(@Body reservation: ProductReservation)
+    @POST("v1/members/carts")
+    suspend fun setReservationData(
+        @Header("Authorization") token: String?,
+        @Body reservation: ProductReservation
+    )
 
     // -------- 장바구니 API --------
 

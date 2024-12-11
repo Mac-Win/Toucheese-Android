@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,13 +39,15 @@ import com.example.toucheeseapp.ui.components.textfield.TextFieldOutlinedCompone
 import com.example.toucheeseapp.ui.theme.Shapes
 import com.example.toucheeseapp.ui.viewmodel.LoginViewModel
 import com.example.toucheeseapp.ui.viewmodel.TAG
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
-    onLoginClicked: (Boolean) -> Unit
+    onLoginClicked: (Int, String, Boolean) -> Unit
 ) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
@@ -58,6 +61,8 @@ fun LoginScreen(
     val context = LocalContext.current
     // SnackBar
     val hostState = remember { SnackbarHostState() }
+    // 키보드
+    val imeController = LocalSoftwareKeyboardController.current
 
 
     Scaffold(
@@ -120,25 +125,27 @@ fun LoginScreen(
             // 로그인 버튼
             Button(
                 onClick = {
-                    var result = false
-                    // 로그인 요청
-                    viewModel.requestLogin(
-                        tokenManager = TokenManager(context),
-                        email = textFieldId,
-                        password = textFieldPw
-                    )
-                    result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
-                    // 로그인 여부 확인
-
-                    Log.d(TAG, "result = $result")
-                    onLoginClicked(result)
-
-                    if (!result) {
-                        // 로그인 실패 시 snackbar host 전달
-                        coroutine.launch {
+                    coroutine.launch {
+                        // 로그인 요청
+                        viewModel.requestLogin(
+                            tokenManager = TokenManager(context),
+                            email = textFieldId,
+                            password = textFieldPw
+                        )
+                        // 로그인 여부 확인
+                        val result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
+                        Log.d(TAG, "result = $result")
+                        if (result) {
+                            Log.d(TAG, "result = $result")
+                            // 로그인 성공 시 화면 전환
+                            onLoginClicked(viewModel.memberId.value, viewModel.memberName.value, result)
+                        } else {
+                            // 로그인 실패 시 snackbar host 전달
                             hostState.showSnackbar("로그인 실패, 이메일과 비밀번호를 확인해주세요.")
                         }
                     }
+                    // 키보드 내리기
+                    imeController?.hide()
                 },
                 modifier = Modifier.padding(16.dp),
                 colors = ButtonDefaults.buttonColors(

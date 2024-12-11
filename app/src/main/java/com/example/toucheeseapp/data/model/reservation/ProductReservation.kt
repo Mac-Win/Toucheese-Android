@@ -6,7 +6,7 @@ data class ProductReservation(
     val totalPrice: Int,
     val memberId: Int,
     val createDate: String,
-    val createTime: TimeReservation,
+    val createTime: String,
     val personnel: Int,
     val addOptions: List<Int>
 )

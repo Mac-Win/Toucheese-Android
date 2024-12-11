@@ -1,10 +1,14 @@
 package com.example.toucheeseapp.ui.navigation
 
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -27,13 +31,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.toucheeseapp.data.network.ToucheeseServer
+import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
 import com.example.toucheeseapp.ui.screens.login.LoginScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.HomeScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
-import com.example.toucheeseapp.ui.screens.tab_Home.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioListScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioProductReviewScreen
 import kotlinx.coroutines.launch
@@ -41,6 +46,7 @@ import kotlinx.coroutines.launch
 
 val TAG = "ToucheeseApp"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToucheeseApp(api: ToucheeseServer) {
@@ -54,7 +60,19 @@ fun ToucheeseApp(api: ToucheeseServer) {
     // 바텀 시트
     var showBottomSheet by remember { mutableStateOf(false) }
     // 로그인 상태
-    val (isLoggedIn, setLoginState) = remember { mutableStateOf(false) }
+    var isLoggedIn by remember { mutableStateOf(false) }
+    // 앱 시작 시 자동 로그인 처리
+    val tokenManager = TokenManager(context)
+    // 첫 화면
+    val firstScreen = if (tokenManager.getAccessToken() != null){
+        isLoggedIn = true
+        Screen.Home.route
+    } else {
+        isLoggedIn = false
+        Screen.Login.route
+    }
+    // 멤버 Id
+    var memberId by remember { mutableStateOf(0) }
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -77,22 +95,28 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route, // 첫 번째 화면 route 지정
+        startDestination = firstScreen, // 첫 번째 화면 route 지정
     ) { // Builder 부문
 
         // 로그인 화면
         composable(Screen.Login.route) {
             LoginScreen(
                 modifier = Modifier,
-                onLoginClicked = { result ->
+                onLoginClicked = { memberLoginId: Int, memberName: String, result: Boolean ->
+                    Log.d("ToucheeseApp", "result = $result")
                     // 로그인 상태 저장
-                    setLoginState(result)
+                    isLoggedIn = result
+                    Log.d("ToucheeseApp", "isLoggedIn = $isLoggedIn")
                     // 로그인 성공
                     if (isLoggedIn){
                         // 홈 화면으로 이동
                         navController.navigate(
                             Screen.Home.route
                         )
+                        // 멤버 Id 저장
+                        memberId = memberLoginId
+                        // 환영 메시지
+                        Toast.makeText(context, "${memberName}님 반갑습니다.", Toast.LENGTH_LONG).show()
                     }
                 }
             )
@@ -210,6 +234,9 @@ fun ToucheeseApp(api: ToucheeseServer) {
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
             val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
             ProductOrderDetailScreen(
+                tokenManager = tokenManager,
+                memberId = memberId,
+                studioId = studioId,
                 productId = productId,
                 onBackButtonClicked = { navController.navigateUp() },
                 onReviewButtonClicked = {
@@ -277,6 +304,24 @@ fun ToucheeseApp(api: ToucheeseServer) {
                         text = "바텀 내비게이션 테스트 화면",
                         fontSize = 36.sp
                     )
+
+                    Button(
+                        onClick = {
+                            // 토큰 삭제
+                            tokenManager.clearAccessToken()
+                            Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                            // 로그인 화면으로 이동
+                            navController.navigate(Screen.Login.route){
+                                bottomNavSelectedTab = 0
+                                // 백스택 제거
+                                popUpTo(navController.graph.id) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    ) {
+                        Text(text = "로그아웃")
+                    }
                 }
             }
         }

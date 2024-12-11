@@ -1,8 +1,9 @@
 package com.example.toucheeseapp.ui.screens.tab_Home
 
-import android.nfc.Tag
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +32,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponseItem
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
-import com.example.toucheeseapp.data.model.reservation.TimeReservation
 import com.example.toucheeseapp.data.model.reservation.ProductReservation
+import com.example.toucheeseapp.data.model.reservation.TimeReservation
+import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.AppBarImageComponent
 import com.example.toucheeseapp.ui.components.DatePickComponent
 import com.example.toucheeseapp.ui.components.ProductOrderOptionComponent
@@ -41,10 +44,17 @@ import com.example.toucheeseapp.ui.components.calendar.CustomDatePickerComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.Month
+import java.time.format.DateTimeFormatter
 
 val TAG = "ProductOrderDetailScreen"
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOrderDetailScreen(
+    tokenManager: TokenManager,
+    memberId: Int,
+    studioId: Int,
     viewModel: StudioViewModel = hiltViewModel(),
     productId: Int,
     modifier: Modifier = Modifier,
@@ -62,6 +72,14 @@ fun ProductOrderDetailScreen(
     val calendarState = rememberSelectableCalendarState()
     // 선택된 옵션들
     var selectedOption by remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
+    // 날짜가 선택되었는지를 저장
+    val (isDateClicked, setDateClicked) = remember { mutableStateOf(false) }
+    // 선택일자
+    val (selectedDate, setSelectedDate) = remember { mutableStateOf<LocalDate>(LocalDate.now()) }
+    // 선택일자의 운영시간
+    val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
+    // 선택 시간
+    var selectedTime by remember { mutableStateOf("") }
 
     if (productDetail != null) {
         // 기준 인원이 1인지 여부
@@ -90,11 +108,12 @@ fun ProductOrderDetailScreen(
                         onClick = {
                             // 예약 정보 데이터를 수집한다
                             val reservationProductId = productId // 상품 Id
-                            val reservationStudioId = viewModel.studioDetail.value?.id ?: 0 // 스튜디오 Id
+                            val reservationStudioId = studioId // 스튜디오 Id
+                            val reservationMemberId = memberId // 회원 Id
                             val reservationTotalPrice = totalPrice // 최종 가격
-                            val reservationMemberId = 1 // 임시 데이터
-                            val reservationCreateDate = "2024-12-07" // 임시 데이터
-                            val reservationCreateTime = TimeReservation(9, 30) // 임시 데이터
+                            val reservationCreateDate = selectedDate // 예약 날짜
+                            val reservationCreateTime = selectedTime
+//                            val reservationCreateTime = TimeReservation(selectedTime.substringBefore(":").toInt(), selectedTime.substringAfter(":").toInt()) // 예약 시간
                             val reservationPersonnel = numOfPerson
                             val reservationAddOptions = selectedOption.toList()
 
@@ -104,27 +123,23 @@ fun ProductOrderDetailScreen(
                                 studioId = reservationStudioId,
                                 memberId = reservationMemberId,
                                 totalPrice = reservationTotalPrice,
-                                createDate = reservationCreateDate,
+                                createDate = reservationCreateDate.toString(),
                                 createTime = reservationCreateTime,
                                 personnel = reservationPersonnel,
                                 addOptions = reservationAddOptions
                             )
-
+                            Log.d(TAG, "productReservation: ${productReservation}")
+                            val token = tokenManager.getAccessToken()
+                            Log.d(TAG, "token: ${token}")
                             // 예약 정보를 서버로 전송한다
                             coroutineScope.launch {
-                                try {
-                                    // 서버로 데이터 전송
-                                    viewModel.setReservationData(reservation = productReservation)
-                                    Log.d(TAG, "서버 전송 클릭")
-                                } catch (error: Exception) {
-                                    Log.d(TAG, "전송 실패 error = ${error.message}")
-                                }
+                                // 서버로 데이터 전송
+                                viewModel.setReservationData(token= token, reservation = productReservation)
+                                Log.d(TAG, "서버 전송 클릭")
                             }
 
-
-
-
                             // 장바구니 화면으로 이동한다
+
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -191,12 +206,19 @@ fun ProductOrderDetailScreen(
 
                     // 촬영날짜
                     DatePickComponent(
-                        date = "2024-11-28", // 임시 데이터
+                        date = if (selectedTime.isNotEmpty()) "${selectedDate.year}년 ${monthToKorea(selectedDate.month)}월 ${selectedDate.dayOfMonth}일 ( ${selectedTime} )" else "예약일자 및 시간 선택",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         onDateClicked = {
                             setDialog(true)
+                            coroutineScope.launch {
+                                val result  = viewModel.loadCalendarTime(
+                                    studioId = studioId,
+                                    yearMonth = calendarState.monthState.currentMonth.toString()
+                                )
+                                setOperationHours(result)
+                            }
                         },
                     )
 
@@ -206,14 +228,49 @@ fun ProductOrderDetailScreen(
 
             if (showDialog) {
                 CustomDatePickerComponent(
+                    selectedDate = selectedDate.toString(),
+                    operationHours = operatingHours,
                     calendarSate = calendarState,
-                    isDateClicked = true,
-                    onDateClicked = {
-                        // 서버 API 호출
+                    isDateClicked = isDateClicked,
+                    onMonthChanged = { selectedMonth ->
+                        // 서버 API 비동기 호출
+                        coroutineScope.launch {
+                            val result = viewModel.loadCalendarTime(
+                                studioId = studioId,
+                                yearMonth =  selectedMonth.toString(),
+                            )
+                            Log.d("ProductOrderDetailScreen", "API result: ${result}")
+                            // 그 월에 해당하는 운영시간 로드
+                            setOperationHours(result)
+                        }
                     },
-                    onDismissRequest = {},
-                    onConfirmClicked = {},
-                    onCancelClicked = {}
+
+                    onDateClicked = { clickedDate ->
+                        if (isDateClicked && selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
+                            setDateClicked(false)
+                            setSelectedDate(LocalDate.now())
+                        } else { // 다른 날짜를 누른 경우
+                            setDateClicked(true)
+                            setSelectedDate(clickedDate)
+                        }
+                    },
+                    onDismissRequest = {
+                        setDialog(false)
+                        setDateClicked(false)
+                        setOperationHours(emptyList())
+                    },
+                    onTimeClicked = { date: String, time: String ->
+                        // 포맷팅
+                        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                        val parsedDate = LocalDate.parse(date, dateFormatter)
+
+                        // 날짜 설정
+                        setSelectedDate(parsedDate)
+                        // 시간 설정
+                        selectedTime = time
+                        Log.d("ProductOrderDetailScreen", "선택 일자 : ${selectedDate}")
+                        Log.d("ProductOrderDetailScreen", "선택 시간 : ${selectedTime}")
+                    }
                 )
             }
         }
@@ -234,5 +291,21 @@ fun ProductOrderDetailScreen(
     }
 }
 
-// 예약 정보 서버에 저장
-fun setReservationData() { }
+// 월을 한글로 표시한다
+@RequiresApi(Build.VERSION_CODES.O)
+fun monthToKorea(month: Month): Int {
+    return when (month) {
+        Month.JANUARY -> 1
+        Month.FEBRUARY -> 2
+        Month.MARCH -> 3
+        Month.APRIL -> 4
+        Month.MAY -> 5
+        Month.JUNE -> 6
+        Month.JULY -> 7
+        Month.AUGUST -> 8
+        Month.SEPTEMBER -> 9
+        Month.OCTOBER -> 10
+        Month.NOVEMBER -> 11
+        Month.DECEMBER -> 12
+    }
+}
