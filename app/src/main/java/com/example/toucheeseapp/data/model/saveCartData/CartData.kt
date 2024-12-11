@@ -1,6 +1,6 @@
-package com.example.toucheeseapp.data.model.reservation
+package com.example.toucheeseapp.data.model.saveCartData
 
-data class ProductReservation(
+data class CartData(
     val productId: Int,
     val studioId: Int,
     val totalPrice: Int,
