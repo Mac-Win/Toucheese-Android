@@ -1,5 +1,6 @@
-package com.example.toucheeseapp.ui.screens
+package com.example.toucheeseapp.ui.screens.tab_Home
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -18,21 +19,46 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.toucheeseapp.data.model.userInfo.UserInfoResponse
+import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.*
+import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @Composable
 fun OrderPayScreen(
-    userName: String,
-    userPhone: String,
-    userEmail: String,
-    productItems: List<ProductItem>,
-    totalPrice: String,
-    paymentMethods: List<String>,
+    selectedCartIds: List<Int>, // 선택한 장바구니 아이템의 id 리스트
+    viewModel: StudioViewModel = hiltViewModel(),
+    tokenManager: TokenManager,
     selectedPaymentMethod: String,
     onPaymentMethodSelected: (String) -> Unit,
     onConfirmOrder: () -> Unit,
     onBackClick: () -> Unit
 ) {
+    // 선택한 상품들
+    val products by viewModel.cartItems.collectAsState()
+    var userInfo: UserInfoResponse? = null
+    LaunchedEffect(selectedCartIds) {
+        // 토큰 받아오기
+        val token = tokenManager.getAccessToken()
+        // 선택한 장바구니 데이터 조회
+        viewModel.loadCartList(token)
+        // 사용자 정보 조회
+        userInfo = viewModel.loadUserData(token)
+    }
+    Log.d("OrderPayScreen", "products: ${products}")
+    Log.d("OrderPayScreen", "userInfo: ${userInfo}")
+    // 최종 가격
+    var totalPrice = 0
+    products.forEach { item ->
+        totalPrice += item.totalPrice
+    }
+    // 사용자 정보
+    val name = userInfo?.name ?: "testName"
+    val email = userInfo?.email ?: "test@email.com"
+    val phone = userInfo?.phone ?: "010-XXXX-XXXX"
+    // 결제 수단
+    val paymentMethods: List<String> = listOf("신용/체크카드", "카카오 페이", "네이버 페이", "휴대폰 결제")
     Scaffold(
         topBar = {
             OrderPayTopAppBarComponent (onClickLeadingIcon = onBackClick)
@@ -60,13 +86,14 @@ fun OrderPayScreen(
                 SectionTitle("주문 확인")
             }
 
+            // 사용자 정보
             item {
                 OrderPayMyInfoComponent(
-                    name = userName,
-                    phone = userPhone,
-                    email = userEmail
+                    name = name,
+                    phone = phone,
+                    email = email
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
                     thickness = 1.dp
                 )
@@ -78,10 +105,10 @@ fun OrderPayScreen(
 
             item {
                 OrderPayProductListComponent(
-                    productItems = productItems,
+                    productItems = products,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
                     thickness = 1.dp
                 )
@@ -124,47 +151,4 @@ fun OrderPayScreen(
             }
         }
     }
-}
-@Preview(showBackground = true)
-@Composable
-fun OrderPayScreenPreview() {
-    val productItems = listOf(
-        ProductItem(
-            name = "증명 사진",
-            additionalName = "보정 추가",
-            price = 105000,
-            studioName = "공원스튜디오",
-            imageUrl = "https://via.placeholder.com/80",
-            people = 1,
-            reservationDate = "2024-12-10",
-            reservationTime = "14:00"
-
-        ),
-        ProductItem(
-            name = "증명 사진",
-            additionalName = null,
-            price = 75000,
-            studioName = "강남스튜디오",
-            imageUrl = "https://via.placeholder.com/80",
-            people = 2,
-            reservationDate = "2024-12-11",
-            reservationTime = "16:00"
-        )
-    )
-    val paymentMethods = listOf("신용/체크카드", "카카오페이", "네이버페이", "휴대폰 결제")
-
-    var selectedPaymentMethod by remember { mutableStateOf(paymentMethods.first()) }
-
-    OrderPayScreen(
-        userName = "강미미",
-        userPhone = "010-9593-3561",
-        userEmail = "kan9mimi@gmail.com",
-        productItems = productItems,
-        totalPrice = "180,000",
-        paymentMethods = paymentMethods,
-        selectedPaymentMethod = selectedPaymentMethod,
-        onPaymentMethodSelected = { selectedPaymentMethod = it },
-        onConfirmOrder = { /* 예약하기 로직 */ },
-        onBackClick = { /* 뒤로가기 로직 */ }
-    )
 }

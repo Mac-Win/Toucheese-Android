@@ -1,7 +1,14 @@
 package com.example.toucheeseapp.ui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -14,20 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.rememberAsyncImagePainter
+import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 
-data class ProductItem( // 임의 테스트 데이터
-    val name: String,
-    val additionalName: String?,
-    val price: Int,
-    val studioName: String,
-    val imageUrl: String,
-    val people: Int,
-    val reservationDate: String,
-    val reservationTime: String
-)
 
 @Composable
-fun OrderPayProductItemComponent(product: ProductItem) {
+fun OrderPayProductItemComponent(product: CartListResponseItem) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,7 +34,7 @@ fun OrderPayProductItemComponent(product: ProductItem) {
     ) {
         // 상품 이미지
         Image(
-            painter = rememberAsyncImagePainter(product.imageUrl),
+            painter = rememberAsyncImagePainter(product.productImage),
             contentDescription = null,
             modifier = Modifier.size(150.dp)
         )
@@ -60,31 +58,31 @@ fun OrderPayProductItemComponent(product: ProductItem) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = product.name,
+                    text = product.productName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
                 )
                 Text(
-                    text = "₩${product.price}",
+                    text = "₩${product.totalPrice}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
 
             // 추가 상품 이름과 가격
-            product.additionalName?.let { additionalName ->
+            product.addOptions.forEach { additionalName ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = additionalName,
+                        text = additionalName.name,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "₩${product.price}",
+                        text = "₩${additionalName.price}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -124,7 +122,7 @@ fun OrderPayProductItemComponent(product: ProductItem) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "인원: ${product.people}명",
+                    text = "인원: ${product.personnel}명",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal
                 )
