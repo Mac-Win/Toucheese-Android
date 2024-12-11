@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.toucheeseapp.data.model.cart_order_pay.OrderPayResponse
 import com.example.toucheeseapp.data.model.userInfo.UserInfoResponse
 import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.*
@@ -36,27 +37,27 @@ fun OrderPayScreen(
     onBackClick: () -> Unit
 ) {
     // 선택한 상품들
-    val products by viewModel.cartItems.collectAsState()
-    var userInfo: UserInfoResponse? = null
+    var orderPayResponse by remember { mutableStateOf<OrderPayResponse?>(null) }
+    // cartIds List<Int> -> String
+    val cartIds = selectedCartIds.joinToString(separator = ",")
     LaunchedEffect(selectedCartIds) {
+        Log.d("OrderPayScreen", "cartIds: ${cartIds}")
         // 토큰 받아오기
         val token = tokenManager.getAccessToken()
-        // 선택한 장바구니 데이터 조회
-        viewModel.loadCartList(token)
-        // 사용자 정보 조회
-        userInfo = viewModel.loadUserData(token)
+        // 장바구니 결제 조회
+        orderPayResponse = viewModel.loadOrderPayData(token, cartIds)
     }
-    Log.d("OrderPayScreen", "products: ${products}")
-    Log.d("OrderPayScreen", "userInfo: ${userInfo}")
+
     // 최종 가격
     var totalPrice = 0
-    products.forEach { item ->
+    orderPayResponse?.cartPaymentList?.forEach { item ->
         totalPrice += item.totalPrice
     }
     // 사용자 정보
-    val name = userInfo?.name ?: "testName"
-    val email = userInfo?.email ?: "test@email.com"
-    val phone = userInfo?.phone ?: "010-XXXX-XXXX"
+    val memberContactInfo = orderPayResponse?.memberContactInfo
+    val name = memberContactInfo?.name ?: "testName"
+    val email = memberContactInfo?.email ?: "test@email.com"
+    val phone = memberContactInfo?.phone ?: "010-XXXX-XXXX"
     // 결제 수단
     val paymentMethods: List<String> = listOf("신용/체크카드", "카카오 페이", "네이버 페이", "휴대폰 결제")
     Scaffold(
@@ -105,7 +106,7 @@ fun OrderPayScreen(
 
             item {
                 OrderPayProductListComponent(
-                    productItems = products,
+                    productItems = orderPayResponse?.cartPaymentList ?: emptyList(),
                     modifier = Modifier.fillMaxWidth()
                 )
                 HorizontalDivider(
