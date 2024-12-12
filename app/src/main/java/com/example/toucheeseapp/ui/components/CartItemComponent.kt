@@ -32,13 +32,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
+import com.example.toucheeseapp.data.model.carts_list.ReservationTime
+import com.example.toucheeseapp.data.model.carts_list.AddOption
+import com.example.toucheeseapp.data.model.carts_list.SelectAddOption
 
 @Composable
 fun CartItemComponent(
     cartItem: CartListResponseItem,
-    onDeleteClick: (Int) -> Unit,
-    onOptionChangeClick: (Int) -> Unit,
+    onDeleteClick: (CartListResponseItem) -> Unit,
+    onOptionChangeClick: (CartListResponseItem) -> Unit,
     modifier: Modifier = Modifier,
+    showDeleteIcon: Boolean = true,
+    showOptionChangeButton: Boolean = true
 ) {
     Card(
         modifier = modifier
@@ -47,8 +52,7 @@ fun CartItemComponent(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(modifier = Modifier
-            .background(Color(0xFFFFFCF5))) {
+        Column(modifier = Modifier.background(Color(0xFFFFFCF5))) {
             // 스튜디오 정보와 삭제 버튼
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -63,7 +67,7 @@ fun CartItemComponent(
                         contentDescription = "Studio Profile Image",
                         modifier = Modifier
                             .size(52.dp)
-                            .clip(RoundedCornerShape(20.dp)), // 원형 모양
+                            .clip(RoundedCornerShape(20.dp)),
                         contentScale = ContentScale.Crop
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -73,13 +77,15 @@ fun CartItemComponent(
                     )
                 }
 
-                // 삭제 버튼
-                IconButton(onClick = { onDeleteClick(cartItem.cartId) }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Item",
-                        tint = Color.Gray
-                    )
+                // 휴지통 아이콘을 표시할지 여부에 따라 조건부로 렌더링
+                if (showDeleteIcon) {
+                    IconButton(onClick = { onDeleteClick(cartItem) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Item",
+                            tint = Color.Gray
+                        )
+                    }
                 }
             }
 
@@ -88,8 +94,7 @@ fun CartItemComponent(
             // 상품 이미지와 상품 정보
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 // 상품 이미지
                 Image(
@@ -97,7 +102,7 @@ fun CartItemComponent(
                     contentDescription = "Product Image",
                     modifier = Modifier
                         .size(140.dp)
-                        .clip(RoundedCornerShape(8.dp)), // 이미지 모서리 둥글게
+                        .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
 
@@ -106,16 +111,17 @@ fun CartItemComponent(
                 // 상품 정보
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
-                    modifier = Modifier.weight(1f)
-                        .padding(8.dp)){
-
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                ) {
                     Text(
                         text = cartItem.productName,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold
                     )
 
-                    Row(verticalAlignment = Alignment.CenterVertically){
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("예약 인원: ${cartItem.personnel}명", style = MaterialTheme.typography.bodyMedium)
                     }
 
@@ -135,41 +141,20 @@ fun CartItemComponent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 옵션 변경 버튼
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = {onOptionChangeClick(cartItem.cartId)}) {
-                    Text(
-                        text = "옵션변경",
-                        color = MaterialTheme.colorScheme.primary
-                    )
+            // 옵션 변경 버튼을 표시할지 여부에 따라 조건부로 렌더링
+            if (showOptionChangeButton) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onOptionChangeClick(cartItem) }) {
+                        Text(
+                            text = "옵션변경",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CartItemPreview() {
-//    val sampleItem = CartListItem(
-//        studioName = "공원스튜디오",
-//        personnel = 1,
-//        productName = "증명사진",
-//        reservationDate = "2024-12-10",
-//        reservationTime = ReservationTime(14, 0, 0, 0),
-//        totalPrice = 105000,
-//        addOptions = emptyList(),
-//        cartId = 1,
-//        productImageUrl = "https://via.placeholder.com/140",
-//        studioImageUrl = "https://via.placeholder.com/52"
-//    )
-//
-//    CartItemComponent(
-//        cartItem = sampleItem,
-//        onDeleteClick = { cartId -> println("Delete cartId: $cartId") },
-//        onOptionChangeClick = { cartId -> println("Change Option cartId: $cartId") }
-//    )
 }

@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 fun CartTopAppBarComponent(
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
-    onClickTrailingIcon: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
@@ -47,16 +46,6 @@ fun CartTopAppBarComponent(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = modifier.weight(1f),
-                )
-            }
-        },
-        actions = {
-            IconButton(
-                onClick = onClickTrailingIcon,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Delete, // 쓰레기통 아이콘
-                    contentDescription = "장바구니 비우기",
                 )
             }
         }

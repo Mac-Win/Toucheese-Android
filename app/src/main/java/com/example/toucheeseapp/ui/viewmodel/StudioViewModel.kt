@@ -255,11 +255,11 @@ class StudioViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // API 호출을 통해 서버에서 항목 삭제
-                repository.deleteCartItem(
-                    token= token,
-                    cartId = cartId
-                )
-
+                Log.d("StudioViewModel", "CartId: $cartId")
+                Log.d("StudioViewModel,","token: $token")
+                repository.deleteCartItem("Bearer $token", cartId)
+                Log.d("StudioViewModel", "CartId2: $cartId")
+                loadCartList(token)
                 // 로컬 상태에서 삭제된 항목 제거
                 _cartItems.value = _cartItems.value.filter { it.cartId != cartId }
             } catch (error: Exception) {
@@ -272,11 +272,8 @@ class StudioViewModel @Inject constructor(
     fun updateCartItem(token: String?, cartId: Int, changedCartItem: ChangedCartItem) {
         viewModelScope.launch {
             try {
-                repository.updateCartItem(
-                    token = token,
-                    cartId = cartId,
-                    changedCartItem = changedCartItem
-                )
+                repository.updateCartItem("Bearer $token", cartId, changedCartItem)
+                loadCartList(token)
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "장바구니 옵션 및 인원 변경 error: ${error.message}")
             }
