@@ -82,10 +82,10 @@ fun CartScreen(
     }
 
     Scaffold(
+        modifier = Modifier.safeDrawingPadding(),
         topBar = {
             CartTopAppBarComponent(
                 onClickLeadingIcon = onBackClick,
-                onClickTrailingIcon = onClearCartClick
             )
         },
         bottomBar = {
