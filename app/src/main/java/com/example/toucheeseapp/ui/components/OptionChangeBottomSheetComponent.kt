@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,36 +69,6 @@ fun ChangeOptionBottomSheetComponent(
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             )
     ) {
-        // 상단 닫기 및 확인 버튼
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = onClose) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close"
-                )
-            }
-            IconButton(onClick = {
-                // 변경 사항 ViewModel에 전달
-                val changedCartItem = ChangedCartItem(
-                    personnel = numOfPeople,
-                    addOptions = selectedOption.toList(),
-                    totalPrice = totalPrice
-                )
-                onOptionChangeClick(changedCartItem)
-                onConfirm()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Confirm"
-                )
-            }
-        }
 
         // CartItemComponent 표시
         CartItemComponent(
@@ -127,14 +98,61 @@ fun ChangeOptionBottomSheetComponent(
             showReviewButton = false
         )
 
-        // 총 가격 표시
-        Text(
-            text = "변경된 가격: ₩$totalPrice",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(top = 16.dp)
+        // 구분선
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+            thickness = DividerDefaults.Thickness,
+            color = Color.Gray
         )
+
+        // 최종 가격 표시
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "최종 가격",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "${totalPrice / 1000},000원",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                )
+        }
+
+        // 최종 확인 버튼
+        Button(
+            onClick = {
+                // 변경 사항 ViewModel에 전달
+                val changedCartItem = ChangedCartItem(
+                    personnel = numOfPeople,
+                    addOptions = selectedOption.toList(),
+                    totalPrice = totalPrice
+                )
+                onOptionChangeClick(changedCartItem)
+                onConfirm()
+            },
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFFFF2CC),
+            ),
+
+        ) {
+            Text(
+                text = "옵션 변경하기",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }

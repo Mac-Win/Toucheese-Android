@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -22,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
-import com.example.toucheeseapp.data.model.carts_list.ReservationTime
-import com.example.toucheeseapp.data.model.carts_list.AddOption
-import com.example.toucheeseapp.data.model.carts_list.SelectAddOption
 
 @Composable
 fun CartItemComponent(
@@ -147,7 +139,7 @@ fun CartItemComponent(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            "전체 가격: ${cartItem.totalPrice}",
+                            "전체 가격: ${cartItem.totalPrice / 1000},000원",
                             style = MaterialTheme.typography.titleMedium
                         )
 
