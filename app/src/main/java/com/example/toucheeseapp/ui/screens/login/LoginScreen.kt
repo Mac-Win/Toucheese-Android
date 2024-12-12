@@ -66,6 +66,7 @@ fun LoginScreen(
 
 
     Scaffold(
+        containerColor = Color(0xFFFBF3DC),
         topBar = {
             Image(
                 painter = painterResource(R.drawable.toucheese_kr_logo),
