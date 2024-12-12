@@ -104,6 +104,8 @@ fun ChangeOptionBottomSheetComponent(
             onDeleteClick = onDeleteClick,
             onOptionChangeClick = { /* 필요시 구현 */ },
             modifier = Modifier.padding(bottom = 16.dp),
+            showDeleteIcon = false,
+            showOptionChangeButton = false
         )
 
         // ProductOrderOptionComponent 표시
@@ -120,7 +122,8 @@ fun ChangeOptionBottomSheetComponent(
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
             onOptionClicked = onOptionClicked,
-            selectedOptionChanged = selectedOptionChanged
+            selectedOptionChanged = selectedOptionChanged,
+            showReviewButton = false
         )
 
         // 총 가격 표시

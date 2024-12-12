@@ -42,6 +42,8 @@ fun CartItemComponent(
     onDeleteClick: (CartListResponseItem) -> Unit,
     onOptionChangeClick: (CartListResponseItem) -> Unit,
     modifier: Modifier = Modifier,
+    showDeleteIcon: Boolean = true,
+    showOptionChangeButton: Boolean = true
 ) {
     Card(
         modifier = modifier
@@ -75,13 +77,15 @@ fun CartItemComponent(
                     )
                 }
 
-                // 삭제 버튼
-                IconButton(onClick = { onDeleteClick(cartItem) }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Item",
-                        tint = Color.Gray
-                    )
+                // 휴지통 아이콘을 표시할지 여부에 따라 조건부로 렌더링
+                if (showDeleteIcon) {
+                    IconButton(onClick = { onDeleteClick(cartItem) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Item",
+                            tint = Color.Gray
+                        )
+                    }
                 }
             }
 
@@ -137,16 +141,18 @@ fun CartItemComponent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 옵션 변경 버튼
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = { onOptionChangeClick(cartItem) }) {
-                    Text(
-                        text = "옵션변경",
-                        color = MaterialTheme.colorScheme.primary
-                    )
+            // 옵션 변경 버튼을 표시할지 여부에 따라 조건부로 렌더링
+            if (showOptionChangeButton) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onOptionChangeClick(cartItem) }) {
+                        Text(
+                            text = "옵션변경",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
