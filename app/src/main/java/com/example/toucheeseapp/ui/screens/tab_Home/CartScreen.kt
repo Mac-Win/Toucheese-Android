@@ -23,22 +23,27 @@ import com.example.toucheeseapp.ui.components.CartTopAppBarComponent
 import com.example.toucheeseapp.ui.components.ChangeOptionBottomSheetComponent
 import com.example.toucheeseapp.ui.components.CartItemComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    onBackClick: () -> Unit,
-    onClearCartClick: () -> Unit,
-    onCheckoutClick: (List<Int>) -> Unit,
     tokenManager: TokenManager,
-    viewModel: StudioViewModel = hiltViewModel()
+    viewModel: StudioViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    onCheckoutClick: (List<Int>) -> Unit,
+    onBackClick: () -> Unit,
 ) {
 
     val cartItems by viewModel.cartItems.collectAsState() // ViewModel에서 상태 관찰
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
-
+    // 장바구니 내역이 있는지 확인
+    val isCartItemsExists = cartItems.isNotEmpty()
+    // BottomSheetModal 상태 관리
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutine = rememberCoroutineScope()
     // 토큰 받아오기
     val token = tokenManager.getAccessToken()
     Log.d("CartScreen", "Current Token: $token")
@@ -46,6 +51,10 @@ fun CartScreen(
     LaunchedEffect(Unit) {
         // 토큰에 해당하는 장바구니 목록
         viewModel.loadCartList(token)
+        // 바텀시트 처음에 expanded 상태로 설정
+        coroutine.launch {
+            bottomSheetState.expand()
+        }
     }
 
     // 총합 계산
@@ -94,6 +103,11 @@ fun CartScreen(
                 contentColor = Color.Black
             ) {
                 Button(
+                    enabled = isCartItemsExists,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = Color(0xFFECECEC)
+                    ),
                     onClick = {
                         val cartIds = cartItems.map { it.cartId }
                         onCheckoutClick(cartIds)
@@ -101,7 +115,6 @@ fun CartScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC000))
                 ) {
                     Text(
                         text = "예약하기 ($totalAmount)",
@@ -141,8 +154,8 @@ fun CartScreen(
                     ) { cartItem ->
                         CartItemComponent(
                             cartItem = cartItem,
-                            onDeleteClick = { cartItem ->
-                                viewModel.deleteCartItem(token, cartItem.cartId)
+                            onDeleteClick = { cartListResponseItem ->
+                                viewModel.deleteCartItem(token, cartListResponseItem.cartId)
                             },
                             onOptionChangeClick = {
                                 selectedItem = cartItem
@@ -150,7 +163,15 @@ fun CartScreen(
                                 selectedOptionIds = cartItem.selectAddOptions.map { it.selectOptionId }.toSet()
                                 Log.d("CartScreen", "Opening Bottom Sheet with SelectedOptionIds: $selectedOptionIds")
                                 isBottomSheetVisible = true
-                            }
+                                coroutine.launch {
+                                    if (bottomSheetState.isVisible) {
+                                        bottomSheetState.hide()
+                                    } else {
+                                        bottomSheetState.expand()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
                 }
@@ -160,11 +181,17 @@ fun CartScreen(
 
     if (isBottomSheetVisible) {
         ModalBottomSheet(
+            sheetState = bottomSheetState, // 바텀시트 상태 전달
             onDismissRequest = {
                 Log.d("CartScreen", "Bottom sheet dismissed")
+                coroutine.launch {
+                    bottomSheetState.hide()
+                }
+                Log.d("CartScreen", "Bottom sheet is visible? : ${bottomSheetState.isVisible}")
                 isBottomSheetVisible = false
             },
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier.wrapContentHeight(),
+            containerColor = Color(0xFFFFFCF5),
         ) {
             selectedItem?.let { item ->
                 ChangeOptionBottomSheetComponent(

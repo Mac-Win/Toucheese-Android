@@ -300,7 +300,6 @@ fun ToucheeseApp(api: ToucheeseServer) {
         ) {
             CartScreen(
                 onBackClick = {navController.navigateUp()},
-                onClearCartClick = {},
                 onCheckoutClick = { cartIds ->
                     val route = Screen.OrderPay.createRoute(cartIds)
                     navController.navigate(route)
@@ -330,7 +329,11 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 tokenManager = tokenManager,
                 selectedPaymentMethod = selectedPaymentMethod,
                 onPaymentMethodSelected = { index ->
-                    selectedPaymentMethod = index
+                    if (selectedPaymentMethod == index) {
+                        selectedPaymentMethod = 0
+                    } else {
+                        selectedPaymentMethod = index
+                    }
                 },
                 onConfirmOrder = {
                     // 예약 일정 탭으로 이동

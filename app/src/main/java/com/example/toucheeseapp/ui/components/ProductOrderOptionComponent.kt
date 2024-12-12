@@ -205,7 +205,7 @@ private fun PriceSection(
             }
         }
         HorizontalDivider(
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
             thickness = DividerDefaults.Thickness,
             color = Color.Gray
         )
