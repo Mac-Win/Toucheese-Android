@@ -156,7 +156,8 @@ fun CartScreen(
                                 selectedOptionIds = cartItem.selectAddOptions.map { it.selectOptionId }.toSet()
                                 Log.d("CartScreen", "Opening Bottom Sheet with SelectedOptionIds: $selectedOptionIds")
                                 isBottomSheetVisible = true
-                            }
+                            },
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
                 }
@@ -170,7 +171,8 @@ fun CartScreen(
                 Log.d("CartScreen", "Bottom sheet dismissed")
                 isBottomSheetVisible = false
             },
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier.fillMaxSize().systemBarsPadding(),
+            containerColor = Color(0xFFFFFCF5),
         ) {
             selectedItem?.let { item ->
                 ChangeOptionBottomSheetComponent(
