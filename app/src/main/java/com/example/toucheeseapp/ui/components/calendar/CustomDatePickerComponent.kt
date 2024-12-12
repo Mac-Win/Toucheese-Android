@@ -212,7 +212,7 @@ fun CustomDatePickerComponent(
                                     },
                                     colors = SuggestionChipDefaults.suggestionChipColors(
                                         containerColor = Color(0xFFFFF2CC),
-                                        disabledContainerColor = Color.Gray,
+                                        disabledContainerColor = Color(0xFFECECEC),
                                     ),
                                     label = {
                                         Text(

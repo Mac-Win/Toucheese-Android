@@ -48,6 +48,7 @@ import java.time.Month
 import java.time.format.DateTimeFormatter
 
 val TAG = "ProductOrderDetailScreen"
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOrderDetailScreen(
@@ -60,7 +61,7 @@ fun ProductOrderDetailScreen(
     onBackButtonClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
     onOrderClicked: () -> Unit,
-    ) {
+) {
     val coroutineScope = rememberCoroutineScope()
     var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
     LaunchedEffect(productId) {
@@ -76,7 +77,11 @@ fun ProductOrderDetailScreen(
     // 선택일자
     val (selectedDate, setSelectedDate) = remember { mutableStateOf<LocalDate>(LocalDate.now()) }
     // 선택일자의 운영시간
-    val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
+    val (operatingHours, setOperationHours) = remember {
+        mutableStateOf<List<CalendarTimeResponseItem>>(
+            emptyList()
+        )
+    }
     // 선택 시간
     var selectedTime by remember { mutableStateOf("") }
     // 시간 선택했는지 여부
@@ -110,37 +115,33 @@ fun ProductOrderDetailScreen(
                     Button(
                         enabled = isTimeSelected,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            disabledContainerColor = Color.Gray
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            disabledContainerColor = Color(0xFFECECEC)
                         ),
                         onClick = {
-                            if (isTimeSelected) {
-                                // 예약 정보 데이터로 만든다
-                                val cartData = CartData(
-                                    productId= productId,
-                                    studioId = studioId,
-                                    memberId = memberId,
-                                    totalPrice = totalPrice,
-                                    createDate = selectedDate.toString(),
-                                    createTime = selectedTime,
-                                    personnel = numOfPerson,
-                                    addOptions = selectedOption.toList()
-                                )
-                                Log.d(TAG, "productReservation: ${cartData}")
-                                val token = tokenManager.getAccessToken()
-                                Log.d(TAG, "token: ${token}")
-                                // 예약 정보를 서버로 전송한다
-                                coroutineScope.launch {
-                                    // 서버로 데이터 전송
-                                    viewModel.saveCartData(token= token, cartData = cartData)
-                                    Log.d(TAG, "서버 전송 클릭")
-                                }
-
-                                // 장바구니 화면으로 이동한다
-                                onOrderClicked()
-                            } else {
-                                Toast.makeText(context, "시간을 선택해주세요", Toast.LENGTH_LONG).show()
+                            // 예약 정보 데이터로 만든다
+                            val cartData = CartData(
+                                productId = productId,
+                                studioId = studioId,
+                                memberId = memberId,
+                                totalPrice = totalPrice,
+                                createDate = selectedDate.toString(),
+                                createTime = selectedTime,
+                                personnel = numOfPerson,
+                                addOptions = selectedOption.toList()
+                            )
+                            Log.d(TAG, "productReservation: ${cartData}")
+                            val token = tokenManager.getAccessToken()
+                            Log.d(TAG, "token: ${token}")
+                            // 예약 정보를 서버로 전송한다
+                            coroutineScope.launch {
+                                // 서버로 데이터 전송
+                                viewModel.saveCartData(token = token, cartData = cartData)
+                                Log.d(TAG, "서버 전송 클릭")
                             }
+
+                            // 장바구니 화면으로 이동한다
+                            onOrderClicked()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -204,14 +205,18 @@ fun ProductOrderDetailScreen(
 
                     // 촬영날짜
                     DatePickComponent(
-                        date = if (isTimeSelected) "${selectedDate.year}년 ${monthToKorea(selectedDate.month)}월 ${selectedDate.dayOfMonth}일 ( ${selectedTime} )" else "예약일자 및 시간 선택",
+                        date = if (isTimeSelected) "${selectedDate.year}년 ${
+                            monthToKorea(
+                                selectedDate.month
+                            )
+                        }월 ${selectedDate.dayOfMonth}일 ( ${selectedTime} )" else "예약일자 및 시간 선택",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         onDateClicked = {
                             setDialog(true)
                             coroutineScope.launch {
-                                val result  = viewModel.loadCalendarTime(
+                                val result = viewModel.loadCalendarTime(
                                     studioId = studioId,
                                     yearMonth = calendarState.monthState.currentMonth.toString()
                                 )
@@ -234,7 +239,7 @@ fun ProductOrderDetailScreen(
                         coroutineScope.launch {
                             val result = viewModel.loadCalendarTime(
                                 studioId = studioId,
-                                yearMonth =  selectedMonth.toString(),
+                                yearMonth = selectedMonth.toString(),
                             )
                             Log.d("ProductOrderDetailScreen", "API result: ${result}")
                             // 그 월에 해당하는 운영시간 로드
