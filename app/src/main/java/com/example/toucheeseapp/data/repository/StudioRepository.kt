@@ -1,13 +1,14 @@
 package com.example.toucheeseapp.data.repository
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
+import com.example.toucheeseapp.data.model.cart_order_pay.OrderPayResponse
 import com.example.toucheeseapp.data.model.carts_list.CartListResponse
 import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import com.example.toucheeseapp.data.model.concept_studio.Studio
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
 import com.example.toucheeseapp.data.model.saveCartData.CartData
-import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
+import com.example.toucheeseapp.data.model.saveReservationData.SaveReservationRequest
 import com.example.toucheeseapp.data.model.search_studio.SearchResponseItem
 import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
@@ -57,7 +58,7 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     suspend fun saveCartData(token: String?, reservation: CartData) = apiService.saveCartData(token, reservation)
 
     // 장바구니 저장 기능
-    suspend fun saveReservationData(token: String?, reservationData: ReservationData) = apiService.saveReservationData(token, reservationData)
+    suspend fun saveReservationData(token: String?, saveReservationRequest: SaveReservationRequest) = apiService.saveReservationData(token, saveReservationRequest)
 
     // 장바구니 목록 조회
     suspend fun loadCartList(token: String?): CartListResponse = apiService.loadCartList(token)
@@ -69,8 +70,6 @@ class StudioRepository @Inject constructor(private val apiService: ToucheeseServ
     // 해당  장바구니 삭제
     suspend fun deleteCartItem(token:String?, cartId: Int) = apiService.deleteCartItem(token, cartId)
 
-    // -------- 회원 API --------
-
-    // 회원 정보
-    suspend fun loadUserData(token: String?): UserInfoResponse = apiService.loadUserData(token)
+    // 장바구니 결제 조회
+    suspend fun loadOrderPayData(token: String?, cartIds: String): OrderPayResponse = apiService.loadOrderPayData(token, cartIds)
 }

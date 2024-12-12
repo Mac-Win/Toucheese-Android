@@ -21,11 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.rememberAsyncImagePainter
-import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
+import com.example.toucheeseapp.data.model.cart_order_pay.CartPayment
 
 
 @Composable
-fun OrderPayProductItemComponent(product: CartListResponseItem) {
+fun OrderPayProductItemComponent(product: CartPayment) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -70,19 +70,19 @@ fun OrderPayProductItemComponent(product: CartListResponseItem) {
             }
 
             // 추가 상품 이름과 가격
-            product.addOptions.forEach { additionalName ->
+            product.selectAddOptions.forEach { additionalName ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = additionalName.name,
+                        text = additionalName.selectOptionName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "₩${additionalName.price}",
+                        text = "₩${additionalName.selectOptionPrice}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )

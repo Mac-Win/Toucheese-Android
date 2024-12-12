@@ -43,6 +43,8 @@ import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioListScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioProductReviewScreen
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
 
@@ -164,14 +166,16 @@ fun ToucheeseApp(api: ToucheeseServer) {
             StudioListScreen(
                 conceptId = conceptId,
                 onClickLeadingIcon = { navController.navigateUp() },
-                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭") },
+                onClickTrailingIcon = {
+                    // 장바구니 화면으로 이동
+                    navController.navigate(Screen.Cart.route)
+                },
                 onStudioItemClicked = { studioId ->
                     // 스튜디오 상세 화면으로 이동
                     navController.navigate(
-                        Screen.StudioDetail.route.replace(
-                            "{studioId}",
-                            "$studioId"
-                        )
+                        Screen.StudioDetail.route
+                            .replace("{studioId}", "$studioId")
+                            .replace("{conceptId}", "$conceptId")
                     )
                 }
             )
@@ -180,6 +184,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
         // 스튜디오 상세 화면
         composable(Screen.StudioDetail.route) { backStackEntry ->
             val studioId = backStackEntry.arguments?.getString("studioId")?.toIntOrNull() ?: 0
+            val conceptId = backStackEntry.arguments?.getString("conceptId")?.toIntOrNull() ?: 0
 
             StudioDetailScreen(
                 studioId = studioId,
@@ -198,10 +203,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onProductClicked = { productId ->
                     // 상품 상세 화면으로 이동
                     navController.navigate(
-                        Screen.ProductOrderDetail.route.replace(
-                            "{productId}",
-                            "$productId"
-                        ).replace("{studioId}", "$studioId")
+                        Screen.ProductOrderDetail.route
+                            .replace("{productId}", "$productId")
+                            .replace("{studioId}", "$studioId")
+                            .replace("{conceptId}", "$conceptId")
                     )
                 }
 
@@ -232,10 +237,12 @@ fun ToucheeseApp(api: ToucheeseServer) {
             arguments = listOf(
                 navArgument("productId") { type = NavType.IntType },
                 navArgument("studioId") { type = NavType.IntType },
+                navArgument("conceptId") { type = NavType.IntType },
             )
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
             val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
+            val conceptId = backStackEntry.arguments?.getInt("conceptId") ?: 0
             ProductOrderDetailScreen(
                 tokenManager = tokenManager,
                 memberId = memberId,
@@ -249,6 +256,15 @@ fun ToucheeseApp(api: ToucheeseServer) {
                             .replace("{studioId}", "$studioId")
                             .replace("{productId}", "$productId")
                     )
+                },
+                onOrderClicked = {
+                    // 장바구니 화면으로 이동
+                    navController.navigate(Screen.Cart.route){
+                        // 백스택 제거
+                        popUpTo(Screen.StudioList.route
+                            .replace("{conceptId}", "$conceptId")
+                        ) { inclusive = true } // 모든 백스택 제거
+                    }
                 }
             )
         }
@@ -285,8 +301,9 @@ fun ToucheeseApp(api: ToucheeseServer) {
             CartScreen(
                 onBackClick = {navController.navigateUp()},
                 onClearCartClick = {},
-                onCheckoutClick = {
-                    navController.navigate(Screen.OrderPay.route)
+                onCheckoutClick = { cartIds ->
+                    val route = Screen.OrderPay.createRoute(cartIds)
+                    navController.navigate(route)
                 },
                 tokenManager = tokenManager,
             )
@@ -296,15 +313,37 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
         // 주문 및 결제 화면
         composable(
-            Screen.OrderPay.route
-        ){
+            route = Screen.OrderPay.route,
+            arguments = listOf(
+                navArgument("orderIds") { type = NavType.StringType }
+            )
+        ){ backStackEntry ->
+            // 전달된 데이터 수신 및 역직렬화
+            val orderIdsJson = backStackEntry.arguments?.getString("orderIds") ?: "[]"
+            val selectedCartIds = Gson().fromJson<List<Int>>(orderIdsJson, object : TypeToken<List<Int>>() {}.type)
+            var selectedPaymentMethod by remember { mutableStateOf(0) }
+            Log.d("ToucheeseApp", "orderIdsJson: ${orderIdsJson}")
+            Log.d("ToucheeseApp", "selectedCartIds: ${orderIdsJson}")
+
             OrderPayScreen(
-                selectedCartIds = listOf(1, 2, 3),
+                selectedCartIds = selectedCartIds,
                 tokenManager = tokenManager,
-                selectedPaymentMethod = "뭐야 이건",
-                onPaymentMethodSelected = { },
-                onConfirmOrder = { },
-                onBackClick = { }
+                selectedPaymentMethod = selectedPaymentMethod,
+                onPaymentMethodSelected = { index ->
+                    selectedPaymentMethod = index
+                },
+                onConfirmOrder = {
+                    // 예약 일정 탭으로 이동
+                    bottomNavSelectedTab = 1
+                    navController.navigate("Test"){
+                        // 백스택 제거
+                        popUpTo(0) { inclusive = true } // 모든 백스택 제거
+                    }
+                },
+                onBackClick = {
+                    // 뒤로가기(장바구니 화면으로 이동)
+                    navController.navigateUp()
+                }
             )
 
         }
