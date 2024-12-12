@@ -69,7 +69,13 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(selectedTab: Int, viewModel: StudioViewModel = hiltViewModel(), onCardClick: (Int) -> Unit, onStudioClick: (Int) -> Unit, onTabSelected: (Int) -> Unit) {
+fun HomeScreen(
+    selectedTab: Int,
+    viewModel: StudioViewModel = hiltViewModel(),
+    onCardClick: (Int) -> Unit,
+    onStudioClick: (Int) -> Unit,
+    onTabSelected: (Int) -> Unit
+) {
     val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val searchResults by viewModel.searchStudios.collectAsState()
@@ -189,7 +195,7 @@ fun SearchBar(
                     lineHeight = 20.sp // 한글 텍스트가 잘리지 않도록 설정
                 ),
                 color = Color.Gray,
-                modifier=Modifier.alpha(0.5f)
+                modifier = Modifier.alpha(0.5f)
             )
         },
         colors = TextFieldDefaults.textFieldColors(
@@ -342,68 +348,60 @@ fun SearchResultBox(
     Box(
         modifier = modifier
     ) {
-        if (searchResults.isEmpty()) {
-            // 검색 결과가 없을 때 메시지 표시
-            Text(
-                text = "검색된 내용이 없습니다.",
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                searchResults.forEach { studio ->
-                    Row(
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            searchResults.forEach { studio ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .clickable {
+                            onRowClick(studio) // SearchResponseItem 전달
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(studio.profileImage),
+                        contentDescription = "${studio.name} 프로필 이미지",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .clickable {
-                                onRowClick(studio) // SearchResponseItem 전달
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                    ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(studio.profileImage),
-                            contentDescription = "${studio.name} 프로필 이미지",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(60.dp)
-                                .padding(4.dp)
-                                .clip(RoundedCornerShape(50.dp))
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = studio.name,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                            Text(
-                                text = studio.address,
-                                fontSize = 14.sp,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .alpha(0.5f),
-                        color = Color.Gray,
+                            .size(60.dp)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(50.dp))
                     )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = studio.name,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = studio.address,
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .alpha(0.5f),
+                    color = Color.Gray,
+                )
             }
         }
     }
