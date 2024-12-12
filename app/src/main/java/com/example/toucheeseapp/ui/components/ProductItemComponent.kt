@@ -74,7 +74,7 @@ fun ProductItem(product: Product, modifier: Modifier = Modifier) {
             Text(
                 text = "${product.price / 1000},000원",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), // Bold 설정
-                color = MaterialTheme.colorScheme.secondary
+                color = Color.Black
             )
         }
     }

@@ -45,7 +45,7 @@ fun TabBarComponent(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(8.dp),
-                    color = Color.White
+                    color = Color.Black
                 )
             }
         }
