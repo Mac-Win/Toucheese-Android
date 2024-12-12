@@ -52,7 +52,8 @@ fun StudioInfoComponent(
 
     var isExpanded by remember { mutableStateOf(false) } // 펼치기/접기
     val (isOperationHoursExpanded, setOperationHoursExpanded) = remember { mutableStateOf(false) }
-
+    // 오늘 날짜
+    val today = getCurrentDayOfWeekInKorean()
     Column(
         modifier = modifier
     ) {
@@ -174,8 +175,6 @@ fun StudioInfoComponent(
                     Column(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
-                        // 오늘 날짜
-                        val today = getCurrentDayOfWeekInKorean()
                         studio.operatingHours.forEach { operatingHour ->
                             // 요일
                             if (operatingHour.openTime == "휴무") { // 휴무일
@@ -190,7 +189,8 @@ fun StudioInfoComponent(
                                 Text(
                                     text = "${operatingHour.dayOfWeek} ${operatingHour.openTime} ~ ${operatingHour.closeTime}",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = if (operatingHour.dayOfWeek == today) FontWeight.Bold else FontWeight.Medium
+                                    fontWeight = if (operatingHour.dayOfWeek == today) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (operatingHour.dayOfWeek == today) Color.Blue else Color.Black
                                 )
                             }
                         }
