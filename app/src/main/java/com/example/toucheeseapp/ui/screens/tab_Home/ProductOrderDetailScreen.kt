@@ -59,7 +59,7 @@ fun ProductOrderDetailScreen(
     modifier: Modifier = Modifier,
     onBackButtonClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
-
+    onOrderClicked: () -> Unit,
     ) {
     val coroutineScope = rememberCoroutineScope()
     var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
@@ -105,27 +105,16 @@ fun ProductOrderDetailScreen(
                 ) {
                     Button(
                         onClick = {
-                            // 예약 정보 데이터를 수집한다
-                            val reservationProductId = productId // 상품 Id
-                            val reservationStudioId = studioId // 스튜디오 Id
-                            val reservationMemberId = memberId // 회원 Id
-                            val reservationTotalPrice = totalPrice // 최종 가격
-                            val reservationCreateDate = selectedDate // 예약 날짜
-                            val reservationCreateTime = selectedTime
-//                            val reservationCreateTime = TimeReservation(selectedTime.substringBefore(":").toInt(), selectedTime.substringAfter(":").toInt()) // 예약 시간
-                            val reservationPersonnel = numOfPerson
-                            val reservationAddOptions = selectedOption.toList()
-
                             // 예약 정보 데이터로 만든다
                             val cartData = CartData(
-                                productId= reservationProductId,
-                                studioId = reservationStudioId,
-                                memberId = reservationMemberId,
-                                totalPrice = reservationTotalPrice,
-                                createDate = reservationCreateDate.toString(),
-                                createTime = reservationCreateTime,
-                                personnel = reservationPersonnel,
-                                addOptions = reservationAddOptions
+                                productId= productId,
+                                studioId = studioId,
+                                memberId = memberId,
+                                totalPrice = totalPrice,
+                                createDate = selectedDate.toString(),
+                                createTime = selectedTime,
+                                personnel = numOfPerson,
+                                addOptions = selectedOption.toList()
                             )
                             Log.d(TAG, "productReservation: ${cartData}")
                             val token = tokenManager.getAccessToken()
@@ -138,7 +127,7 @@ fun ProductOrderDetailScreen(
                             }
 
                             // 장바구니 화면으로 이동한다
-
+                            onOrderClicked()
                         },
                         modifier = Modifier
                             .fillMaxWidth()

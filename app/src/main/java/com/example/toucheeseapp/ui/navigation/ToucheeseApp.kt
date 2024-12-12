@@ -67,8 +67,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
     // 첫 화면
     val firstScreen = if (tokenManager.getAccessToken() != null){
         isLoggedIn = true
-//        Screen.Home.route
-        Screen.OrderPay.route
+        Screen.Home.route
+//        Screen.OrderPay.route
     } else {
         isLoggedIn = false
         Screen.Login.route
@@ -163,14 +163,16 @@ fun ToucheeseApp(api: ToucheeseServer) {
             StudioListScreen(
                 conceptId = conceptId,
                 onClickLeadingIcon = { navController.navigateUp() },
-                onClickTrailingIcon = { Log.d(TAG, "장바구니 화면 이동 클릭") },
+                onClickTrailingIcon = {
+                    // 장바구니 화면으로 이동
+                    navController.navigate(Screen.Cart.route)
+                },
                 onStudioItemClicked = { studioId ->
                     // 스튜디오 상세 화면으로 이동
                     navController.navigate(
-                        Screen.StudioDetail.route.replace(
-                            "{studioId}",
-                            "$studioId"
-                        )
+                        Screen.StudioDetail.route
+                            .replace("{studioId}", "$studioId")
+                            .replace("{conceptId}", "$conceptId")
                     )
                 }
             )
@@ -179,6 +181,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
         // 스튜디오 상세 화면
         composable(Screen.StudioDetail.route) { backStackEntry ->
             val studioId = backStackEntry.arguments?.getString("studioId")?.toIntOrNull() ?: 0
+            val conceptId = backStackEntry.arguments?.getString("conceptId")?.toIntOrNull() ?: 0
 
             StudioDetailScreen(
                 studioId = studioId,
@@ -197,10 +200,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onProductClicked = { productId ->
                     // 상품 상세 화면으로 이동
                     navController.navigate(
-                        Screen.ProductOrderDetail.route.replace(
-                            "{productId}",
-                            "$productId"
-                        ).replace("{studioId}", "$studioId")
+                        Screen.ProductOrderDetail.route
+                            .replace("{productId}", "$productId")
+                            .replace("{studioId}", "$studioId")
+                            .replace("{conceptId}", "$conceptId")
                     )
                 }
 
@@ -231,10 +234,12 @@ fun ToucheeseApp(api: ToucheeseServer) {
             arguments = listOf(
                 navArgument("productId") { type = NavType.IntType },
                 navArgument("studioId") { type = NavType.IntType },
+                navArgument("conceptId") { type = NavType.IntType },
             )
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
             val studioId = backStackEntry.arguments?.getInt("studioId") ?: 0
+            val conceptId = backStackEntry.arguments?.getInt("conceptId") ?: 0
             ProductOrderDetailScreen(
                 tokenManager = tokenManager,
                 memberId = memberId,
@@ -248,6 +253,15 @@ fun ToucheeseApp(api: ToucheeseServer) {
                             .replace("{studioId}", "$studioId")
                             .replace("{productId}", "$productId")
                     )
+                },
+                onOrderClicked = {
+                    // 장바구니 화면으로 이동
+                    navController.navigate(Screen.Cart.route){
+                        // 백스택 제거
+                        popUpTo(Screen.StudioList.route
+                            .replace("{conceptId}", "$conceptId")
+                        ) { inclusive = true } // 모든 백스택 제거
+                    }
                 }
             )
         }
@@ -291,7 +305,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
         ){
             var selectedPaymentMethod by remember { mutableStateOf(0) }
             OrderPayScreen(
-                selectedCartIds = listOf(156, 157),
+                selectedCartIds = listOf(162, 163),
                 tokenManager = tokenManager,
                 selectedPaymentMethod = selectedPaymentMethod,
                 onPaymentMethodSelected = { index ->
@@ -299,11 +313,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 },
                 onConfirmOrder = {
                     // 예약 일정 탭으로 이동
+                    bottomNavSelectedTab = 1
                     navController.navigate("Test"){
                         // 백스택 제거
-                        popUpTo(navController.graph.id) {
-                            inclusive = true
-                        }
+                        popUpTo(0) { inclusive = true } // 모든 백스택 제거
                     }
                 },
                 onBackClick = {
