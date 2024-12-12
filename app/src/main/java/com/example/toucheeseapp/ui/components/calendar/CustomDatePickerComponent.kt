@@ -3,6 +3,7 @@ package com.example.toucheeseapp.ui.components.calendar
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -217,8 +218,9 @@ fun CustomDatePickerComponent(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(availableTime) { time ->
+                                val isPast = isPastTime(selectedDate, time)
                                 SuggestionChip(
-                                    enabled = isPastTime(selectedDate, time),
+                                    enabled = isPast,
                                     onClick = {
                                         Log.d("DatePicker", "clicked Time: $time")
                                         onDismissRequest()
@@ -237,6 +239,7 @@ fun CustomDatePickerComponent(
                                             modifier = Modifier.width(60.dp)
                                         )
                                     },
+                                    border = if(isPast) BorderStroke(1.dp, Color(0xFFFFF2CC)) else BorderStroke(1.dp, Color(0xFFECECEC)),
                                     modifier = Modifier
                                         .width(80.dp)
                                         .padding(horizontal = 4.dp)
