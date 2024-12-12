@@ -138,32 +138,46 @@ fun CustomDatePickerComponent(
                 dayContent = { state ->
                     val date = state.date
                     val selectionState = state.selectionState
-                    Card(
-                        modifier = Modifier
-                            .aspectRatio(1f)
-                            .padding(4.dp)
-                            .clickable {
-                                // 날짜 선택
-                                onDateClicked(date)
-                                selectionState.onDateSelected(date)
-                                Log.d("DatePicker", "date clicked: ${date}")
-                            },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (selectionState.isDateSelected(date)) Color(
-                                0xFFFFF2CC
-                            ) else Color.Transparent,
-                            disabledContainerColor = Color.Gray,
-                        ),
-                        shape = RoundedCornerShape(50.dp),
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
+                    //  서버에서 받아온 데이터 중에 같은 날짜를 출력
+                    val dayList = operationHours.filter { calendarTimeResponseItem ->
+                        calendarTimeResponseItem.date == date.toString()
+                    }
+                    if (dayList.isNotEmpty()){
+                        Log.d("CustomComponentPicker", "current day = ${dayList[0]}")
+                        // date에 해당하는 날짜 데이터 받아옴: CalendarTimeResponseItem
+                        val day = dayList[0]
+                        val today = LocalDate.now()
+                        // 현재보다 과거인지 여부
+                        val isPastDate = date.isBefore(today)
+                        Card(
+                            modifier = Modifier
+                                .aspectRatio(1f)
+                                .padding(4.dp)
+                                // 휴무일이거나 과거인 경우 비활성화
+                                .clickable(enabled = day.status && !isPastDate){
+                                    // 날짜 선택
+                                    onDateClicked(date)
+                                    selectionState.onDateSelected(date)
+                                    Log.d("DatePicker", "date clicked: ${date}")
+                                },
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (selectionState.isDateSelected(date)) Color(
+                                    0xFFFFF2CC
+                                ) else Color.Transparent,
+                                disabledContainerColor = Color.Gray,
+                            ),
+                            shape = RoundedCornerShape(50.dp),
                         ) {
-                            Text(
-                                text = date.dayOfMonth.toString(),
-                                color = Color.Black
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = date.dayOfMonth.toString(),
+                                    // 휴무일이거나 과거인 경우 비활성화
+                                    color = if(day.status && !isPastDate) Color.Black else Color.Gray.copy(alpha = 0.5f)
+                                )
+                            }
                         }
                     }
                 },
