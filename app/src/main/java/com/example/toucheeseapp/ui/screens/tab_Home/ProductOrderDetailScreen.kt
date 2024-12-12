@@ -79,6 +79,10 @@ fun ProductOrderDetailScreen(
     val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
     // 선택 시간
     var selectedTime by remember { mutableStateOf("") }
+    // 시간 선택했는지 여부
+    val isTimeSelected = selectedTime.isNotEmpty()
+    // context
+    val context = LocalContext.current
 
     if (productDetail != null) {
         // 기준 인원이 1인지 여부
@@ -104,35 +108,43 @@ fun ProductOrderDetailScreen(
                     containerColor = Color(0xFFFFFFFF),
                 ) {
                     Button(
+                        enabled = isTimeSelected,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            disabledContainerColor = Color.Gray
+                        ),
                         onClick = {
-                            // 예약 정보 데이터로 만든다
-                            val cartData = CartData(
-                                productId= productId,
-                                studioId = studioId,
-                                memberId = memberId,
-                                totalPrice = totalPrice,
-                                createDate = selectedDate.toString(),
-                                createTime = selectedTime,
-                                personnel = numOfPerson,
-                                addOptions = selectedOption.toList()
-                            )
-                            Log.d(TAG, "productReservation: ${cartData}")
-                            val token = tokenManager.getAccessToken()
-                            Log.d(TAG, "token: ${token}")
-                            // 예약 정보를 서버로 전송한다
-                            coroutineScope.launch {
-                                // 서버로 데이터 전송
-                                viewModel.saveCartData(token= token, cartData = cartData)
-                                Log.d(TAG, "서버 전송 클릭")
-                            }
+                            if (isTimeSelected) {
+                                // 예약 정보 데이터로 만든다
+                                val cartData = CartData(
+                                    productId= productId,
+                                    studioId = studioId,
+                                    memberId = memberId,
+                                    totalPrice = totalPrice,
+                                    createDate = selectedDate.toString(),
+                                    createTime = selectedTime,
+                                    personnel = numOfPerson,
+                                    addOptions = selectedOption.toList()
+                                )
+                                Log.d(TAG, "productReservation: ${cartData}")
+                                val token = tokenManager.getAccessToken()
+                                Log.d(TAG, "token: ${token}")
+                                // 예약 정보를 서버로 전송한다
+                                coroutineScope.launch {
+                                    // 서버로 데이터 전송
+                                    viewModel.saveCartData(token= token, cartData = cartData)
+                                    Log.d(TAG, "서버 전송 클릭")
+                                }
 
-                            // 장바구니 화면으로 이동한다
-                            onOrderClicked()
+                                // 장바구니 화면으로 이동한다
+                                onOrderClicked()
+                            } else {
+                                Toast.makeText(context, "시간을 선택해주세요", Toast.LENGTH_LONG).show()
+                            }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        colors = ButtonDefaults.buttonColors(Color(0xFFFFC000))
                     ) {
                         Text(
                             text = "선택 상품 주문 (₩$totalPrice)",
@@ -147,8 +159,6 @@ fun ProductOrderDetailScreen(
                 modifier = Modifier.padding(it)
             ) {
                 item {
-                    // Toast 메시지 호출을 위한 context
-                    val context = LocalContext.current
                     // 가격 & 옵션
                     ProductOrderOptionComponent(
                         productNumOfPeople = productDetail!!.standard, // 기준 인원
@@ -194,7 +204,7 @@ fun ProductOrderDetailScreen(
 
                     // 촬영날짜
                     DatePickComponent(
-                        date = if (selectedTime.isNotEmpty()) "${selectedDate.year}년 ${monthToKorea(selectedDate.month)}월 ${selectedDate.dayOfMonth}일 ( ${selectedTime} )" else "예약일자 및 시간 선택",
+                        date = if (isTimeSelected) "${selectedDate.year}년 ${monthToKorea(selectedDate.month)}월 ${selectedDate.dayOfMonth}일 ( ${selectedTime} )" else "예약일자 및 시간 선택",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
@@ -209,7 +219,6 @@ fun ProductOrderDetailScreen(
                             }
                         },
                     )
-
                 }
             }
 
