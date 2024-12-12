@@ -23,6 +23,7 @@ import com.example.toucheeseapp.ui.components.CartTopAppBarComponent
 import com.example.toucheeseapp.ui.components.ChangeOptionBottomSheetComponent
 import com.example.toucheeseapp.ui.components.CartItemComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +41,9 @@ fun CartScreen(
     var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
     // 장바구니 내역이 있는지 확인
     val isCartItemsExists = cartItems.isNotEmpty()
-
+    // BottomSheetModal 상태 관리
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutine = rememberCoroutineScope()
     // 토큰 받아오기
     val token = tokenManager.getAccessToken()
     Log.d("CartScreen", "Current Token: $token")
@@ -48,6 +51,10 @@ fun CartScreen(
     LaunchedEffect(Unit) {
         // 토큰에 해당하는 장바구니 목록
         viewModel.loadCartList(token)
+        // 바텀시트 처음에 expanded 상태로 설정
+        coroutine.launch {
+            bottomSheetState.expand()
+        }
     }
 
     // 총합 계산
@@ -156,6 +163,13 @@ fun CartScreen(
                                 selectedOptionIds = cartItem.selectAddOptions.map { it.selectOptionId }.toSet()
                                 Log.d("CartScreen", "Opening Bottom Sheet with SelectedOptionIds: $selectedOptionIds")
                                 isBottomSheetVisible = true
+                                coroutine.launch {
+                                    if (bottomSheetState.isVisible) {
+                                        bottomSheetState.hide()
+                                    } else {
+                                        bottomSheetState.expand()
+                                    }
+                                }
                             },
                             modifier = Modifier.padding(16.dp)
                         )
@@ -167,11 +181,16 @@ fun CartScreen(
 
     if (isBottomSheetVisible) {
         ModalBottomSheet(
+            sheetState = bottomSheetState, // 바텀시트 상태 전달
             onDismissRequest = {
                 Log.d("CartScreen", "Bottom sheet dismissed")
+                coroutine.launch {
+                    bottomSheetState.hide()
+                }
+                Log.d("CartScreen", "Bottom sheet is visible? : ${bottomSheetState.isVisible}")
                 isBottomSheetVisible = false
             },
-            modifier = Modifier.fillMaxSize().systemBarsPadding(),
+            modifier = Modifier.wrapContentHeight(),
             containerColor = Color(0xFFFFFCF5),
         ) {
             selectedItem?.let { item ->
