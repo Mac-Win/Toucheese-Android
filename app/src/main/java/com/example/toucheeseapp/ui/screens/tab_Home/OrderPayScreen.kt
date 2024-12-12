@@ -32,7 +32,7 @@ fun OrderPayScreen(
     selectedCartIds: List<Int>, // 선택한 장바구니 아이템의 id 리스트
     viewModel: StudioViewModel = hiltViewModel(),
     tokenManager: TokenManager,
-    selectedPaymentMethod: Int,
+    selectedPaymentMethod: Int = 0,
     onPaymentMethodSelected: (Int) -> Unit,
     onConfirmOrder: () -> Unit,
     onBackClick: () -> Unit
@@ -50,6 +50,8 @@ fun OrderPayScreen(
         // 장바구니 결제 조회
         orderPayResponse = viewModel.loadOrderPayData(token, cartIds)
     }
+    // 결제 수단 선택 여부
+    val isPaymentMethodSelected = !(selectedPaymentMethod == 0)
 
     // 최종 가격
     var totalPrice = 0
@@ -77,6 +79,7 @@ fun OrderPayScreen(
                 containerColor = Color(0xFFFFFCF5)
             ) {
                 Button(
+                    enabled = isPaymentMethodSelected,
                     onClick = {
                         coroutine.launch {
                             // 서버에 데이터를 전송
@@ -88,7 +91,10 @@ fun OrderPayScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC000))
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = Color(0xFFECECEC)
+                    )
                 ) {
                     Text(text = "예약하기 (₩$totalPrice)", fontSize = 16.sp)
                 }
@@ -132,6 +138,16 @@ fun OrderPayScreen(
 
             item {
                 SectionTitle("결제수단")
+
+                if (!isPaymentMethodSelected){
+                    // 결제 수단 선택 안 한 경우
+                    Text(
+                        text = "결제 수단을 선택해주세요",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Red,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+                }
             }
 
             items(paymentMethods) { paymentMethod ->
