@@ -35,7 +35,9 @@ import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.BottomNavigationBarComponent
 import com.example.toucheeseapp.ui.components.ShareBottomSheetComponent
 import com.example.toucheeseapp.ui.screens.login.LoginScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.CartScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.HomeScreen
+import com.example.toucheeseapp.ui.screens.tab_Home.OrderPayScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.ProductOrderDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
@@ -67,6 +69,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
     val firstScreen = if (tokenManager.getAccessToken() != null){
         isLoggedIn = true
         Screen.Home.route
+//        Screen.OrderPay.route
     } else {
         isLoggedIn = false
         Screen.Login.route
@@ -273,6 +276,37 @@ fun ToucheeseApp(api: ToucheeseServer) {
                     )
                 }
             )
+        }
+
+        // 장바구니 화면
+        composable(
+            Screen.Cart.route
+        ) {
+            CartScreen(
+                onBackClick = {navController.navigateUp()},
+                onClearCartClick = {},
+                onCheckoutClick = {
+                    navController.navigate(Screen.OrderPay.route)
+                },
+                tokenManager = tokenManager,
+            )
+
+        }
+
+
+        // 주문 및 결제 화면
+        composable(
+            Screen.OrderPay.route
+        ){
+            OrderPayScreen(
+                selectedCartIds = listOf(1, 2, 3),
+                tokenManager = tokenManager,
+                selectedPaymentMethod = "뭐야 이건",
+                onPaymentMethodSelected = { },
+                onConfirmOrder = { },
+                onBackClick = { }
+            )
+
         }
 
         // BottomNav Test 화면

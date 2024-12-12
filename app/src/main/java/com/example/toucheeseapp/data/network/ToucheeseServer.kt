@@ -1,18 +1,19 @@
 package com.example.toucheeseapp.data.network
 
 import com.example.toucheeseapp.data.model.calendar_studio.CalendarTimeResponse
-import com.example.toucheeseapp.data.model.carts_list.CartItemList
+import com.example.toucheeseapp.data.model.carts_list.CartListResponse
 import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
-import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
-import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.concept_studio.StudioResponse
 import com.example.toucheeseapp.data.model.filter_studio.FilterResponse
 import com.example.toucheeseapp.data.model.load_concept.ConceptResponse
 import com.example.toucheeseapp.data.model.product_detail.ProductDetailResponse
-import com.example.toucheeseapp.data.model.saveCartData.CartData
 import com.example.toucheeseapp.data.model.review_studio.StudioReviewResponse
+import com.example.toucheeseapp.data.model.saveCartData.CartData
+import com.example.toucheeseapp.data.model.saveReservationData.ReservationData
 import com.example.toucheeseapp.data.model.search_studio.SearchResponse
+import com.example.toucheeseapp.data.model.specific_review.ReviewResponse
 import com.example.toucheeseapp.data.model.studio_detail.StudioDetailResponse
+import com.example.toucheeseapp.data.model.userInfo.UserInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -123,13 +124,13 @@ interface ToucheeseServer {
     @GET("v1/members/carts/list")
     suspend fun loadCartList(
         @Header("Authorization") token: String?,
-        ): CartItemList
+    ): CartListResponse
 
     // 장바구니 옵션 및 인원 변경
     @PUT("v1/members/carts/{cartId}")
     suspend fun updateCartItem(
         @Header("Authorization") token: String?,
-        @Path("cartId") cartId:Int,
+        @Path("cartId") cartId: Int,
         @Body changedCartItem: ChangedCartItem,
     )
 
@@ -139,4 +140,12 @@ interface ToucheeseServer {
         @Header("Authorization") token: String?,
         @Path("cartId") cartId: Int
     )
+
+    // -------- 회원 API --------
+
+    // 회원 정보
+    @GET("v1/members/infos")
+    suspend fun loadUserData(
+        @Header("Authorization") token: String?
+    ): UserInfoResponse
 }

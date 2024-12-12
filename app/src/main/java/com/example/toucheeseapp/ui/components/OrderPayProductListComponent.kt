@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 
 @Composable
 fun OrderPayProductListComponent(
-    productItems: List<ProductItem>,
+    productItems: List<CartListResponseItem>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {

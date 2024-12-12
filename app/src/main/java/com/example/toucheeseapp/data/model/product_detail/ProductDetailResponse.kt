@@ -1,6 +1,7 @@
 package com.example.toucheeseapp.data.model.product_detail
 
 
+import com.example.toucheeseapp.data.model.carts_list.AddOption
 import com.google.gson.annotations.SerializedName
 
 data class ProductDetailResponse(

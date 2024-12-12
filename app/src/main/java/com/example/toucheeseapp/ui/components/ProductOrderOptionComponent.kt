@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.toucheeseapp.R
-import com.example.toucheeseapp.data.model.product_detail.AddOption
+import com.example.toucheeseapp.data.model.carts_list.AddOption
 
 @Composable
 fun ProductOrderOptionComponent(
@@ -50,6 +50,7 @@ fun ProductOrderOptionComponent(
     onReviewButtonClicked: () -> Unit,
     onOptionClicked: (Int) -> Unit, // 옵션 클릭 시 동작
     selectedOptionChanged: (Int) -> Unit,
+    showReviewButton: Boolean = true // 리뷰 버튼이 필요없는 화면에서 제거하기 위함
 ) {
 
     Column(modifier = modifier) {
@@ -65,6 +66,7 @@ fun ProductOrderOptionComponent(
             onDecreaseClicked = onDecreaseClicked,
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
+            showReviewButton = showReviewButton
             )
 
         // 추가 구매 옵션
@@ -91,18 +93,21 @@ private fun PriceSection(
     onDecreaseClicked: () -> Unit,
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
+    showReviewButton: Boolean = true
 ) {
     Column(
         modifier = modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
     ) {
         // 리뷰 보러가기
-        TextButton(
-            onClick = onReviewButtonClicked,
-        ) {
-            Text(
-                text= "리뷰 ${reviewCount}개 보러가기 >",
-                fontSize = 12.sp
-            )
+        if (showReviewButton) {
+            TextButton(
+                onClick = onReviewButtonClicked,
+            ) {
+                Text(
+                    text= "리뷰 ${reviewCount}개 보러가기 >",
+                    fontSize = 12.sp
+                )
+            }
         }
 
         // 가격
@@ -246,7 +251,7 @@ private fun AdditionalOptions(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = selectedOption.contains(index),
+                    selected = selectedOption.contains(option.id),
                     colors = RadioButtonColors(
                         selectedColor = Color(0xFFFFE085),
                         unselectedColor = Color(0xFFFFE085),
@@ -257,10 +262,10 @@ private fun AdditionalOptions(
                     onClick = {
                         // 금액 변경
                         onOptionClicked(
-                            if (selectedOption.contains(index)) -option.price else option.price
+                            if (selectedOption.contains(option.id)) -option.price else option.price
                         )
                         // 새로운 Set 객체를 생성하여 상태 변경
-                        selectedOptionChanged(index)
+                        selectedOptionChanged(option.id)
                     }
                 )
                 // 옵션명
