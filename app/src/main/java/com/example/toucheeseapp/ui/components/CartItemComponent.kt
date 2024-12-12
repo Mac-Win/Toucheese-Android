@@ -41,11 +41,12 @@ import com.example.toucheeseapp.data.model.carts_list.SelectAddOption
 @Composable
 fun CartItemComponent(
     cartItem: CartListResponseItem,
+    showDeleteIcon: Boolean = true,
+    showOptionChangeButton: Boolean = true,
+    modifier: Modifier = Modifier,
     onDeleteClick: (CartListResponseItem) -> Unit,
     onOptionChangeClick: (CartListResponseItem) -> Unit,
-    modifier: Modifier = Modifier,
-    showDeleteIcon: Boolean = true,
-    showOptionChangeButton: Boolean = true
+
 ) {
     Card(
         modifier = modifier
@@ -56,7 +57,7 @@ fun CartItemComponent(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column() {
+        Column {
             // 스튜디오 정보와 삭제 버튼
             Row(
                 verticalAlignment = Alignment.CenterVertically,
