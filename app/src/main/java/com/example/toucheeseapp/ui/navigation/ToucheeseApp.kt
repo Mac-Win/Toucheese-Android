@@ -43,6 +43,8 @@ import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioListScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioProductReviewScreen
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
 
@@ -299,8 +301,9 @@ fun ToucheeseApp(api: ToucheeseServer) {
             CartScreen(
                 onBackClick = {navController.navigateUp()},
                 onClearCartClick = {},
-                onCheckoutClick = {
-                    navController.navigate(Screen.OrderPay.route)
+                onCheckoutClick = { cartIds ->
+                    val route = Screen.OrderPay.createRoute(cartIds)
+                    navController.navigate(route)
                 },
                 tokenManager = tokenManager,
             )
@@ -310,11 +313,20 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
         // 주문 및 결제 화면
         composable(
-            Screen.OrderPay.route
-        ){
+            route = Screen.OrderPay.route,
+            arguments = listOf(
+                navArgument("orderIds") { type = NavType.StringType }
+            )
+        ){ backStackEntry ->
+            // 전달된 데이터 수신 및 역직렬화
+            val orderIdsJson = backStackEntry.arguments?.getString("orderIds") ?: "[]"
+            val selectedCartIds = Gson().fromJson<List<Int>>(orderIdsJson, object : TypeToken<List<Int>>() {}.type)
             var selectedPaymentMethod by remember { mutableStateOf(0) }
+            Log.d("ToucheeseApp", "orderIdsJson: ${orderIdsJson}")
+            Log.d("ToucheeseApp", "selectedCartIds: ${orderIdsJson}")
+
             OrderPayScreen(
-                selectedCartIds = listOf(162, 163),
+                selectedCartIds = selectedCartIds,
                 tokenManager = tokenManager,
                 selectedPaymentMethod = selectedPaymentMethod,
                 onPaymentMethodSelected = { index ->
