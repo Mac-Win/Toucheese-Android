@@ -46,7 +46,7 @@ fun ProfileComponent(
             text = profileNickname,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color.White // 텍스트 색상
+            color = Color.Black // 텍스트 색상
         )
     }
 }
