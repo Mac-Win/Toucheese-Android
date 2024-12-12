@@ -28,16 +28,18 @@ import kotlin.math.max
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    onBackClick: () -> Unit,
-    onClearCartClick: () -> Unit,
-    onCheckoutClick: (List<Int>) -> Unit,
     tokenManager: TokenManager,
-    viewModel: StudioViewModel = hiltViewModel()
+    viewModel: StudioViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    onCheckoutClick: (List<Int>) -> Unit,
+    onBackClick: () -> Unit,
 ) {
 
     val cartItems by viewModel.cartItems.collectAsState() // ViewModel에서 상태 관찰
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
+    // 장바구니 내역이 있는지 확인
+    val isCartItemsExists = cartItems.isNotEmpty()
 
     // 토큰 받아오기
     val token = tokenManager.getAccessToken()
@@ -94,6 +96,11 @@ fun CartScreen(
                 contentColor = Color.Black
             ) {
                 Button(
+                    enabled = isCartItemsExists,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = Color(0xFFECECEC)
+                    ),
                     onClick = {
                         val cartIds = cartItems.map { it.cartId }
                         onCheckoutClick(cartIds)
@@ -101,7 +108,6 @@ fun CartScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC000))
                 ) {
                     Text(
                         text = "예약하기 ($totalAmount)",
@@ -141,8 +147,8 @@ fun CartScreen(
                     ) { cartItem ->
                         CartItemComponent(
                             cartItem = cartItem,
-                            onDeleteClick = { cartItem ->
-                                viewModel.deleteCartItem(token, cartItem.cartId)
+                            onDeleteClick = { cartListResponseItem ->
+                                viewModel.deleteCartItem(token, cartListResponseItem.cartId)
                             },
                             onOptionChangeClick = {
                                 selectedItem = cartItem

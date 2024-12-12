@@ -300,7 +300,6 @@ fun ToucheeseApp(api: ToucheeseServer) {
         ) {
             CartScreen(
                 onBackClick = {navController.navigateUp()},
-                onClearCartClick = {},
                 onCheckoutClick = { cartIds ->
                     val route = Screen.OrderPay.createRoute(cartIds)
                     navController.navigate(route)
