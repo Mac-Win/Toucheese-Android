@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -186,7 +187,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
             val studioId = backStackEntry.arguments?.getString("studioId")?.toIntOrNull() ?: 0
             val conceptId = backStackEntry.arguments?.getString("conceptId")?.toIntOrNull() ?: 0
 
+            // 탭 상태 관리
+            val (selectedTab, setSelectedTab) = rememberSaveable {  mutableStateOf(0) }
             StudioDetailScreen(
+                selectedTab = selectedTab,
                 studioId = studioId,
                 navigateBack = { navController.navigateUp() },
                 onShare = { Log.d(TAG, "공유 클릭") },
@@ -208,8 +212,8 @@ fun ToucheeseApp(api: ToucheeseServer) {
                             .replace("{studioId}", "$studioId")
                             .replace("{conceptId}", "$conceptId")
                     )
-                }
-
+                },
+                onSelectedTabChanged = setSelectedTab,
             )
         }
 

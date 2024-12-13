@@ -2,6 +2,7 @@ package com.example.toucheeseapp.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -60,7 +61,7 @@ fun ChangeOptionBottomSheetComponent(
         derivedStateOf { recalcTotalPrice(numOfPeople, selectedOption) }
     }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
@@ -69,90 +70,91 @@ fun ChangeOptionBottomSheetComponent(
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             )
     ) {
-
-        // CartItemComponent 표시
-        CartItemComponent(
-            cartItem = cartItem,
-            onDeleteClick = onDeleteClick,
-            onOptionChangeClick = { /* 필요시 구현 */ },
-            modifier = Modifier.padding(bottom = 16.dp),
-            showDeleteIcon = false,
-            showOptionChangeButton = false
-        )
-
-        // ProductOrderOptionComponent 표시
-        ProductOrderOptionComponent(
-            productNumOfPeople = productNumOfPeople,
-            productNumOfPeoplePrice = productNumOfPeoplePrice,
-            productOptions = productOptions,
-            numOfPeople = numOfPeople,
-            reviewCount = reviewCount,
-            isOverFlow = isOverFlow,
-            isOnlyOne = isOnlyOne,
-            selectedOption = selectedOption,
-            onDecreaseClicked = onDecreaseClicked,
-            onIncreaseClicked = onIncreaseClicked,
-            onReviewButtonClicked = onReviewButtonClicked,
-            onOptionClicked = onOptionClicked,
-            selectedOptionChanged = selectedOptionChanged,
-            showReviewButton = false
-        )
-
-        // 구분선
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            thickness = DividerDefaults.Thickness,
-            color = Color.Gray
-        )
-
-        // 최종 가격 표시
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "최종 가격",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = Color.Black
+        item {
+            // CartItemComponent 표시
+            CartItemComponent(
+                cartItem = cartItem,
+                onDeleteClick = onDeleteClick,
+                onOptionChangeClick = { /* 필요시 구현 */ },
+                modifier = Modifier.padding(bottom = 16.dp),
+                showDeleteIcon = false,
+                showOptionChangeButton = false
             )
-            Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "${totalPrice / 1000},000원",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                )
-        }
-
-        // 최종 확인 버튼
-        Button(
-            onClick = {
-                // 변경 사항 ViewModel에 전달
-                val changedCartItem = ChangedCartItem(
-                    personnel = numOfPeople,
-                    addOptions = selectedOption.toList(),
-                    totalPrice = totalPrice
-                )
-                onOptionChangeClick(changedCartItem)
-                onConfirm()
-            },
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFFF2CC),
-            ),
-
-        ) {
-            Text(
-                text = "옵션 변경하기",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Black,
-                textAlign = TextAlign.Center,
+            // ProductOrderOptionComponent 표시
+            ProductOrderOptionComponent(
+                productNumOfPeople = productNumOfPeople,
+                productNumOfPeoplePrice = productNumOfPeoplePrice,
+                productOptions = productOptions,
+                numOfPeople = numOfPeople,
+                reviewCount = reviewCount,
+                isOverFlow = isOverFlow,
+                isOnlyOne = isOnlyOne,
+                selectedOption = selectedOption,
+                onDecreaseClicked = onDecreaseClicked,
+                onIncreaseClicked = onIncreaseClicked,
+                onReviewButtonClicked = onReviewButtonClicked,
+                onOptionClicked = onOptionClicked,
+                selectedOptionChanged = selectedOptionChanged,
+                showReviewButton = false
             )
+
+            // 구분선
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+                thickness = DividerDefaults.Thickness,
+                color = Color.Gray
+            )
+
+            // 최종 가격 표시
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "최종 가격",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "${totalPrice / 1000},000원",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                )
+            }
+
+            // 최종 확인 버튼
+            Button(
+                onClick = {
+                    // 변경 사항 ViewModel에 전달
+                    val changedCartItem = ChangedCartItem(
+                        personnel = numOfPeople,
+                        addOptions = selectedOption.toList(),
+                        totalPrice = totalPrice
+                    )
+                    onOptionChangeClick(changedCartItem)
+                    onConfirm()
+                },
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFF2CC),
+                ),
+
+                ) {
+                Text(
+                    text = "옵션 변경하기",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

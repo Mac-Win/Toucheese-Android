@@ -42,6 +42,7 @@ import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @Composable
 fun StudioDetailScreen(
+    selectedTab: Int,
     studioId: Int,
     viewModel: StudioViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
@@ -49,12 +50,11 @@ fun StudioDetailScreen(
     onBookmark: (Boolean) -> Unit,
     onReviewClick: (Int) -> Unit,
     onProductClicked: (Int) -> Unit,
-
+    onSelectedTabChanged: (Int) -> Unit,
     ) {
     val studio by viewModel.studioDetail.collectAsState()
     val isBookmarked by viewModel.isBookmarked.collectAsState()
     var expandedNotice by remember { mutableStateOf(false) }
-    var selectedTab by remember { mutableStateOf(0) }
     val studioReviews by viewModel.studioReviews.collectAsState()
 
     LaunchedEffect(studioId) {
@@ -118,7 +118,7 @@ fun StudioDetailScreen(
                 item {
                     TabBarComponent(
                         selectedTabIndex = selectedTab,
-                        onTabSelected = { selectedTab = it },
+                        onTabSelected = onSelectedTabChanged,
                         tabTitles = listOf("가격", "리뷰")
                     )
                 }

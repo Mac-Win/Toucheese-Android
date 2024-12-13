@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,102 +66,104 @@ fun ReviewDetailScreen(
     LaunchedEffect(studioId, reviewId) {
         viewModel.loadStudioSpecificReview(studioId, reviewId)
     }
+    Scaffold(
+        topBar = {
+            StudioTopAppBarComponent(
+                isBookmarked = false, // 임의 값
+                onNavigateBack = navigateBack,
+                onShare = { isShareSheetVisible = true },
+                onBookmarkToggle = { /* 북마크 처리 */ }
+            )
+        }
+    ) { innerPadding ->
+        if (specificReview != null) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(innerPadding), // 전체 배경색
+                verticalArrangement = Arrangement.spacedBy(16.dp) // 요소 간 간격
+            ) {
+                // 프로필 섹션
+                item {
+                    ProfileComponent(
+                        profileDrawableRes = R.drawable.profileimage, // 드로어블 리소스 ID
+                        profileNickname = "정두콩"
+                    )
+                }
 
-    if (specificReview != null) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White), // 전체 배경색
-            verticalArrangement = Arrangement.spacedBy(16.dp) // 요소 간 간격
-        ) {
-            // TopAppBar
-            item {
-                StudioTopAppBarComponent(
-                    isBookmarked = false, // 임의 값
-                    onNavigateBack = navigateBack,
-                    onShare = { isShareSheetVisible = true },
-                    onBookmarkToggle = { /* 북마크 처리 */ }
-                )
-            }
+                // 리뷰 사진
+                item {
+                    specificReview?.reviewImages?.let { photoUrls ->
+                        ReviewPhotoComponent(
+                            modifier = Modifier.padding(8.dp),
+                            photoUrls = photoUrls,
+                            onPhotoClick = { index ->
+                                selectedPhotoIndex = index
+                                isDialogVisible = true
+                            }
+                        )
+                    }
+                }
 
-            // 프로필 섹션
-            item {
-                ProfileComponent(
-                    profileDrawableRes = R.drawable.profileimage, // 드로어블 리소스 ID
-                    profileNickname = "정두콩"
-                )
-            }
+                // 리뷰 내용
+                item {
+                    specificReview?.reviewContent?.let { reviewText ->
+                        ReviewContent(reviewText = reviewText)
+                    }
+                }
 
-            // 리뷰 사진
-            item {
-                specificReview?.reviewImages?.let { photoUrls ->
-                    ReviewPhotoComponent(
-                        modifier = Modifier.padding(8.dp),
-                        photoUrls = photoUrls,
-                        onPhotoClick = { index ->
-                            selectedPhotoIndex = index
-                            isDialogVisible = true
-                        }
+                // 디바이더
+                item {
+                    HorizontalDivider(
+                        color = Color(0xFFFFC000),
+                        thickness = 1.dp
+                    )
+                }
+
+                // 스튜디오 프로필 및 댓글 섹션
+                item {
+                    ReviewStudioAndCommentComponent(
+                        studio = studio,
+                        comments = dummyComments
                     )
                 }
             }
-
-            // 리뷰 내용
-            item {
-                specificReview?.reviewContent?.let { reviewText ->
-                    ReviewContent(reviewText = reviewText)
-                }
+        } else {
+            // 로딩 상태 표시
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "리뷰 정보를 불러오는 중입니다.")
             }
+        }
 
-            // 디바이더
-            item {
-                Divider(
-                    color = Color(0xFFFFC000),
-                    thickness = 1.dp
-                )
-            }
-
-            // 스튜디오 프로필 및 댓글 섹션
-            item {
-                ReviewStudioAndCommentComponent(
-                    studio = studio,
-                    comments = dummyComments
+        // 이미지 다이얼로그 표시
+        if (isDialogVisible) {
+            specificReview?.reviewImages?.let { photoUrls ->
+                ReviewImageDialog(
+                    photoUrls = photoUrls,
+                    selectedIndex = selectedPhotoIndex,
+                    onDismiss = { isDialogVisible = false }
                 )
             }
         }
-    } else {
-        // 로딩 상태 표시
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "리뷰 정보를 불러오는 중입니다.")
+
+        // 공유 바텀 시트
+        if (isShareSheetVisible) {
+            ModalBottomSheet(
+                onDismissRequest = { isShareSheetVisible = false },
+                modifier = Modifier.wrapContentHeight(),
+            ) {
+                ShareBottomSheetComponent(
+                    modifier = Modifier.fillMaxWidth(),
+                    context = context,
+                    pageLink = pageLink,
+                    onDismiss = { isShareSheetVisible = false }
+                )
+            }
         }
     }
 
-    // 이미지 다이얼로그 표시
-    if (isDialogVisible) {
-        specificReview?.reviewImages?.let { photoUrls ->
-            ReviewImageDialog(
-                photoUrls = photoUrls,
-                selectedIndex = selectedPhotoIndex,
-                onDismiss = { isDialogVisible = false }
-            )
-        }
-    }
-
-    // 공유 바텀 시트
-    if (isShareSheetVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { isShareSheetVisible = false },
-            modifier = Modifier.fillMaxHeight(),
-        ) {
-            ShareBottomSheetComponent(
-                modifier = Modifier.fillMaxWidth(),
-                context = context,
-                pageLink = pageLink,
-                onDismiss = { isShareSheetVisible = false }
-            )
-        }
-    }
 }

@@ -72,7 +72,13 @@ fun OrderPayScreen(
         )
     Scaffold(
         topBar = {
-            OrderPayTopAppBarComponent (onClickLeadingIcon = onBackClick)
+            CartTopAppBarComponent(
+                title = "주문/결제",
+                showLeadingIcon = true,
+                showTrailingIcon = false,
+                onClickLeadingIcon = onBackClick,
+                onClickTrailingICon = { /* 필요시 구현 */}
+            )
         },
         bottomBar = {
             BottomAppBar(

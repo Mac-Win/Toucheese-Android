@@ -94,7 +94,11 @@ fun CartScreen(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
             CartTopAppBarComponent(
+                title = "장바구니",
+                showLeadingIcon = true,
+                showTrailingIcon = false,
                 onClickLeadingIcon = onBackClick,
+                onClickTrailingICon = { /* 필요시 구현 */}
             )
         },
         bottomBar = {
