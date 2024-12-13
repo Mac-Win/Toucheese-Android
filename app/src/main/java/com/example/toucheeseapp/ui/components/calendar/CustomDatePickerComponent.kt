@@ -86,6 +86,7 @@ fun CustomDatePickerComponent(
         ) {
             SelectableCalendar(
                 modifier = Modifier.padding(16.dp),
+                horizontalSwipeEnabled = false,
                 calendarState = calendarSate,
                 monthHeader = {
                     Row(
