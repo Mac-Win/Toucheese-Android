@@ -31,6 +31,7 @@ import com.example.toucheeseapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartTopAppBarComponent(
+    title: String,
     showLeadingIcon: Boolean = false,
     showTrailingIcon: Boolean = false,
     modifier: Modifier = Modifier,
@@ -44,7 +45,7 @@ fun CartTopAppBarComponent(
                 modifier = modifier.fillMaxSize()
             ) {
                 Text(
-                    text = "장바구니",
+                    text = title,
                     textAlign = TextAlign.Center,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
