@@ -30,8 +30,8 @@ fun TopAppBarComponent(
     showLeadingIcon: Boolean = false,
     showTrailingIcon: Boolean = false,
     modifier: Modifier = Modifier,
-    onClickLeadingIcon: () -> Unit,
-    onClickTrailingIcon: () -> Unit
+    onClickLeadingIcon: () -> Unit = { },
+    onClickTrailingIcon: () -> Unit = { }
 ) {
     TopAppBar(
         title = {
