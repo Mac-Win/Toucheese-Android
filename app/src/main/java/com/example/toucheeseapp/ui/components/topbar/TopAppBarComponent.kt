@@ -13,20 +13,25 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.example.toucheeseapp.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarComponent(
     title: String,
+    leadingIcon: ImageVector = ImageVector.vectorResource(R.drawable.home_36px),
+    trailingIcon: ImageVector = ImageVector.vectorResource(R.drawable.home_36px),
     showLeadingIcon: Boolean = false,
     showTrailingIcon: Boolean = false,
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
-    onClickTrailingICon: () -> Unit
+    onClickTrailingIcon: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -47,7 +52,7 @@ fun TopAppBarComponent(
             if (showLeadingIcon) {
                 IconButton(onClick = onClickLeadingIcon) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack, // 뒤로가기 버튼
+                        imageVector = leadingIcon, // 뒤로가기 버튼
                         contentDescription = "Back"
                     )
                 }
@@ -61,9 +66,9 @@ fun TopAppBarComponent(
         },
         actions = {
             if (showTrailingIcon) {
-                IconButton(onClick = onClickTrailingICon) {
+                IconButton(onClick = onClickTrailingIcon) {
                     Icon(
-                        imageVector = Icons.Default.ShoppingCart, // 장바구니 버튼
+                        imageVector = trailingIcon, // 장바구니 버튼
                         contentDescription = "Cart"
                     )
                 }

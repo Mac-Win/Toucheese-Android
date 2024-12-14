@@ -76,7 +76,7 @@ fun OrderPayScreen(
                 showLeadingIcon = true,
                 showTrailingIcon = false,
                 onClickLeadingIcon = onBackClick,
-                onClickTrailingICon = { /* 필요시 구현 */ }
+                onClickTrailingIcon = { /* 필요시 구현 */ }
             )
         },
         bottomBar = {
