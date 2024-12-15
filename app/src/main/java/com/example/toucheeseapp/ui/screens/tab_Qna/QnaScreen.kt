@@ -28,6 +28,7 @@ fun QnaScreen(
     viewModel: QnaViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onTabSelected: (Int) -> Unit,
+    onItemClicked: () -> Unit,
     onButtonClicked: () -> Unit,
 ) {
     Scaffold(
@@ -74,17 +75,19 @@ fun QnaScreen(
             items(testDataList) { item ->
                 // 문의 내역 아이템
                 InfoListItemComponent(
-                    title = item,
+                    title = "Q.${item}",
+                    content = "",
                     createDate = "2024-12-15",
                     userName = "홍길동",
                     replyState = item.isNotEmpty(),
+                    isContentShowed = false,
                     modifier = Modifier.padding(
                         start = 12.dp,
                         end = 12.dp,
                         bottom = 12.dp,
                         top = 16.dp
                     ),
-                    onItemClicked = { Log.d("QnaScreen", "문의 item 클릭 : ${item}") }
+                    onItemClicked = onItemClicked,
                 )
             }
 
