@@ -5,9 +5,5 @@ import com.example.toucheeseapp.data.repository.QnaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-//@HiltViewModel
-class QnaViewModel /*@Inject constructor(
-    private val repository: QnaRepository
-): ViewModel() {
-
-}*/
+class QnaViewModel: ViewModel() {
+}
