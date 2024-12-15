@@ -2,9 +2,9 @@ package com.example.toucheeseapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val md_theme_light_primary = Color(0xFFFFBE00)
-val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-val md_theme_light_primaryContainer = Color(0xFF89F8C7)
+val md_theme_light_primary = Color(0xFFFFD129)
+val md_theme_light_onPrimary = Color(0xFF1F1F1F) // 주조색 위의 글자색
+val md_theme_light_primaryContainer = Color(0xFFFFD129) // 버튼 등의 container 색상
 val md_theme_light_onPrimaryContainer = Color(0xFF002114)
 val md_theme_light_secondary = Color(0xFFFFF2CC)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)
@@ -18,10 +18,10 @@ val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
-val md_theme_light_background = Color(0xFFFBFDF9)
-val md_theme_light_onBackground = Color(0xFF191C1A)
-val md_theme_light_surface = Color(0xFFFBFDF9)
-val md_theme_light_onSurface = Color(0xFF191C1A)
+val md_theme_light_background = Color(0xFFFAFAFA)
+val md_theme_light_onBackground = Color(0xFF595959)
+val md_theme_light_surface = Color(0xFFFAFAFA)
+val md_theme_light_onSurface = Color(0xFF141414)
 val md_theme_light_surfaceVariant = Color(0xFFDBE5DD)
 val md_theme_light_onSurfaceVariant = Color(0xFF404943)
 val md_theme_light_outline = Color(0xFF707973)
@@ -30,7 +30,7 @@ val md_theme_light_inverseSurface = Color(0xFF2E312F)
 val md_theme_light_inversePrimary = Color(0xFF6CDBAC)
 val md_theme_light_shadow = Color(0xFF000000)
 val md_theme_light_surfaceTint = Color(0xFF006C4C)
-val md_theme_light_outlineVariant = Color(0xFFBFC9C2)
+val md_theme_light_outlineVariant = Color(0xFFD9D9D9)
 val md_theme_light_scrim = Color(0xFF000000)
 
 val md_theme_dark_primary = Color(0xFF6CDBAC)
