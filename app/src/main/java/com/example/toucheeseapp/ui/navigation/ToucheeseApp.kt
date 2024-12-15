@@ -46,6 +46,7 @@ import com.example.toucheeseapp.ui.screens.tab_Home.StudioListScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioProductReviewScreen
 import com.example.toucheeseapp.ui.screens.tab_Qna.QnaContentScreen
 import com.example.toucheeseapp.ui.screens.tab_Qna.QnaScreen
+import com.example.toucheeseapp.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -375,7 +376,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
                 onButtonClicked = {
                     // 문의 작성 화면으로 이동
-//                    navController.navigate(Screen.Qna.route)
+                    navController.navigate(Screen.QnaWrite.route)
                 }
             )
         }
@@ -397,6 +398,34 @@ fun ToucheeseApp(api: ToucheeseServer) {
                     )
                     bottomNavSelectedTab = selectedTab
                 },
+            )
+        }
+
+        // 문의작성 화면
+        composable(Screen.QnaWrite.route){
+            QnaWriteScreen(
+                selectedTab = bottomNavSelectedTab,
+
+                onClickLeadingIcon = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = selectedTab
+                },
+                onEnrolledClicked = {
+                    // 문의하기 탭으로 이동
+                    navController.navigate(Screen.Qna.route){
+                        popUpTo(navController.graph.id){
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 
