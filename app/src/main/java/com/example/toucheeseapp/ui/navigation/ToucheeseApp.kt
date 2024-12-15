@@ -152,11 +152,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 },
                 onTabSelected = { selectedTab ->
                     // backStack 초기화
-                    navController.navigate("Test"){
-                        popUpTo(navController.graph.id){
-                            inclusive = true
-                        }
-                    }
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController
+                    )
                     // 탭 이동
                     bottomNavSelectedTab = selectedTab
                 }
