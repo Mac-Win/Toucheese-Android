@@ -39,5 +39,10 @@ val Typography = Typography(
         fontFamily = NotoSansKr,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = NotoSansKr,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp
     )
 )
