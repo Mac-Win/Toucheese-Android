@@ -33,11 +33,11 @@ val Typography = Typography(
     labelSmall = TextStyle(
         fontFamily = NotoSansKr,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = 12.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = NotoSansKr,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
+        fontSize = 16.sp
     )
 )
