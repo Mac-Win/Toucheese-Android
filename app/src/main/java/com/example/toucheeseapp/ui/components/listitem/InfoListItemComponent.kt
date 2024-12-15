@@ -27,9 +27,11 @@ import com.example.toucheeseapp.ui.theme.ToucheeseAppTheme
 @Composable
 fun InfoListItemComponent(
     title: String,
+    content: String = "",
     createDate: String,
     userName: String,
     replyState: Boolean,
+    isContentShowed: Boolean,
     modifier: Modifier = Modifier,
     onItemClicked: () -> Unit,
 ) {
@@ -47,7 +49,7 @@ fun InfoListItemComponent(
         ) {
 
             Text(
-                text = "Q.$title",
+                text = title,
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
@@ -55,7 +57,9 @@ fun InfoListItemComponent(
                 style = MaterialTheme.typography.bodyMedium
             )
             Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 SuggestionChip(
@@ -85,14 +89,30 @@ fun InfoListItemComponent(
                             style = MaterialTheme.typography.labelSmall
                         )
                     },
-                    modifier = Modifier.wrapContentHeight()
-                        .clickable(enabled = false){},
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .clickable(enabled = false) {},
                     colors = SuggestionChipDefaults.suggestionChipColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         disabledContainerColor = Color(0xFFECECEC)
                     ),
                     onClick = { /* 필요 시 연결 및 구현 */},
                 )
+            }
+
+            if (isContentShowed) {
+                if (content.isNotEmpty()) {
+                    Text(
+                        text = content,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF434343)
+                    )
+                } else {
+                    Text(
+                        text = "작성해주신 문의 내용이 없습니다.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
     }
@@ -103,15 +123,19 @@ fun InfoListItemComponent(
 @Composable
 private fun InfoListItemPreview() {
     val title = "제목을 입력해주세요"
+    val content = "문의 내용입니다.\n문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다. 문의 내용입니다."
     val createDate = "24.11.04"
     val userName = "홍길동"
     val replyState = true
+    val isContentShowed = true
     ToucheeseAppTheme {
         InfoListItemComponent(
             title = title,
+            content = content,
             createDate = createDate,
             userName = userName,
             replyState = replyState,
+            isContentShowed = isContentShowed,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 16.dp),
@@ -119,18 +143,3 @@ private fun InfoListItemPreview() {
         )
     }
 }
-
-//data class QnaTestData(
-//    val title: String,
-//    val content: String,
-//    val createDate: String,
-//    val userName: String,
-//    val replyState: Boolean,
-//    val qnaResponseItem: QnaTestResponseItem
-//)
-//
-//data class QnaTestResponseItem(
-//    val answerName: String,
-//    val answerDate: String,
-//    val answerContent: String
-//)
