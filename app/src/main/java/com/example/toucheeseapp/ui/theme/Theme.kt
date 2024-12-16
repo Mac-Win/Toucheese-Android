@@ -1,4 +1,4 @@
-package com.example.toucheeseApp.ui.theme
+package com.example.toucheeseapp.ui.theme
 
 import android.app.Activity
 import android.os.Build

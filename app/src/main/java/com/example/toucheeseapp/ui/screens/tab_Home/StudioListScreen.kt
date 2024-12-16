@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.ui.components.FilterChipComponent
 import com.example.toucheeseapp.ui.components.StudioListItemComponent
-import com.example.toucheeseapp.ui.components.TopAppBarComponent
+import com.example.toucheeseapp.ui.components.topbar.TopAppBarComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 
 @Composable
@@ -42,6 +45,11 @@ fun StudioListScreen(
     Scaffold(
         topBar = {
             TopAppBarComponent(
+                title = "검색",
+                leadingIcon = Icons.AutoMirrored.Default.ArrowBack,
+                trailingIcon = Icons.Default.ShoppingCart,
+                showLeadingIcon = true,
+                showTrailingIcon = true,
                 onClickLeadingIcon = onClickLeadingIcon,
                 onClickTrailingIcon = onClickTrailingIcon,
             )

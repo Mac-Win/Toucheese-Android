@@ -44,6 +44,9 @@ import com.example.toucheeseapp.ui.screens.tab_Home.ReviewDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioDetailScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioListScreen
 import com.example.toucheeseapp.ui.screens.tab_Home.StudioProductReviewScreen
+import com.example.toucheeseapp.ui.screens.tab_Qna.QnaContentScreen
+import com.example.toucheeseapp.ui.screens.tab_Qna.QnaScreen
+import com.example.toucheeseapp.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -151,11 +154,10 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 },
                 onTabSelected = { selectedTab ->
                     // backStack 초기화
-                    navController.navigate("Test"){
-                        popUpTo(navController.graph.id){
-                            inclusive = true
-                        }
-                    }
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController
+                    )
                     // 탭 이동
                     bottomNavSelectedTab = selectedTab
                 }
@@ -355,6 +357,79 @@ fun ToucheeseApp(api: ToucheeseServer) {
 
         }
 
+        // 문의하기 화면
+        composable(Screen.Qna.route){
+            QnaScreen(
+                selectedTab = bottomNavSelectedTab,
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = selectedTab
+                },
+                onItemClicked = {
+                    // 문의 내역 화면으로 이동
+                    navController.navigate(Screen.QnaContent.route)
+                },
+
+                onButtonClicked = {
+                    // 문의 작성 화면으로 이동
+                    navController.navigate(Screen.QnaWrite.route)
+                }
+            )
+        }
+
+        // 문의내역 화면
+        composable(Screen.QnaContent.route){
+            QnaContentScreen(
+                selectedTab = bottomNavSelectedTab,
+
+                onClickLeadingIcon = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = selectedTab
+                },
+            )
+        }
+
+        // 문의작성 화면
+        composable(Screen.QnaWrite.route){
+            QnaWriteScreen(
+                selectedTab = bottomNavSelectedTab,
+
+                onClickLeadingIcon = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = selectedTab
+                },
+                onEnrolledClicked = {
+                    // 문의하기 탭으로 이동
+                    navController.navigate(Screen.Qna.route){
+                        popUpTo(navController.graph.id){
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+
         // BottomNav Test 화면
         composable("Test"){
             Scaffold(
@@ -419,6 +494,15 @@ fun bottomNavClicked(selectedTab: Int, navController: NavController) {
                 }
             }
 
+        }
+
+        // 문의하기 화면으로 이동
+        2 -> {
+            navController.navigate(Screen.Qna.route){
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+            }
         }
         // Test 화면 이동
         else -> {

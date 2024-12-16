@@ -5,13 +5,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,7 +21,7 @@ import com.example.toucheeseapp.data.model.carts_list.CartListResponseItem
 import com.example.toucheeseapp.data.model.carts_list.SelectAddOption
 import com.example.toucheeseapp.data.model.carts_optionChange.ChangedCartItem
 import com.example.toucheeseapp.data.token_manager.TokenManager
-import com.example.toucheeseapp.ui.components.CartTopAppBarComponent
+import com.example.toucheeseapp.ui.components.topbar.TopAppBarComponent
 import com.example.toucheeseapp.ui.components.ChangeOptionBottomSheetComponent
 import com.example.toucheeseapp.ui.components.CartItemComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
@@ -93,12 +95,13 @@ fun CartScreen(
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
-            CartTopAppBarComponent(
+            TopAppBarComponent(
                 title = "장바구니",
+                leadingIcon = Icons.AutoMirrored.Default.ArrowBack,
                 showLeadingIcon = true,
                 showTrailingIcon = false,
                 onClickLeadingIcon = onBackClick,
-                onClickTrailingICon = { /* 필요시 구현 */}
+                onClickTrailingIcon = { /* 필요시 구현 */}
             )
         },
         bottomBar = {
