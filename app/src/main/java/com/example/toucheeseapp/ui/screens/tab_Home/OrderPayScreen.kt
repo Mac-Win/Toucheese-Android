@@ -16,14 +16,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.toucheeseapp.data.model.cart_order_pay.OrderPayResponse
-import com.example.toucheeseapp.data.model.userInfo.UserInfoResponse
 import com.example.toucheeseapp.data.token_manager.TokenManager
 import com.example.toucheeseapp.ui.components.*
+import com.example.toucheeseapp.ui.components.topbar.TopAppBarComponent
 import com.example.toucheeseapp.ui.viewmodel.StudioViewModel
 import kotlinx.coroutines.launch
 
@@ -72,12 +71,12 @@ fun OrderPayScreen(
         )
     Scaffold(
         topBar = {
-            CartTopAppBarComponent(
+            TopAppBarComponent(
                 title = "주문/결제",
                 showLeadingIcon = true,
                 showTrailingIcon = false,
                 onClickLeadingIcon = onBackClick,
-                onClickTrailingICon = { /* 필요시 구현 */}
+                onClickTrailingIcon = { /* 필요시 구현 */ }
             )
         },
         bottomBar = {
