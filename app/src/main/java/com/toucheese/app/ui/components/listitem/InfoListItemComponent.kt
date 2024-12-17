@@ -2,10 +2,11 @@ package com.toucheese.app.ui.components.listitem
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,7 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,52 +36,51 @@ fun InfoListItemComponent(
     onItemClicked: () -> Unit,
 ) {
     OutlinedCard(
-        enabled = replyState,
         shape = CardDefaults.outlinedShape,
         colors = CardDefaults.outlinedCardColors(
             containerColor = MaterialTheme.colorScheme.surface,
-            disabledContainerColor = Color(0xFFECECEC)
         ),
         onClick = onItemClicked,
     ) {
         Column(
-            modifier = modifier
+            modifier = modifier,
         ) {
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "작성일: $createDate",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            // 제목
+            Row {
+                Text(
+                    text = "Q.",
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            // 문의 이미지
+            Row {
+
+            }
+
+            // 작성자 및 작성일
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                SuggestionChip(
-                    shape = RoundedCornerShape(50.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
-                    label = {
-                        Text(
-                            text = userName,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    },
-                    modifier = Modifier.wrapContentHeight(),
-                    colors = SuggestionChipDefaults.suggestionChipColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    ),
-                    onClick = { /* 필요 시 연결 및 구현 */},
+                Text(
+                    text = userName,
+                    style = MaterialTheme.typography.labelSmall
                 )
 
 
+                Text(
+                    text = "| 작성일: $createDate",
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
                 SuggestionChip(
-                    shape = RoundedCornerShape(999.dp),
-                    border = if(replyState) BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer) else BorderStroke(1.dp, Color(0xFFECECECE)),
+                    shape = RoundedCornerShape(6.dp),
+                    border = if(replyState) BorderStroke(1.dp, Color(0xFFFFC999)) else BorderStroke(1.dp, Color(0xFFD9D9D9)),
                     enabled = replyState,
                     label = {
                         Text(
@@ -91,12 +92,13 @@ fun InfoListItemComponent(
                         .wrapContentHeight()
                         .clickable(enabled = false) {},
                     colors = SuggestionChipDefaults.suggestionChipColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        disabledContainerColor = Color(0xFFECECEC)
+                        containerColor = Color(0xFFFFFDE6),
+                        disabledContainerColor = MaterialTheme.colorScheme.background,
+                        labelColor = Color(0xFFFFC999),
+                        disabledLabelColor = Color(0xFF8C8C8C)
                     ),
                     onClick = { /* 필요 시 연결 및 구현 */},
                 )
-            }
 
             if (isContentShowed) {
                 if (content.isNotEmpty()) {
