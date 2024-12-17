@@ -2,6 +2,7 @@ package com.toucheese.app.ui.screens.tab_Qna
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -330,6 +331,10 @@ fun QnaWriteScreen(
                                             onLongPress = {
                                                 // 이미지 삭제 드롭다운 띄우기
                                                 setDeleteDropdownState(true)
+                                            },
+                                            onTap = {
+                                                // 삭제 방법 알림
+                                                Toast.makeText(context, "사진을 길게 누를 경우 삭제할 수 있습니다.", Toast.LENGTH_SHORT).show()
                                             }
                                         )
                                     },
