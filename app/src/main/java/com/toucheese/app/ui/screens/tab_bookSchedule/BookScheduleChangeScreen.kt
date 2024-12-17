@@ -20,6 +20,7 @@ import io.github.boguszpawlowski.composecalendar.selection.SelectionMode
 import java.time.LocalDate
 import java.time.YearMonth
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BookingScheduleChangeScreen(
@@ -29,7 +30,7 @@ fun BookingScheduleChangeScreen(
 ) {
     Scaffold(
         topBar = {
-            com.example.toucheeseapp.ui.components.topbar.TopAppBarComponent(
+            com.toucheese.app.ui.components.topbar.TopAppBarComponent(
                 title = "예약 일정",
                 showLeadingIcon = true,
                 leadingIcon = Icons.AutoMirrored.Default.ArrowBack,

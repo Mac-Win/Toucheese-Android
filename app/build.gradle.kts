@@ -11,7 +11,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.toucheese.eapp"
+        applicationId = "com.toucheese.app"
         minSdk = 24
         targetSdk = 35
         versionCode = 2
