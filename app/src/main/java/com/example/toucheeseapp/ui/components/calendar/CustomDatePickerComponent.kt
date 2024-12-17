@@ -59,7 +59,7 @@ import java.time.format.DateTimeParseException
 fun CustomDatePickerComponent(
     selectedDate: String,
     operationHours: List<CalendarTimeResponseItem>,
-    calendarSate: CalendarState<DynamicSelectionState>,
+    calendarState: CalendarState<DynamicSelectionState>,
     isDateClicked: Boolean,
     onDismissRequest: () -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
@@ -87,7 +87,7 @@ fun CustomDatePickerComponent(
             SelectableCalendar(
                 modifier = Modifier.padding(16.dp),
                 horizontalSwipeEnabled = false,
-                calendarState = calendarSate,
+                calendarState = calendarState,
                 monthHeader = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -97,13 +97,13 @@ fun CustomDatePickerComponent(
                         // 이전 달로 이동
                         IconButton(
                             onClick = {
-                                calendarSate.monthState.currentMonth =
-                                    calendarSate.monthState.currentMonth.minusMonths(1)
+                                calendarState.monthState.currentMonth =
+                                    calendarState.monthState.currentMonth.minusMonths(1)
                                 Log.d(
                                     "DatePicked",
-                                    "currentMonth: ${calendarSate.monthState.currentMonth}"
+                                    "currentMonth: ${calendarState.monthState.currentMonth}"
                                 )
-                                onMonthChanged(calendarSate.monthState.currentMonth)
+                                onMonthChanged(calendarState.monthState.currentMonth)
                             }
                         ) {
                             Icon(
@@ -113,19 +113,19 @@ fun CustomDatePickerComponent(
                         }
 
                         Text(
-                            text = "${calendarSate.monthState.currentMonth}"
+                            text = "${calendarState.monthState.currentMonth}"
                         )
 
                         // 다음 달로 이동
                         IconButton(
                             onClick = {
-                                calendarSate.monthState.currentMonth =
-                                    calendarSate.monthState.currentMonth.plusMonths(1)
+                                calendarState.monthState.currentMonth =
+                                    calendarState.monthState.currentMonth.plusMonths(1)
                                 Log.d(
                                     "DatePicked",
-                                    "currentMonth: ${calendarSate.monthState.currentMonth}"
+                                    "currentMonth: ${calendarState.monthState.currentMonth}"
                                 )
-                                onMonthChanged(calendarSate.monthState.currentMonth)
+                                onMonthChanged(calendarState.monthState.currentMonth)
                             },
                         ) {
                             Icon(
