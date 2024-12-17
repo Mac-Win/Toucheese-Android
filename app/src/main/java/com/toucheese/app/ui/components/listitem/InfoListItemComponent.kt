@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -59,7 +60,9 @@ fun InfoListItemComponent(
             Column {
 
                 // 제목
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = "Q.",
                         color = MaterialTheme.colorScheme.primary
@@ -68,45 +71,25 @@ fun InfoListItemComponent(
                         text = title,
                         style = MaterialTheme.typography.bodyLarge
                     )
+
+                    Spacer(modifier= Modifier.weight(1f))
+
+                    CustomStateChipComponent(
+                        label = "답변 완료",
+                        disabledLabel = "답변 대기",
+                        replyState = replyState,
+                        containerColor = Color(0xFFFFFDE6),
+                        disabledContainerColor = MaterialTheme.colorScheme.background,
+                        borderColor = Color(0xFFFFC999),
+                        disabledBorderColor = Color(0xFFD9D9D9),
+                        labelColor = Color(0xFFFFC999),
+                        disabledLabelColor = Color(0xFF8C8C8C),
+                        modifier = Modifier
+                            .height(30.dp)
+//                            .align(Alignment.TopEnd)
+                    )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                // 문의 이미지
-                if (list.isNotEmpty()){
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        items(list) { item ->
-                            Card(
-                                modifier = modifier.fillMaxWidth(),
-                            ) {
-                                AsyncImage(
-                                    model = item,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    alignment = Alignment.Center,
-                                    modifier = Modifier.size(80.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-                // 작성자 및 작성일
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = userName,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-
-
-                    Text(
-                        text = " | 작성일: $createDate",
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
 
                 if (isContentShowed) {
                     if (content.isNotEmpty()) {
@@ -122,24 +105,48 @@ fun InfoListItemComponent(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(12.dp))
+                // 문의 이미지
+                if (list.isNotEmpty()){
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        items(list) { item ->
+                            Card(
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AsyncImage(
+                                    model = item,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    alignment = Alignment.Center,
+                                    modifier = Modifier.size(80.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                // 작성자 및 작성일
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = userName,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+
+
+                    Text(
+                        text = " | 작성일: $createDate",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
-
-            CustomStateChipComponent(
-                label = "답변 완료",
-                disabledLabel = "답변 대기",
-                replyState = replyState,
-                containerColor = Color(0xFFFFFDE6),
-                disabledContainerColor = MaterialTheme.colorScheme.background,
-                borderColor = Color(0xFFFFC999),
-                disabledBorderColor = Color(0xFFD9D9D9),
-                labelColor = Color(0xFFFFC999),
-                disabledLabelColor = Color(0xFF8C8C8C),
-                modifier = Modifier
-                    .height(30.dp)
-                    .wrapContentWidth()
-                    .align(Alignment.TopEnd)
-            )
-
         }
     }
 

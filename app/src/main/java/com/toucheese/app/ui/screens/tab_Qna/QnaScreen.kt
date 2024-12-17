@@ -1,5 +1,6 @@
 package com.toucheese.app.ui.screens.tab_Qna
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -53,6 +54,7 @@ fun QnaScreen(
     }
 
     Scaffold(
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
             TopAppBarComponent(
                 title = "문의하기",
@@ -119,7 +121,9 @@ fun QnaScreen(
                     userName = "홍길동",
                     replyState = item.isNotEmpty(),
                     isContentShowed = false,
-                    modifier = Modifier.padding(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(
                         start = 12.dp,
                         end = 12.dp,
                         bottom = 12.dp,
