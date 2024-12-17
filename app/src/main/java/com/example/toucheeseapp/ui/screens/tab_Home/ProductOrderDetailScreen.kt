@@ -232,7 +232,7 @@ fun ProductOrderDetailScreen(
                 CustomDatePickerComponent(
                     selectedDate = selectedDate.toString(),
                     operationHours = operatingHours,
-                    calendarSate = calendarState,
+                    calendarState = calendarState,
                     isDateClicked = isDateClicked,
                     onMonthChanged = { selectedMonth ->
                         // 서버 API 비동기 호출
