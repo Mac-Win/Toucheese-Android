@@ -40,7 +40,7 @@ import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.DatePickComponent
 import com.toucheese.app.ui.components.ProductOrderOptionComponent
 import com.toucheese.app.ui.components.calendar.CustomDatePickerComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -55,7 +55,7 @@ fun ProductOrderDetailScreen(
     tokenManager: TokenManager,
     memberId: Int,
     studioId: Int,
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     productId: Int,
     modifier: Modifier = Modifier,
     onBackButtonClicked: () -> Unit,

@@ -12,10 +12,10 @@ import com.toucheese.app.data.model.saveReservationData.SaveReservationRequest
 import com.toucheese.app.data.model.search_studio.SearchResponseItem
 import com.toucheese.app.data.model.specific_review.ReviewResponse
 import com.toucheese.app.data.model.studio_detail.StudioDetailResponse
-import com.toucheese.app.data.network.ToucheeseServer
+import com.toucheese.app.data.network.HomeService
 import javax.inject.Inject
 
-class StudioRepository @Inject constructor(private val apiService: ToucheeseServer) {
+class HomeRepository @Inject constructor(private val apiService: HomeService) {
 
     // -------- 해당 컨셉 스튜디오 API -------
 

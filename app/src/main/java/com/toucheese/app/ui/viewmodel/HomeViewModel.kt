@@ -15,7 +15,7 @@ import com.toucheese.app.data.model.saveReservationData.SaveReservationRequest
 import com.toucheese.app.data.model.search_studio.SearchResponseItem
 import com.toucheese.app.data.model.specific_review.ReviewResponse
 import com.toucheese.app.data.model.studio_detail.StudioDetailResponse
-import com.toucheese.app.data.repository.StudioRepository
+import com.toucheese.app.data.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StudioViewModel @Inject constructor(
-    private val repository: StudioRepository
+class HomeViewModel @Inject constructor(
+    private val repository: HomeRepository
 ) : ViewModel() {
 
     private val _studios = MutableStateFlow<List<Studio>>(emptyList())

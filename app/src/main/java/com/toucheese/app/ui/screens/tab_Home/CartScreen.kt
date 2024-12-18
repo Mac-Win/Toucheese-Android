@@ -23,7 +23,7 @@ import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.components.ChangeOptionBottomSheetComponent
 import com.toucheese.app.ui.components.CartItemComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -31,7 +31,7 @@ import kotlin.math.max
 @Composable
 fun CartScreen(
     tokenManager: TokenManager,
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onCheckoutClick: (List<Int>) -> Unit,
     onBackClick: () -> Unit,

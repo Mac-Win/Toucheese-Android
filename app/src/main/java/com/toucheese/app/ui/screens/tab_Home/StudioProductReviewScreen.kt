@@ -15,12 +15,12 @@ import com.toucheese.app.data.model.product_detail.ProductDetailResponse
 import com.toucheese.app.data.model.review_studio.StudioReviewResponseItem
 import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.ReviewListComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 
 @Composable
 fun StudioProductReviewScreen(
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     studioId: Int,
     productId: Int,
     modifier: Modifier = Modifier,

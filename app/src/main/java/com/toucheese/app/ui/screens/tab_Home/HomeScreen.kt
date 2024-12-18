@@ -64,14 +64,14 @@ import com.toucheese.app.R
 import com.toucheese.app.data.model.concept_studio.Studio
 import com.toucheese.app.data.model.search_studio.SearchResponseItem
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     selectedTab: Int,
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     onCardClick: (Int) -> Unit,
     onStudioClick: (Int) -> Unit,
     onTabSelected: (Int) -> Unit
@@ -160,7 +160,7 @@ fun HomeScreen(
 @Composable
 fun SearchBar(
     searchText: String,
-    viewModel: StudioViewModel,
+    viewModel: HomeViewModel,
     keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier,
     setText: (String) -> Unit,

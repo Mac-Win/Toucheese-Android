@@ -31,7 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.toucheese.app.data.network.ToucheeseServer
+import com.toucheese.app.data.network.HomeService
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.components.ShareBottomSheetComponent
@@ -57,7 +57,7 @@ val TAG = "ToucheeseApp"
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToucheeseApp(api: ToucheeseServer) {
+fun ToucheeseApp(api: HomeService) {
     val navController = rememberNavController()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()

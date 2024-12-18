@@ -23,13 +23,13 @@ import com.toucheese.app.data.model.cart_order_pay.OrderPayResponse
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.*
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun OrderPayScreen(
     selectedCartIds: List<Int>, // 선택한 장바구니 아이템의 id 리스트
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     tokenManager: TokenManager,
     selectedPaymentMethod: Int = 0,
     onPaymentMethodSelected: (Int) -> Unit,

@@ -23,7 +23,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ToucheeseServer {
+interface HomeService {
     // -------- 해당 컨셉 스튜디오 API --------
 
     // 컨셉 스튜디오 목록 조회
