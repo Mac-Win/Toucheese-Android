@@ -24,9 +24,9 @@ import com.toucheese.app.ui.theme.ToucheeseAppTheme
 
 @Composable
 fun TimeSlotButtonComponent(
-    modifier: Modifier,
     times: List<String>,
     selectedTime: String?,
+    modifier: Modifier,
     onTimeClick: (String) -> Unit
 ) {
     // 3개의 열로 나누기
