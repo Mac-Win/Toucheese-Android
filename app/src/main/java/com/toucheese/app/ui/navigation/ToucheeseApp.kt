@@ -49,6 +49,7 @@ import com.toucheese.app.ui.screens.tab_Qna.QnaScreen
 import com.toucheese.app.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import kotlinx.coroutines.launch
 
 
@@ -344,7 +345,7 @@ fun ToucheeseApp(api: HomeService) {
                 onConfirmOrder = {
                     // 예약 일정 탭으로 이동
                     bottomNavSelectedTab = 1
-                    navController.navigate("Test"){
+                    navController.navigate(Screen.BookSchedule.route){
                         // 백스택 제거
                         popUpTo(0) { inclusive = true } // 모든 백스택 제거
                     }
@@ -429,6 +430,33 @@ fun ToucheeseApp(api: HomeService) {
             )
         }
 
+        // 예약일정 화면
+        composable("BookScheduleScreen") {
+            BookScheduleScreen(
+                selectedTab = bottomNavSelectedTab,
+                tokenManager = tokenManager,
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = selectedTab
+                },
+                onButtonClicked1 = { studioId ->
+                    // 스튜디오 상세 화면으로 이동
+                    navController.navigate(
+                        Screen.StudioDetail.route
+                            .replace("{studioId}", "$studioId")
+                    )
+
+                },
+                onButtonClicked2 = { logicNumber ->
+
+                }
+            )
+        }
+
 
         // BottomNav Test 화면
         composable("Test"){
@@ -494,6 +522,14 @@ fun bottomNavClicked(selectedTab: Int, navController: NavController) {
                 }
             }
 
+        }
+        // 예약일정 화면으로 이동
+        1 -> {
+            navController.navigate(Screen.BookSchedule.route){
+                popUpTo(navController.graph.id){
+                    inclusive = true
+                }
+            }
         }
 
         // 문의하기 화면으로 이동
