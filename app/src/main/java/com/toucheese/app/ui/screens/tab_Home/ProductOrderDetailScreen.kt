@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,6 +43,7 @@ import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.DatePickComponent
 import com.toucheese.app.ui.components.ProductOrderOptionComponent
 import com.toucheese.app.ui.components.calendar.CustomDatePickerComponent
+import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.StudioViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
@@ -99,11 +103,11 @@ fun ProductOrderDetailScreen(
 
         Scaffold(
             topBar = {
-                AppBarImageComponent(
-                    productName = productDetail!!.name, // 상품명
-                    productInfo = productDetail!!.description, // 상품 설명
-                    productImage = productDetail!!.productImage, // 상품 이미지
-                    onBackButtonClicked = onBackButtonClicked,
+                TopAppBarComponent(
+                    title = "",
+                    showLeadingIcon = true,
+                    onClickLeadingIcon = onBackButtonClicked,
+                    leadingIcon = Icons.AutoMirrored.Default.ArrowBack
                 )
             },
             bottomBar = {
@@ -118,6 +122,7 @@ fun ProductOrderDetailScreen(
                             containerColor = MaterialTheme.colorScheme.primary,
                             disabledContainerColor = Color(0xFFECECEC)
                         ),
+                        shape = RoundedCornerShape(8.dp),
                         onClick = {
                             // 예약 정보 데이터로 만든다
                             val cartData = CartData(
@@ -160,6 +165,15 @@ fun ProductOrderDetailScreen(
                 modifier = Modifier.padding(it)
             ) {
                 item {
+                    AppBarImageComponent(
+                        productName = productDetail!!.name, // 상품명
+                        productInfo = productDetail!!.description, // 상품 설명
+                        productImage = productDetail!!.productImage, // 상품 이미지,
+                        onReviewButtonClicked = onReviewButtonClicked,
+                        reviewCount = productDetail!!.reviewCount
+                    )
+                }
+                item {
                     // 가격 & 옵션
                     ProductOrderOptionComponent(
                         productNumOfPeople = productDetail!!.standard, // 기준 인원
@@ -200,7 +214,7 @@ fun ProductOrderDetailScreen(
                             } else {
                                 selectedOption + index
                             }
-                        }
+                        },
                     )
 
                     // 촬영날짜
