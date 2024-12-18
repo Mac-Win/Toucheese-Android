@@ -25,5 +25,5 @@ sealed class Screen(val route: String) {
 
     // ----- BookSchedule -----
     object BookSchedule: Screen("BookScheduleScreen")
-    object BookScheduleChange: Screen("BookScheduleChangeScreen")
+    object BookScheduleChange: Screen("BookScheduleChangeScreen/{studioId}/{reservationId}")
 }

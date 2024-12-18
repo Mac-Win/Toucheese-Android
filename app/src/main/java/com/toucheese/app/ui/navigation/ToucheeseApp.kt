@@ -49,6 +49,7 @@ import com.toucheese.app.ui.screens.tab_Qna.QnaScreen
 import com.toucheese.app.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.toucheese.app.ui.components.BookingScheduleChangeScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import kotlinx.coroutines.launch
 
@@ -451,9 +452,51 @@ fun ToucheeseApp(api: HomeService) {
                     )
 
                 },
-                onButtonClicked2 = { logicNumber ->
+                onButtonClicked2 = { logicNumber, studioId, reservationId ->
+                    // 각 상태에 맞는 로직 수행
+                    // 1: 예약일정 변경 화면으로 이동
+                    // 3: 리뷰쓰기 화면으로 이동
+                    when (logicNumber){
+                        1 -> {
+                            // 예약일정 변경 화면으로 이동
+                            navController.navigate(
+                                Screen.BookScheduleChange.route
+                                    .replace("{studioId}", "$studioId")
+                                    .replace("{reservationId}", "$reservationId")
+                            )
+                        }
+                        3 -> {
+                            // 리뷰쓰기 화면으로 이동
+
+                        }
+                        else -> {
+                            Log.d(TAG, "잘못된 이동입니다")
+                        }
+                    }
 
                 }
+            )
+        }
+
+        // 예약일정 변경 화면
+        composable(
+            Screen.BookScheduleChange.route,
+            arguments = listOf(
+                navArgument("studioId") { type = NavType.IntType },
+                navArgument("reservationId") { type = NavType.IntType }
+            )
+        ){ backStackEntry ->
+            val studioId = backStackEntry.arguments?.getInt("studioId")?: 0
+            val reservationId = backStackEntry.arguments?.getInt("reservationId")?: 0
+            BookingScheduleChangeScreen(
+                reservationId = reservationId,
+                studioId = studioId,
+
+                tokenManager = tokenManager,
+                onBackClick = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
             )
         }
 
