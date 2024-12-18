@@ -25,4 +25,12 @@ object RetrofitClient {
     @Singleton
     @Provides
     fun provideLoginService(retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideQnaService(retrofit: Retrofit): QnaService = retrofit.create(QnaService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideBookScheduleService(retrofit: Retrofit): BookScheduleService = retrofit.create(BookScheduleService::class.java)
 }
