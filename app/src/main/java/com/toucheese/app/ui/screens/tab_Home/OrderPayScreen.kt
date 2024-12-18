@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.data.model.cart_order_pay.OrderPayResponse
+import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.*
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
@@ -41,7 +41,7 @@ fun OrderPayScreen(
     // 코루틴
     val coroutine = rememberCoroutineScope()
     // 선택한 상품들
-    var orderPayResponse by remember { mutableStateOf<OrderPayResponse?>(null) }
+    var orderPayResponse by remember { mutableStateOf<com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse?>(null) }
     // cartIds List<Int> -> String
     val cartIds = selectedCartIds.joinToString(separator = ",")
     LaunchedEffect(selectedCartIds) {

@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.toucheese.app.R
-import com.toucheese.app.data.model.concept_studio.Studio
+import com.toucheese.app.data.model.home.concept_studio.Studio
 
 // 추후 parameter에 studio: Studio 추가
 @Composable
-fun StudioListItemComponent(studio: Studio, isMarked: Boolean, modifier: Modifier = Modifier) {
+fun StudioListItemComponent(studio: com.toucheese.app.data.model.home.concept_studio.Studio, isMarked: Boolean, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(top = 16.dp, start = 16.dp, bottom = 16.dp)
     ) {

@@ -33,16 +33,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.toucheese.app.data.model.carts_list.CartListResponseItem
+import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
 
 @Composable
 fun CartItemComponent(
-    cartItem: CartListResponseItem,
+    cartItem: com.toucheese.app.data.model.home.carts_list.CartListResponseItem,
     showDeleteIcon: Boolean = true,
     showOptionChangeButton: Boolean = true,
     modifier: Modifier = Modifier,
-    onDeleteClick: (CartListResponseItem) -> Unit,
-    onOptionChangeClick: (CartListResponseItem) -> Unit,
+    onDeleteClick: (com.toucheese.app.data.model.home.carts_list.CartListResponseItem) -> Unit,
+    onOptionChangeClick: (com.toucheese.app.data.model.home.carts_list.CartListResponseItem) -> Unit,
 
     ) {
     Card(

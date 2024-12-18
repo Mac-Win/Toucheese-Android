@@ -11,8 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.data.model.product_detail.ProductDetailResponse
-import com.toucheese.app.data.model.review_studio.StudioReviewResponseItem
+import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
+import com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem
 import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.ReviewListComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
@@ -27,8 +27,8 @@ fun StudioProductReviewScreen(
     onBackButtonClicked: () -> Unit, // 뒤로가기
     onReviewItemClicked: (Int) -> Unit, // 리뷰 아이템 클릭
 ) {
-    var productReviewList by remember { mutableStateOf<List<StudioReviewResponseItem>?>(null) }
-    var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
+    var productReviewList by remember { mutableStateOf<List<com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem>?>(null) }
+    var productDetail by remember { mutableStateOf<com.toucheese.app.data.model.home.product_detail.ProductDetailResponse?>(null) }
 
     LaunchedEffect(studioId, productId) {
         productReviewList = viewModel.loadProductReview(studioId, productId)

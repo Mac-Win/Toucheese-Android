@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.toucheese.app.data.model.review_studio.StudioReviewResponseItem
+import com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem
 
 @Composable
-fun ReviewListComponent(modifier: Modifier = Modifier, reviews: List<StudioReviewResponseItem>, onReviewClick: (Int) -> Unit) {
+fun ReviewListComponent(modifier: Modifier = Modifier, reviews: List<com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem>, onReviewClick: (Int) -> Unit) {
     // 한 줄에 3개의 아이템을 배치
     val chunkedReviews = reviews.chunked(3)
 

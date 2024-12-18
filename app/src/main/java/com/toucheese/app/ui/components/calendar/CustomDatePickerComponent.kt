@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.toucheese.app.data.model.calendar_studio.CalendarTimeResponseItem
+import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
 import io.github.boguszpawlowski.composecalendar.CalendarState
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
 import io.github.boguszpawlowski.composecalendar.selection.DynamicSelectionState

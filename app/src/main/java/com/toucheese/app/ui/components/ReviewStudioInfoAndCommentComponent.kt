@@ -15,11 +15,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.toucheese.app.data.model.concept_studio.Studio
+import com.toucheese.app.data.model.home.concept_studio.Studio
 
 @Composable
 fun ReviewStudioAndCommentComponent(
-    studio: Studio?,
+    studio: com.toucheese.app.data.model.home.concept_studio.Studio?,
     comments: List<String>
 ) {
     Column(

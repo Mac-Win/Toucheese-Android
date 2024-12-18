@@ -32,9 +32,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.data.model.calendar_studio.CalendarTimeResponseItem
-import com.toucheese.app.data.model.product_detail.ProductDetailResponse
-import com.toucheese.app.data.model.saveCartData.CartData
+import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
+import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
+import com.toucheese.app.data.model.home.saveCartData.CartData
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.DatePickComponent
@@ -63,7 +63,7 @@ fun ProductOrderDetailScreen(
     onOrderClicked: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
+    var productDetail by remember { mutableStateOf<com.toucheese.app.data.model.home.product_detail.ProductDetailResponse?>(null) }
     LaunchedEffect(productId) {
         productDetail = viewModel.loadProductDetail(productId)
     }
@@ -78,7 +78,7 @@ fun ProductOrderDetailScreen(
     val (selectedDate, setSelectedDate) = remember { mutableStateOf<LocalDate>(LocalDate.now()) }
     // 선택일자의 운영시간
     val (operatingHours, setOperationHours) = remember {
-        mutableStateOf<List<CalendarTimeResponseItem>>(
+        mutableStateOf<List<com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem>>(
             emptyList()
         )
     }
@@ -120,7 +120,7 @@ fun ProductOrderDetailScreen(
                         ),
                         onClick = {
                             // 예약 정보 데이터로 만든다
-                            val cartData = CartData(
+                            val cartData = com.toucheese.app.data.model.home.saveCartData.CartData(
                                 productId = productId,
                                 studioId = studioId,
                                 memberId = memberId,

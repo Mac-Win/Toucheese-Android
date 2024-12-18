@@ -16,9 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.data.model.carts_list.CartListResponseItem
-import com.toucheese.app.data.model.carts_list.SelectAddOption
-import com.toucheese.app.data.model.carts_optionChange.ChangedCartItem
+import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
+import com.toucheese.app.data.model.home.carts_list.SelectAddOption
+import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.components.ChangeOptionBottomSheetComponent
@@ -39,7 +39,7 @@ fun CartScreen(
 
     val cartItems by viewModel.cartItems.collectAsState() // ViewModel에서 상태 관찰
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
+    var selectedItem by remember { mutableStateOf<com.toucheese.app.data.model.home.carts_list.CartListResponseItem?>(null) }
     // 장바구니 내역이 있는지 확인
     val isCartItemsExists = cartItems.isNotEmpty()
     // BottomSheetModal 상태 관리
@@ -62,7 +62,7 @@ fun CartScreen(
     val totalAmount = "₩${cartItems.sumOf { it.totalPrice }}"
 
     // 장바구니 아이템 삭제 로직
-    fun onDeleteCartItem(cartItem: CartListResponseItem) {
+    fun onDeleteCartItem(cartItem: com.toucheese.app.data.model.home.carts_list.CartListResponseItem) {
         viewModel.deleteCartItem(token, cartItem.cartId)
     }
 
@@ -213,11 +213,15 @@ fun CartScreen(
                     onDecreaseClicked = {
                         if (item.personnel > 1) {
                             val updatedPersonnel = item.personnel - 1
-                            val changedCartItem = ChangedCartItem(
-                                personnel = updatedPersonnel,
-                                addOptions = selectedOptionIds.toList(),
-                                totalPrice = recalcTotalPrice(updatedPersonnel, selectedOptionIds)
-                            )
+                            val changedCartItem =
+                                com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+                                    personnel = updatedPersonnel,
+                                    addOptions = selectedOptionIds.toList(),
+                                    totalPrice = recalcTotalPrice(
+                                        updatedPersonnel,
+                                        selectedOptionIds
+                                    )
+                                )
                             Log.d("CartScreen", "ChangedCartItem onDecrease: $changedCartItem")
                             viewModel.updateCartItem(token, item.cartId, changedCartItem)
                             isBottomSheetVisible = false
@@ -225,11 +229,12 @@ fun CartScreen(
                     },
                     onIncreaseClicked = {
                         val updatedPersonnel = item.personnel + 1
-                        val changedCartItem = ChangedCartItem(
-                            personnel = updatedPersonnel,
-                            addOptions = selectedOptionIds.toList(),
-                            totalPrice = recalcTotalPrice(updatedPersonnel, selectedOptionIds)
-                        )
+                        val changedCartItem =
+                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+                                personnel = updatedPersonnel,
+                                addOptions = selectedOptionIds.toList(),
+                                totalPrice = recalcTotalPrice(updatedPersonnel, selectedOptionIds)
+                            )
                         Log.d("CartScreen", "ChangedCartItem onIncrease: $changedCartItem")
                         viewModel.updateCartItem(token, item.cartId, changedCartItem)
                         isBottomSheetVisible = false
@@ -245,7 +250,7 @@ fun CartScreen(
                         } else {
                             val selectedOption = item.addOptions.find { it.id == optionId }
                             if (selectedOption != null) {
-                                item.selectAddOptions + SelectAddOption(
+                                item.selectAddOptions + com.toucheese.app.data.model.home.carts_list.SelectAddOption(
                                     selectOptionId = selectedOption.id,
                                     selectOptionName = selectedOption.name,
                                     selectOptionPrice = selectedOption.price
@@ -255,11 +260,12 @@ fun CartScreen(
                             }
                         }
                         val updatedOptionIds = updatedOptions.map { it.selectOptionId }.toSet()
-                        val changedCartItem = ChangedCartItem(
-                            personnel = item.personnel,
-                            addOptions = updatedOptionIds.toList(),
-                            totalPrice = recalcTotalPrice(item.personnel, updatedOptionIds)
-                        )
+                        val changedCartItem =
+                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+                                personnel = item.personnel,
+                                addOptions = updatedOptionIds.toList(),
+                                totalPrice = recalcTotalPrice(item.personnel, updatedOptionIds)
+                            )
                         Log.d("CartScreen", "ChangedCartItem onOptionClicked: $changedCartItem")
                         viewModel.updateCartItem(token, item.cartId, changedCartItem)
                     },
@@ -268,7 +274,7 @@ fun CartScreen(
                         onDeleteCartItem(it)
                         isBottomSheetVisible = false
                     },
-                    onOptionChangeClick = { updatedCartItem: ChangedCartItem ->
+                    onOptionChangeClick = { updatedCartItem: com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem ->
                         // 업데이트 할 때 최신 상태 반영
                         Log.d("CartScreen", "OptionChangeClick: $updatedCartItem")
                         viewModel.updateCartItem(token, item.cartId, updatedCartItem)
@@ -280,11 +286,12 @@ fun CartScreen(
                     },
                     onConfirm = {
                         // 확인 시 ChangedCartItem 전송
-                        val changedCartItem = ChangedCartItem(
-                            personnel = item.personnel,
-                            addOptions = selectedOptionIds.toList(),
-                            totalPrice = recalcTotalPrice(item.personnel, selectedOptionIds)
-                        )
+                        val changedCartItem =
+                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+                                personnel = item.personnel,
+                                addOptions = selectedOptionIds.toList(),
+                                totalPrice = recalcTotalPrice(item.personnel, selectedOptionIds)
+                            )
                         Log.d("CartScreen", "ChangedCartItem onConfirm: $changedCartItem")
                         viewModel.updateCartItem(token, item.cartId, changedCartItem)
                         isBottomSheetVisible = false

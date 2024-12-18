@@ -13,10 +13,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.toucheese.app.data.model.studio_detail.Product
+import com.toucheese.app.data.model.home.studio_detail.Product
 
 @Composable
-fun ProductItem(product: Product, modifier: Modifier = Modifier) {
+fun ProductItem(product: com.toucheese.app.data.model.home.studio_detail.Product, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically

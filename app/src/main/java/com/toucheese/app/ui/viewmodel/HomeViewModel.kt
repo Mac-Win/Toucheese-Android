@@ -3,18 +3,18 @@ package com.toucheese.app.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toucheese.app.data.model.calendar_studio.CalendarTimeResponseItem
-import com.toucheese.app.data.model.cart_order_pay.OrderPayResponse
-import com.toucheese.app.data.model.carts_list.CartListResponseItem
-import com.toucheese.app.data.model.carts_optionChange.ChangedCartItem
-import com.toucheese.app.data.model.concept_studio.Studio
-import com.toucheese.app.data.model.product_detail.ProductDetailResponse
-import com.toucheese.app.data.model.review_studio.StudioReviewResponseItem
-import com.toucheese.app.data.model.saveCartData.CartData
-import com.toucheese.app.data.model.saveReservationData.SaveReservationRequest
-import com.toucheese.app.data.model.search_studio.SearchResponseItem
-import com.toucheese.app.data.model.specific_review.ReviewResponse
-import com.toucheese.app.data.model.studio_detail.StudioDetailResponse
+import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
+import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
+import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
+import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
+import com.toucheese.app.data.model.home.concept_studio.Studio
+import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
+import com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem
+import com.toucheese.app.data.model.home.saveCartData.CartData
+import com.toucheese.app.data.model.home.saveReservationData.SaveReservationRequest
+import com.toucheese.app.data.model.home.search_studio.SearchResponseItem
+import com.toucheese.app.data.model.home.specific_review.ReviewResponse
+import com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse
 import com.toucheese.app.data.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +27,11 @@ class HomeViewModel @Inject constructor(
     private val repository: HomeRepository
 ) : ViewModel() {
 
-    private val _studios = MutableStateFlow<List<Studio>>(emptyList())
-    val studios: StateFlow<List<Studio>> = _studios
+    private val _studios = MutableStateFlow<List<com.toucheese.app.data.model.home.concept_studio.Studio>>(emptyList())
+    val studios: StateFlow<List<com.toucheese.app.data.model.home.concept_studio.Studio>> = _studios
 
-    private val _searchStudios = MutableStateFlow<List<SearchResponseItem>>(emptyList())
-    val searchStudios: StateFlow<List<SearchResponseItem>> = _searchStudios
+    private val _searchStudios = MutableStateFlow<List<com.toucheese.app.data.model.home.search_studio.SearchResponseItem>>(emptyList())
+    val searchStudios: StateFlow<List<com.toucheese.app.data.model.home.search_studio.SearchResponseItem>> = _searchStudios
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching // 현재 검색중인지 여부를 확인
@@ -39,17 +39,17 @@ class HomeViewModel @Inject constructor(
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
-    private val _studioDetail = MutableStateFlow<StudioDetailResponse?>(null)
-    val studioDetail: StateFlow<StudioDetailResponse?> = _studioDetail
+    private val _studioDetail = MutableStateFlow<com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse?>(null)
+    val studioDetail: StateFlow<com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse?> = _studioDetail
 
-    private val _studioReviews = MutableStateFlow<List<StudioReviewResponseItem>>(emptyList())
-    val studioReviews: StateFlow<List<StudioReviewResponseItem>> = _studioReviews
+    private val _studioReviews = MutableStateFlow<List<com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem>>(emptyList())
+    val studioReviews: StateFlow<List<com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem>> = _studioReviews
 
-    private val _specificReview = MutableStateFlow<ReviewResponse?>(null)
-    val specificReview: StateFlow<ReviewResponse?> = _specificReview
+    private val _specificReview = MutableStateFlow<com.toucheese.app.data.model.home.specific_review.ReviewResponse?>(null)
+    val specificReview: StateFlow<com.toucheese.app.data.model.home.specific_review.ReviewResponse?> = _specificReview
 
-    private val _cartItems = MutableStateFlow<List<CartListResponseItem>>(emptyList())
-    val cartItems: StateFlow<List<CartListResponseItem>> = _cartItems
+    private val _cartItems = MutableStateFlow<List<com.toucheese.app.data.model.home.carts_list.CartListResponseItem>>(emptyList())
+    val cartItems: StateFlow<List<com.toucheese.app.data.model.home.carts_list.CartListResponseItem>> = _cartItems
 
     // 로딩 상태를 관리
     private val _isLoading = MutableStateFlow(false)
@@ -94,7 +94,7 @@ class HomeViewModel @Inject constructor(
     }
 
     // 캘린더 휴무일 및 예약 시간
-    suspend fun loadCalendarTime(studioId: Int, yearMonth: String): List<CalendarTimeResponseItem> {
+    suspend fun loadCalendarTime(studioId: Int, yearMonth: String): List<com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem> {
         return try {
             repository.loadCalendarTime(studioId, yearMonth).toList()
         } catch (error: Exception) {
@@ -188,7 +188,7 @@ class HomeViewModel @Inject constructor(
     }
 
     // 특정 상품 리뷰 목록 조회
-    suspend fun loadProductReview(studioId: Int, productId: Int): List<StudioReviewResponseItem>? {
+    suspend fun loadProductReview(studioId: Int, productId: Int): List<com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem>? {
         return try {
             repository.loadProductReview(studioId, productId).toList()
         } catch (error: Exception) {
@@ -200,7 +200,7 @@ class HomeViewModel @Inject constructor(
     // -------- 상품 API --------
 
     // 상품 상세 조회
-    suspend fun loadProductDetail(productId: Int): ProductDetailResponse? {
+    suspend fun loadProductDetail(productId: Int): com.toucheese.app.data.model.home.product_detail.ProductDetailResponse? {
         return try {
             repository.loadProductDetail(productId)
         } catch (error: Exception) {
@@ -212,7 +212,7 @@ class HomeViewModel @Inject constructor(
     // -------- 예약 API --------
 
     // 장바구니 저장 기능
-    suspend fun saveCartData(token: String?, cartData: CartData) {
+    suspend fun saveCartData(token: String?, cartData: com.toucheese.app.data.model.home.saveCartData.CartData) {
         try {
             repository.saveCartData(token = "Bearer $token", reservation = cartData)
         } catch (error: Exception) {
@@ -225,7 +225,9 @@ class HomeViewModel @Inject constructor(
         try {
             val result = repository.saveReservationData(
                 token = "Bearer $token",
-                saveReservationRequest = SaveReservationRequest(cartIds)
+                saveReservationRequest = com.toucheese.app.data.model.home.saveReservationData.SaveReservationRequest(
+                    cartIds
+                )
             )
             Log.d("StudioViewModel", "예약 정보 저장 기능: ${result}")
         } catch (error: Exception) {
@@ -268,7 +270,7 @@ class HomeViewModel @Inject constructor(
     }
 
     // 장바구니 옵션 및 인원 변경
-    fun updateCartItem(token: String?, cartId: Int, changedCartItem: ChangedCartItem) {
+    fun updateCartItem(token: String?, cartId: Int, changedCartItem: com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem) {
         viewModelScope.launch {
             try {
                 repository.updateCartItem("Bearer $token", cartId, changedCartItem)
@@ -281,7 +283,7 @@ class HomeViewModel @Inject constructor(
     }
 
     // 장바구니 결제 조회
-    suspend fun loadOrderPayData(token: String?, cartIds: String): OrderPayResponse? {
+    suspend fun loadOrderPayData(token: String?, cartIds: String): com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse? {
         return try {
             Log.d("StudioViewModel", "cardIds=$cartIds")
             val result = repository.loadOrderPayData("Bearer $token", cartIds)
