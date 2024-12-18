@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +29,7 @@ import com.toucheese.app.data.model.product_detail.ProductDetailResponse
 import com.toucheese.app.data.model.review_studio.StudioReviewResponseItem
 import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.ReviewListComponent
+import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.StudioViewModel
 
 
@@ -50,13 +53,11 @@ fun StudioProductReviewScreen(
     if (productDetail != null && productReviewList != null){
         Scaffold(
             topBar = {
-                AppBarImageComponent(
-                    productName = productDetail!!.name,
-                    productInfo = productDetail!!.description,
-                    productImage = productDetail!!.productImage,
-                    modifier = Modifier,
-                    onReviewButtonClicked = { },
-                    reviewCount = productDetail!!.reviewCount
+                TopAppBarComponent(
+                    title = "",
+                    showLeadingIcon = true,
+                    onClickLeadingIcon = onBackButtonClicked,
+                    leadingIcon = Icons.AutoMirrored.Default.ArrowBack
                 )
             }
 
@@ -69,6 +70,16 @@ fun StudioProductReviewScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                item {
+                    AppBarImageComponent(
+                        productName = productDetail!!.name,
+                        productInfo = productDetail!!.description,
+                        productImage = productDetail!!.productImage,
+                        modifier = Modifier,
+                        onReviewButtonClicked = { },
+                        reviewCount = productDetail!!.reviewCount
+                    )
+                }
                 item {
                     ReviewListComponent(
                         reviews = productReviewList!!,
