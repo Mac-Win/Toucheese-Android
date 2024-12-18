@@ -6,17 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +45,6 @@ fun ProductOrderOptionComponent(
     selectedOptionChanged: (Int) -> Unit,
     showReviewButton: Boolean = true // 리뷰 버튼이 필요없는 화면에서 제거하기 위함
 ) {
-
     Column(modifier = modifier) {
 
         // 가격 및 인원
@@ -63,7 +59,9 @@ fun ProductOrderOptionComponent(
             onIncreaseClicked = onIncreaseClicked,
             onReviewButtonClicked = onReviewButtonClicked,
             showReviewButton = showReviewButton
-            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // 추가 구매 옵션
         AdditionalOptions(
@@ -92,19 +90,9 @@ private fun PriceSection(
     showReviewButton: Boolean = true
 ) {
     Column(
-        modifier = modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
+        modifier = modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 리뷰 보러가기
-        if (showReviewButton) {
-            TextButton(
-                onClick = onReviewButtonClicked,
-            ) {
-                Text(
-                    text= "리뷰 ${reviewCount}개 보러가기 >",
-                    fontSize = 12.sp
-                )
-            }
-        }
 
         // 가격
         Row(
@@ -135,11 +123,8 @@ private fun PriceSection(
 
                 )
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 4.dp),
-            thickness = DividerDefaults.Thickness,
-            color = Color.Gray
-        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         // 인원
         Row(
@@ -200,11 +185,6 @@ private fun PriceSection(
                 )
             }
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-            thickness = DividerDefaults.Thickness,
-            color = Color.Gray
-        )
     }
 }
 
@@ -235,35 +215,35 @@ private fun AdditionalOptions(
 
         Text(
             text = "추가 구매",
-            fontSize = 12.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
+            modifier = Modifier.padding(8.dp)
         )
 
         // 추가 구매 옵션
         productOptions.forEachIndexed { index, option ->
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(8.dp),
+
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(
+                SquareRadioButton(
                     selected = selectedOption.contains(option.id),
-                    colors = RadioButtonColors(
-                        selectedColor = Color(0xFFFFE085),
-                        unselectedColor = Color(0xFFFFE085),
-                        disabledSelectedColor = Color(0xFFFFFFFF),
-                        disabledUnselectedColor = Color(0xFFFFFFFF),
-                    ),
-                    modifier = Modifier.padding(2.dp),
                     onClick = {
-                        // 금액 변경
                         onOptionClicked(
                             if (selectedOption.contains(option.id)) -option.price else option.price
                         )
-                        // 새로운 Set 객체를 생성하여 상태 변경
                         selectedOptionChanged(option.id)
-                    }
+                    },
+                    selectedColor = Color(0xFFFFE085),
+                    unselectedColor = Color.Transparent,
+                    borderColor = Color.Gray,
+                    checkColor = Color.Black
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
                 // 옵션명
                 Text(
                     text = option.name,
