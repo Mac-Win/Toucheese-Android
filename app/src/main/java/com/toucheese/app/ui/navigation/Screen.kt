@@ -22,4 +22,8 @@ sealed class Screen(val route: String) {
     object Qna: Screen("Qna")
     object QnaContent: Screen("QnaContent")
     object QnaWrite: Screen("QnaWrite")
+
+    // ----- BookSchedule -----
+    object BookSchedule: Screen("BookScheduleScreen")
+    object BookScheduleChange: Screen("BookScheduleChangeScreen/{studioId}/{reservationId}")
 }

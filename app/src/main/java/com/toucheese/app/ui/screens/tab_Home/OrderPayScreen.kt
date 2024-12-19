@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,17 +21,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.data.model.cart_order_pay.OrderPayResponse
+import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.*
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun OrderPayScreen(
     selectedCartIds: List<Int>, // 선택한 장바구니 아이템의 id 리스트
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     tokenManager: TokenManager,
     selectedPaymentMethod: Int = 0,
     onPaymentMethodSelected: (Int) -> Unit,
@@ -41,7 +43,7 @@ fun OrderPayScreen(
     // 코루틴
     val coroutine = rememberCoroutineScope()
     // 선택한 상품들
-    var orderPayResponse by remember { mutableStateOf<OrderPayResponse?>(null) }
+    var orderPayResponse by remember { mutableStateOf<com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse?>(null) }
     // cartIds List<Int> -> String
     val cartIds = selectedCartIds.joinToString(separator = ",")
     LaunchedEffect(selectedCartIds) {
@@ -73,6 +75,7 @@ fun OrderPayScreen(
         topBar = {
             TopAppBarComponent(
                 title = "주문/결제",
+                leadingIcon = Icons.AutoMirrored.Default.ArrowBack,
                 showLeadingIcon = true,
                 showTrailingIcon = false,
                 onClickLeadingIcon = onBackClick,

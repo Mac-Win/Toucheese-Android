@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.toucheese.app.data.model.review_studio.StudioReviewResponseItem
+import com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem
 
 @Composable
-fun ReviewItemComponent(review: StudioReviewResponseItem, modifier: Modifier = Modifier) {
+fun ReviewItemComponent(review: com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),

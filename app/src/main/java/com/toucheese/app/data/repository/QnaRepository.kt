@@ -1,4 +1,7 @@
 package com.toucheese.app.data.repository
 
-class QnaRepository {
+import com.toucheese.app.data.network.QnaService
+import javax.inject.Inject
+
+class QnaRepository @Inject constructor(apiService: QnaService){
 }

@@ -31,7 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.toucheese.app.data.network.ToucheeseServer
+import com.toucheese.app.data.network.HomeService
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.components.ShareBottomSheetComponent
@@ -49,6 +49,8 @@ import com.toucheese.app.ui.screens.tab_Qna.QnaScreen
 import com.toucheese.app.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.toucheese.app.ui.components.BookingScheduleChangeScreen
+import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import kotlinx.coroutines.launch
 
 
@@ -57,7 +59,7 @@ val TAG = "ToucheeseApp"
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToucheeseApp(api: ToucheeseServer) {
+fun ToucheeseApp(api: HomeService) {
     val navController = rememberNavController()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
@@ -344,7 +346,7 @@ fun ToucheeseApp(api: ToucheeseServer) {
                 onConfirmOrder = {
                     // 예약 일정 탭으로 이동
                     bottomNavSelectedTab = 1
-                    navController.navigate("Test"){
+                    navController.navigate(Screen.BookSchedule.route){
                         // 백스택 제거
                         popUpTo(0) { inclusive = true } // 모든 백스택 제거
                     }
@@ -429,6 +431,75 @@ fun ToucheeseApp(api: ToucheeseServer) {
             )
         }
 
+        // 예약일정 화면
+        composable("BookScheduleScreen") {
+            BookScheduleScreen(
+                selectedTab = bottomNavSelectedTab,
+                tokenManager = tokenManager,
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = selectedTab
+                },
+                onButtonClicked1 = { studioId ->
+                    // 스튜디오 상세 화면으로 이동
+                    navController.navigate(
+                        Screen.StudioDetail.route
+                            .replace("{studioId}", "$studioId")
+                    )
+
+                },
+                onButtonClicked2 = { logicNumber, studioId, reservationId ->
+                    // 각 상태에 맞는 로직 수행
+                    // 1: 예약일정 변경 화면으로 이동
+                    // 3: 리뷰쓰기 화면으로 이동
+                    when (logicNumber){
+                        1 -> {
+                            // 예약일정 변경 화면으로 이동
+                            navController.navigate(
+                                Screen.BookScheduleChange.route
+                                    .replace("{studioId}", "$studioId")
+                                    .replace("{reservationId}", "$reservationId")
+                            )
+                        }
+                        3 -> {
+                            // 리뷰쓰기 화면으로 이동
+
+                        }
+                        else -> {
+                            Log.d(TAG, "잘못된 이동입니다")
+                        }
+                    }
+
+                }
+            )
+        }
+
+        // 예약일정 변경 화면
+        composable(
+            Screen.BookScheduleChange.route,
+            arguments = listOf(
+                navArgument("studioId") { type = NavType.IntType },
+                navArgument("reservationId") { type = NavType.IntType }
+            )
+        ){ backStackEntry ->
+            val studioId = backStackEntry.arguments?.getInt("studioId")?: 0
+            val reservationId = backStackEntry.arguments?.getInt("reservationId")?: 0
+            BookingScheduleChangeScreen(
+                reservationId = reservationId,
+                studioId = studioId,
+
+                tokenManager = tokenManager,
+                onBackClick = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+            )
+        }
+
 
         // BottomNav Test 화면
         composable("Test"){
@@ -494,6 +565,14 @@ fun bottomNavClicked(selectedTab: Int, navController: NavController) {
                 }
             }
 
+        }
+        // 예약일정 화면으로 이동
+        1 -> {
+            navController.navigate(Screen.BookSchedule.route){
+                popUpTo(navController.graph.id){
+                    inclusive = true
+                }
+            }
         }
 
         // 문의하기 화면으로 이동

@@ -21,6 +21,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -36,18 +37,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.toucheese.app.R
 import com.toucheese.app.ui.theme.ToucheeseAppTheme
 
 @Composable
 fun BookingScheduleItemComponent(
-    modifier: Modifier = Modifier,
+    studioName: String, // 스튜디오 이름
+    createDate: String, // 예약일자
+    createTime: String, // 예약 시간
+    studioImage: String, // 스튜디오 사진
+    statusLabel: String, // 예약 상태
+    buttonLabel1: String = "스튜디오 홈",
+    buttonLabel2: String,
+    chipContainerColor: Color,
+    chipTextColor: Color,
+    chipBorderColor: Color,
     showButton: Boolean = true,
+    elevation: CardElevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+    modifier: Modifier = Modifier,
+    onButtonClicked1: () -> Unit,
+    onButtonClicked2: () -> Unit,
     ){
     Card (
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        elevation = elevation,
         shape = RoundedCornerShape(8.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -57,11 +72,11 @@ fun BookingScheduleItemComponent(
                     .background(Color.White)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.profileimage),
+                    painter = rememberAsyncImagePainter(studioImage),
                     contentDescription = "Studio Profile Image",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .size(52.dp)
+                        .size(40.dp)
                         .clip(RoundedCornerShape(20.dp)),
                     contentScale = ContentScale.Crop
                 )
@@ -71,7 +86,7 @@ fun BookingScheduleItemComponent(
                         .padding(8.dp)
                 ) {
                     Text(
-                        text = "두콩스튜디오",
+                        text = studioName,
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Row(
@@ -83,7 +98,7 @@ fun BookingScheduleItemComponent(
                             tint = Color.Gray
                         )
                         Text(
-                            text = "2024-12-08 13:00",
+                            text = "${createDate} ${createTime}",
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
@@ -91,23 +106,20 @@ fun BookingScheduleItemComponent(
                 Spacer(modifier = Modifier.weight(1f))
 
                 SuggestionChip(
+                    shape = RoundedCornerShape(6.dp),
+                    colors = SuggestionChipDefaults.suggestionChipColors(
+                        containerColor = chipContainerColor,
+                        labelColor = chipTextColor,
+                    ),
+                    border = BorderStroke(1.dp, chipBorderColor),
                     onClick = {},
-                    enabled = false,
                     label = {
                         Text(
-                            text = "예약대기",
+                            text = statusLabel,
                             style = MaterialTheme.typography.labelSmall
                         )
                     },
                     modifier = Modifier.align(Alignment.Top),
-                    shape = RoundedCornerShape(6.dp),
-                    colors = SuggestionChipDefaults.suggestionChipColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        labelColor = MaterialTheme.colorScheme.onPrimary,
-                        disabledLabelColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
                 )
             }
 
@@ -119,15 +131,16 @@ fun BookingScheduleItemComponent(
                         .fillMaxWidth()
                 ) {
                     Button(
-                        onClick = {},
+                        shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
+                        border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.5f),
-                        shape = RoundedCornerShape(8.dp)
+                        onClick = onButtonClicked1,
                     ) {
                         Text(
-                            text = "스튜디오 홈",
+                            text = buttonLabel1,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -136,33 +149,21 @@ fun BookingScheduleItemComponent(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(
-                        onClick = {},
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.5f),
-                        shape = RoundedCornerShape(8.dp)
+                        onClick = onButtonClicked2,
                     ) {
                         Text(
-                            text = "예약일정 변경",
+                            text = buttonLabel2,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
             }
-        }
-    }
-}
-
-
-@Preview
-@Composable
-fun bookingScheduleItemPreview(){
-
-    ToucheeseAppTheme {
-        Surface {
-
-            BookingScheduleItemComponent()
         }
     }
 }

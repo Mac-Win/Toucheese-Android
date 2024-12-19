@@ -20,9 +20,17 @@ object RetrofitClient {
 
     @Singleton
     @Provides
-    fun provideToucheeseServer(retrofit: Retrofit): ToucheeseServer = retrofit.create(ToucheeseServer::class.java)
+    fun provideHomeService(retrofit: Retrofit): HomeService = retrofit.create(HomeService::class.java)
 
     @Singleton
     @Provides
     fun provideLoginService(retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideQnaService(retrofit: Retrofit): QnaService = retrofit.create(QnaService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideBookScheduleService(retrofit: Retrofit): BookScheduleService = retrofit.create(BookScheduleService::class.java)
 }

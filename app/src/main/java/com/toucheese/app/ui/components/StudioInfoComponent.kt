@@ -38,13 +38,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.toucheese.app.data.model.studio_detail.StudioDetailResponse
+import com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse
 import io.github.boguszpawlowski.composecalendar.kotlinxDateTime.now
 import kotlinx.datetime.LocalDate
 
 @Composable
 fun StudioInfoComponent(
-    studio: StudioDetailResponse,
+    studio: com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse,
     modifier: Modifier = Modifier
 ) {
 

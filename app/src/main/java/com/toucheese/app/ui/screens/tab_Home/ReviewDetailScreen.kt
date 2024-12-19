@@ -35,12 +35,12 @@ import com.toucheese.app.ui.components.ReviewStudioAndCommentComponent
 import com.toucheese.app.ui.components.ShareBottomSheetComponent
 import com.toucheese.app.ui.components.StudioTopAppBarComponent
 import com.toucheese.app.ui.components.dummyComments
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewDetailScreen(
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     studioId: Int,
     reviewId: Int,
     navigateBack: () -> Unit,

@@ -13,17 +13,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toucheese.app.data.model.carts_list.AddOption
-import com.toucheese.app.data.model.carts_list.CartListResponseItem
-import com.toucheese.app.data.model.carts_optionChange.ChangedCartItem
+import com.toucheese.app.data.model.home.carts_list.AddOption
+import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
+import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import kotlin.math.max
 
 @Composable
 fun ChangeOptionBottomSheetComponent(
-    cartItem: CartListResponseItem,
+    cartItem: com.toucheese.app.data.model.home.carts_list.CartListResponseItem,
     productNumOfPeople: Int,
     productNumOfPeoplePrice: Int,
-    productOptions: List<AddOption>,
+    productOptions: List<com.toucheese.app.data.model.home.carts_list.AddOption>,
     numOfPeople: Int,
     reviewCount: Int,
     isOverFlow: Boolean,
@@ -33,8 +33,8 @@ fun ChangeOptionBottomSheetComponent(
     onIncreaseClicked: () -> Unit,
     onReviewButtonClicked: () -> Unit,
     onOptionClicked: (Int) -> Unit,
-    onDeleteClick: (CartListResponseItem) -> Unit,
-    onOptionChangeClick: (ChangedCartItem) -> Unit,
+    onDeleteClick: (com.toucheese.app.data.model.home.carts_list.CartListResponseItem) -> Unit,
+    onOptionChangeClick: (com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem) -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
     selectedOptionChanged: (Int) -> Unit,
@@ -130,11 +130,12 @@ fun ChangeOptionBottomSheetComponent(
             Button(
                 onClick = {
                     // 변경 사항 ViewModel에 전달
-                    val changedCartItem = ChangedCartItem(
-                        personnel = numOfPeople,
-                        addOptions = selectedOption.toList(),
-                        totalPrice = totalPrice
-                    )
+                    val changedCartItem =
+                        com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+                            personnel = numOfPeople,
+                            addOptions = selectedOption.toList(),
+                            totalPrice = totalPrice
+                        )
                     onOptionChangeClick(changedCartItem)
                     onConfirm()
                 },
