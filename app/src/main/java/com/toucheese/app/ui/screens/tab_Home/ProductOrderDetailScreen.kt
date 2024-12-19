@@ -72,8 +72,6 @@ fun ProductOrderDetailScreen(
     val calendarState = rememberSelectableCalendarState()
     // 선택된 옵션들
     var selectedOption by remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
-    // 날짜가 선택되었는지를 저장
-    val (isDateClicked, setDateClicked) = remember { mutableStateOf(false) }
     // 선택일자
     val (selectedDate, setSelectedDate) = remember { mutableStateOf<LocalDate>(LocalDate.now()) }
     // 선택일자의 운영시간
@@ -230,10 +228,10 @@ fun ProductOrderDetailScreen(
 
             if (showDialog) {
                 CustomDatePickerComponent(
+                    selectedTime = selectedTime,
                     selectedDate = selectedDate.toString(),
                     operationHours = operatingHours,
                     calendarState = calendarState,
-                    isDateClicked = isDateClicked,
                     onMonthChanged = { selectedMonth ->
                         // 서버 API 비동기 호출
                         coroutineScope.launch {
@@ -248,17 +246,14 @@ fun ProductOrderDetailScreen(
                     },
 
                     onDateClicked = { clickedDate ->
-                        if (isDateClicked && selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
-                            setDateClicked(false)
+                        if (selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
                             setSelectedDate(LocalDate.now())
                         } else { // 다른 날짜를 누른 경우
-                            setDateClicked(true)
                             setSelectedDate(clickedDate)
                         }
                     },
                     onDismissRequest = {
                         setDialog(false)
-                        setDateClicked(false)
                         setOperationHours(emptyList())
                     },
                     onTimeClicked = { date: String, time: String ->

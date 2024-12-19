@@ -48,8 +48,8 @@ fun CustomDatePickerWeekComponent(
             val isSameWeek: Boolean = isSameWeek(selectedDate, date)
             // 선택된 날짜인지 여부
             val isSelectedDate: Boolean = selectedDate == date
-            // 현재보다 과거인지 여부
-            val isPastDate = date.isBefore(selectedDate)
+            // 활성화 여부
+            val isPastDate = date.isBefore(LocalDate.now())
             Log.d("CustomDatePickerWeekComponent", "같은 주에 속하나? : $isSameWeek")
 
             if (isSameWeek) {

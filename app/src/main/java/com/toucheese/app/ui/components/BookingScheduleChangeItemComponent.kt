@@ -30,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toucheese.app.R
 import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
+import com.toucheese.app.ui.components.calendar.CustomDatePickerComponent
 import com.toucheese.app.ui.components.calendar.CustomDatePickerWeekComponent
 import io.github.boguszpawlowski.composecalendar.CalendarState
 import io.github.boguszpawlowski.composecalendar.selection.DynamicSelectionState
@@ -59,8 +61,9 @@ fun BookingScheduleChangeItemComponent(
     operationTimeList: List<CalendarTimeResponseItem>,
     modifier: Modifier = Modifier,
     setSelectedTime: (String) -> Unit,
+    setSelectedDate: (LocalDate) -> Unit,
+    onCalendarOpenRequest: () -> Unit,
 ) {
-    var isDatePickerOpen by remember { mutableStateOf(false) }
     val morningTimes = operationTimeList[0].times.filter { time ->
         // LocalTime으로 변경
         val localTime = castToLocalTime(time)
@@ -71,9 +74,7 @@ fun BookingScheduleChangeItemComponent(
         val localTime = castToLocalTime(time)
         localTime >= LocalTime.of(12, 0)
     }
-    Log.d("BookingScheduleChangeItem", "operationTimeList = ${operationTimeList}")
-    Log.d("BookingScheduleChangeItem", "morningTimes = ${morningTimes}")
-    Log.d("BookingScheduleChangeItem", "afternoonTimes = ${afternoonTimes}")
+
 
 
     Card(
@@ -105,10 +106,13 @@ fun BookingScheduleChangeItemComponent(
                 .padding(16.dp)
         ) {
             AssistChip(
-                onClick = {
-                    isDatePickerOpen = true
+                onClick = onCalendarOpenRequest,
+                label = {
+                    Text(
+                        text =  "${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일",
+                        color = Color(0xFF595959)
+                    )
                 },
-                label = { Text("${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일") },
                 leadingIcon = {
                     Icon(
                         painter = painterResource(id = R.drawable.calendar_36px),
@@ -123,16 +127,14 @@ fun BookingScheduleChangeItemComponent(
                         tint = Color(0xFF8C8C8C)
                     )
                 },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 shape = RoundedCornerShape(8.dp),
                 colors = AssistChipDefaults.assistChipColors(
                     labelColor = Color(0xFF595959)
                 ),
-                border = BorderStroke(1.dp, Color(0xFF8C8C8C))
+                border = BorderStroke(1.dp, Color(0xFFF0F0F0))
             )
 
             // 요일 및 날짜 표시
-
             CustomDatePickerWeekComponent(
                 selectedDate = selectedDate,
                 calendarState = calendarState,
@@ -158,11 +160,13 @@ fun BookingScheduleChangeItemComponent(
                 modifier = Modifier.padding(vertical = 4.dp)
             )
             if (morningTimes.isNotEmpty()) {
+                Log.d("BookScheduleScreen", "오전 시간 : ${morningTimes}")
                 TimeSlotButtonComponent(
                     times = morningTimes,
                     selectedTime = selectedTime,
                     onTimeClick = setSelectedTime,
-                    modifier = Modifier
+//                    isPast = ,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp)) // 섹션 간 간격
             }
@@ -175,40 +179,22 @@ fun BookingScheduleChangeItemComponent(
                 modifier = Modifier.padding(vertical = 4.dp)
             )
             if (afternoonTimes.isNotEmpty()) {
+                Log.d("BookScheduleScreen", "오후 시간 : ${afternoonTimes}")
                 TimeSlotButtonComponent(
                     times = afternoonTimes,
                     selectedTime = selectedTime,
                     onTimeClick = setSelectedTime,
-                    modifier = Modifier
+//                    isPast = ,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
     }
 }
 
-//    if (isDatePickerOpen) {
-//        CustomDatePickerComponent(
-//            selectedDate = selectedDate.toString(),
-//            operationHours = operationHours,
-//            calendarState = calendarState,
-//            isDateClicked = true,
-//            onDismissRequest = { isDatePickerOpen = false },
-//            onMonthChanged = { month ->
-//
-//            },
-//            onDateClicked = { date ->
-//                selectedDate = date
-//                isDatePickerOpen = false
-//            },
-//            onTimeClicked = { date, time ->
-//
-//            }
-//        )
-//    }
-
 // String -> LocalTime 변환
 @RequiresApi(Build.VERSION_CODES.O)
-private fun castToLocalTime(time: String): LocalTime {
+fun castToLocalTime(time: String): LocalTime {
     val refinedTime = if (time.length == 4) "0$time" else time
     val format = DateTimeFormatter.ofPattern("HH:mm") // 시간 형식 정의
     return LocalTime.parse(refinedTime, format)
