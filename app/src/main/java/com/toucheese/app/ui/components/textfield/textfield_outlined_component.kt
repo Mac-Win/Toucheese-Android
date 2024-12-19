@@ -33,14 +33,16 @@ fun TextFieldOutlinedComponent(
             Text(
                 text = placeholder,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                color = Color.Gray
             )
         },
         singleLine = true,
         leadingIcon = {
             Icon(
                 imageVector = leadingIcon,
-                contentDescription = "id"
+                contentDescription = "id",
+                tint = Color.Gray
             )
         },
         keyboardOptions = keyboardOptions,
