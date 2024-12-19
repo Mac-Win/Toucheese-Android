@@ -3,19 +3,10 @@ package com.toucheese.app.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,77 +24,72 @@ fun AppBarImageComponent(
     productInfo: String, // 상품 상세 설명
     productImage: String, // 상품 이미지
     modifier: Modifier = Modifier,
-    onBackButtonClicked:() -> Unit,
+    onReviewButtonClicked: () -> Unit,
+    showReviewButton: Boolean = true,
+    reviewCount: Int,
 ) {
-
     Box(
         modifier = Modifier
             .safeDrawingPadding()
-            .background(Color(0xFFFFFCF5)),
+            .background(color = MaterialTheme.colorScheme.background)
+            .fillMaxWidth(),
         contentAlignment = Alignment.TopStart,
     ) {
-        IconButton(
-            modifier = Modifier.padding(16.dp),
-            onClick = onBackButtonClicked
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.Black
-            )
-        }
-
-        // Image
-        Box(
+        // 내부 Column을 사용하여 이미지, 텍스트, 버튼을 세로로 배치
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.33f) // 전체 높이의 1/3만 차지
-                .safeDrawingPadding(),
-            contentAlignment = Alignment.Center
+                .padding(vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Column(
-                modifier = Modifier.padding(vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            // 상품 이미지
+            AsyncImage(
+                model = productImage,
+                contentDescription = "Photo",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(300.dp)
+                    .border(BorderStroke(1.dp, Color.Black))
+            )
 
+            // 상품명
+            Text(
+                text = productName,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
+            // 상품 상세설명
+            Text(
+                text = productInfo,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier
+                    .width(220.dp)
+                    .padding(top = 4.dp)
+            )
+
+            // 리뷰 보러가기 버튼
+            if (showReviewButton) {
+                TextButton(
+                    onClick = onReviewButtonClicked,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
                 ) {
-                // 상품 이미지
-                Column(
-                    modifier= Modifier
-                        .fillMaxWidth(0.33f)
-                        .fillMaxHeight(0.7f)
-                        .padding(8.dp),
-
-                ) {
-                    AsyncImage(
-                        model = productImage,
-                        contentDescription = "Photo",
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .border(BorderStroke(1.dp, Color.Black))
+                    Text(
+                        text = "리뷰 ${reviewCount}개 >",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
                     )
                 }
-
-                // 상품명
-                Text(
-                    text = productName,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(vertical = 8.dp),
-
-                    )
-
-                // 상품 상세설명
-                Text(
-                    text = productInfo,
-                    textAlign = TextAlign.Center,
-                    fontSize = 8.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.width(200.dp)
-                )
             }
         }
     }
-
 }

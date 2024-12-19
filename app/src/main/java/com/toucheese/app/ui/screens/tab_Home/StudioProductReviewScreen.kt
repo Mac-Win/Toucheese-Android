@@ -27,8 +27,8 @@ fun StudioProductReviewScreen(
     onBackButtonClicked: () -> Unit, // 뒤로가기
     onReviewItemClicked: (Int) -> Unit, // 리뷰 아이템 클릭
 ) {
-    var productReviewList by remember { mutableStateOf<List<com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem>?>(null) }
-    var productDetail by remember { mutableStateOf<com.toucheese.app.data.model.home.product_detail.ProductDetailResponse?>(null) }
+    var productReviewList by remember { mutableStateOf<List<StudioReviewResponseItem>?>(null) }
+    var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
 
     LaunchedEffect(studioId, productId) {
         productReviewList = viewModel.loadProductReview(studioId, productId)
@@ -38,26 +38,54 @@ fun StudioProductReviewScreen(
     if (productDetail != null && productReviewList != null){
         Scaffold(
             topBar = {
-                AppBarImageComponent(
-                    productName = productDetail!!.name,
-                    productInfo = productDetail!!.description,
-                    productImage = productDetail!!.productImage,
-                    modifier = Modifier,
-                    onBackButtonClicked = onBackButtonClicked,
+                TopAppBarComponent(
+                    title = "",
+                    showLeadingIcon = true,
+                    onClickLeadingIcon = onBackButtonClicked,
+                    leadingIcon = Icons.AutoMirrored.Default.ArrowBack
                 )
             }
 
         ) { innerPadding ->
-            Column(
-                modifier = Modifier.padding(innerPadding)
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                ReviewListComponent(
-                    reviews = productReviewList!!,
-                    onReviewClick = onReviewItemClicked
-                )
+                item {
+                    AppBarImageComponent(
+                        productName = productDetail!!.name,
+                        productInfo = productDetail!!.description,
+                        productImage = productDetail!!.productImage,
+                        modifier = Modifier,
+                        onReviewButtonClicked = { },
+                        reviewCount = productDetail!!.reviewCount
+                    )
+                }
+                item {
+                    ReviewListComponent(
+                        reviews = productReviewList!!,
+                        onReviewClick = onReviewItemClicked
+                    )
+                }
             }
         }
     } else {
-
+        // 로딩 상태나 에러 처리 등을 여기에 구현
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "로딩 중...",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+        }
     }
 }

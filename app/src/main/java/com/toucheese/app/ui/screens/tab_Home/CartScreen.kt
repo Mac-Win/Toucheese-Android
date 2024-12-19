@@ -303,7 +303,8 @@ fun CartScreen(
                             selectedOptionIds + optionId
                         }
                         Log.d("CartScreen", "SelectedOptionIds after change: $selectedOptionIds")
-                    }
+                    },
+
                 )
             }
         }
