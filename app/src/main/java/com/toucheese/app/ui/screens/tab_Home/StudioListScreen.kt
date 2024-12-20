@@ -84,10 +84,9 @@ fun StudioListScreen(
                 items(studios) { studio ->
                     StudioListItemComponent(
                         studio = studio,
-                        isMarked = true,
                         modifier = Modifier.clickable {
                             onStudioItemClicked(studio.id)
-                        }
+                        },
                     )
                 }
             }
