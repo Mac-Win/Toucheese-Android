@@ -5,6 +5,7 @@ import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
 import com.toucheese.app.data.model.home.carts_list.CartListResponse
 import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import com.toucheese.app.data.model.home.concept_studio.Studio
+import com.toucheese.app.data.model.home.load_concept.ConceptResponse
 import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
 import com.toucheese.app.data.model.home.review_studio.StudioReviewResponse
 import com.toucheese.app.data.model.home.saveCartData.CartData
@@ -16,6 +17,9 @@ import com.toucheese.app.data.network.HomeService
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(private val apiService: HomeService) {
+
+    // ----- 컨셉 API -----
+    suspend fun loadConcept(): ConceptResponse = apiService.loadConcept()
 
     // -------- 해당 컨셉 스튜디오 API -------
 

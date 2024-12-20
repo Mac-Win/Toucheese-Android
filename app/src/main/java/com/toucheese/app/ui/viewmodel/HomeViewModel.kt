@@ -8,6 +8,7 @@ import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
 import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
 import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import com.toucheese.app.data.model.home.concept_studio.Studio
+import com.toucheese.app.data.model.home.load_concept.ConceptResponse
 import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
 import com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem
 import com.toucheese.app.data.model.home.saveCartData.CartData
@@ -54,6 +55,17 @@ class HomeViewModel @Inject constructor(
     // 로딩 상태를 관리
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    // 컨셉 이름
+    private val _conceptName = MutableStateFlow("")
+    val conceptName: StateFlow<String> = _conceptName
+
+    // ----- 컨셉 API -----
+    suspend fun loadConceptName(conceptId: Int) {
+        val conceptList = repository.loadConcept().toList()
+        val result = conceptList.find { it.id == conceptId }
+        _conceptName.value = result?.name ?: "검색"
+    }
 
     // -------- 스튜디오 API --------
 

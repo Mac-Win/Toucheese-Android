@@ -37,15 +37,17 @@ fun StudioListScreen(
     var selectedIndex by remember { mutableStateOf(-1) } // 선택된 chip Index
     var selectedFilters by remember { mutableStateOf(mapOf<Int, Int>()) } // 다중 선택을 위한 Set
     val studios by viewModel.studios.collectAsState()
+    val conceptName by viewModel.conceptName.collectAsState()
 
     LaunchedEffect(conceptId) {
         viewModel.getConceptStudio(conceptId)
+        viewModel.loadConceptName(conceptId)
     }
 
     Scaffold(
         topBar = {
             TopAppBarComponent(
-                title = "검색",
+                title = conceptName,
                 leadingIcon = Icons.AutoMirrored.Default.ArrowBack,
                 trailingIcon = Icons.Default.ShoppingCart,
                 showLeadingIcon = true,
