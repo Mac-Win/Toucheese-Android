@@ -15,8 +15,40 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ToucheeseApp"
         tools:targetApi="31"
-        android:usesCleartextTraffic="true"
-        >
+        android:usesCleartextTraffic="true">
+
+
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth"
+                    android:scheme="kakao0fbea0ec74d8b0b35ea699ee605d01b9"/>
+            </intent-filter>
+        </activity>
+
+        <!-- 네이버 로그인 리다이렉트 URI 설정  -->
+        <activity
+            android:name="com.navercorp.nid.oauth.OAuthLoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- 리다이렉트 URI 설정 -->
+                <data
+                    android:scheme="com.toucheese.app"
+                    android:host="callback" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
