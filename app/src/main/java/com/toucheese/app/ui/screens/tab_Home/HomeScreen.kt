@@ -61,17 +61,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.toucheese.app.R
-import com.toucheese.app.data.model.concept_studio.Studio
-import com.toucheese.app.data.model.search_studio.SearchResponseItem
+import com.toucheese.app.data.model.home.concept_studio.Studio
+import com.toucheese.app.data.model.home.search_studio.SearchResponseItem
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     selectedTab: Int,
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     onCardClick: (Int) -> Unit,
     onStudioClick: (Int) -> Unit,
     onTabSelected: (Int) -> Unit
@@ -160,7 +160,7 @@ fun HomeScreen(
 @Composable
 fun SearchBar(
     searchText: String,
-    viewModel: StudioViewModel,
+    viewModel: HomeViewModel,
     keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier,
     setText: (String) -> Unit,
@@ -341,9 +341,9 @@ fun ReusableTopBar(
 
 @Composable
 fun SearchResultBox(
-    searchResults: List<SearchResponseItem>,
+    searchResults: List<com.toucheese.app.data.model.home.search_studio.SearchResponseItem>,
     modifier: Modifier = Modifier,
-    onRowClick: (SearchResponseItem) -> Unit // SearchResponseItem을 전달
+    onRowClick: (com.toucheese.app.data.model.home.search_studio.SearchResponseItem) -> Unit // SearchResponseItem을 전달
 ) {
     Box(
         modifier = modifier
@@ -409,7 +409,7 @@ fun SearchResultBox(
 
 @Composable
 fun HomeContent(
-    studios: State<List<Studio>>,
+    studios: State<List<com.toucheese.app.data.model.home.concept_studio.Studio>>,
     onCardClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {

@@ -1,16 +1,27 @@
 package com.toucheese.app.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,60 +31,48 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.toucheese.app.ui.theme.ToucheeseAppTheme
 
 @Composable
 fun TimeSlotButtonComponent(
-    modifier: Modifier,
     times: List<String>,
-    selectedTime: String?,
+    selectedTime: String,
+//    isPast: Boolean,
+    modifier: Modifier,
     onTimeClick: (String) -> Unit
 ) {
-    // 3개의 열로 나누기
-    val rows = times.chunked(3)
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.heightIn(min = 50.dp, max = 200.dp)
+    ) {
+        items(times) { time ->
+            val isSelected = time == selectedTime
 
-    Column(modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        rows.forEach { rowTimes ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                rowTimes.forEach { time ->
-                    val isSelected = time == selectedTime
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(width = 96.dp, height = 40.dp)
-                            .background(
-                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inverseOnSurface,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .clickable { onTimeClick(time) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = time,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-                // 빈 공간을 채우기 위해 투명한 Box 추가
-                val emptyCount = 3 - rowTimes.size
-                repeat(emptyCount) {
-                    Box(
-                        modifier = Modifier
-                            .size(width = 96.dp, height = 40.dp) // 버튼과 동일한 크기
-                            .background(
-                                color = Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
+            SuggestionChip(
+                enabled = true,
+                border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFFD9D9D9)),
+                label = {
+                    Text(
+                        text = time,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth()
                     )
-                }
-            }
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    labelColor = Color(0xFF1F1F1F),
+                ),
+                modifier = Modifier
+                    .width(96.dp)
+                    .height(40.dp),
+                onClick = {},
+            )
         }
     }
 }

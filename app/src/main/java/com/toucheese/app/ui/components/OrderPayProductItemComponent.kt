@@ -23,11 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.rememberAsyncImagePainter
-import com.toucheese.app.data.model.cart_order_pay.CartPayment
+import com.toucheese.app.data.model.home.cart_order_pay.CartPayment
 
 
 @Composable
-fun OrderPayProductItemComponent(product: CartPayment) {
+fun OrderPayProductItemComponent(product: com.toucheese.app.data.model.home.cart_order_pay.CartPayment) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

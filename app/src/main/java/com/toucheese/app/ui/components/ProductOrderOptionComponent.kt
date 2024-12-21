@@ -25,13 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toucheese.app.R
-import com.toucheese.app.data.model.carts_list.AddOption
+import com.toucheese.app.data.model.home.carts_list.AddOption
 
 @Composable
 fun ProductOrderOptionComponent(
     productNumOfPeople: Int, // 상품 기준 인원
     productNumOfPeoplePrice: Int, // 상품 기준(대표) 가격
-    productOptions: List<AddOption>, // 추가 구매 옵션
+    productOptions: List<com.toucheese.app.data.model.home.carts_list.AddOption>, // 추가 구매 옵션
     numOfPeople: Int, // 화면에 표시되는 인원 수
     reviewCount: Int, // 리뷰 갯수
     isOverFlow: Boolean, // 기준인원보다 선택된 인원수가 넘었는지 여부 (true: 넘음)
@@ -191,7 +191,7 @@ private fun PriceSection(
 @Composable
 private fun AdditionalOptions(
     selectedOption: Set<Int>,
-    productOptions: List<AddOption>,
+    productOptions: List<com.toucheese.app.data.model.home.carts_list.AddOption>,
     isOverFlow: Boolean,
     modifier: Modifier = Modifier,
     onOptionClicked: (Int) -> Unit,

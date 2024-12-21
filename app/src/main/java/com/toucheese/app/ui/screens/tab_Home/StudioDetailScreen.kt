@@ -34,13 +34,13 @@ import com.toucheese.app.ui.components.ReviewListComponent
 import com.toucheese.app.ui.components.StudioInfoComponent
 import com.toucheese.app.ui.components.StudioTopAppBarComponent
 import com.toucheese.app.ui.components.TabBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 @Composable
 fun StudioDetailScreen(
     selectedTab: Int,
     studioId: Int,
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
     onShare: () -> Unit,
     onBookmark: (Boolean) -> Unit,

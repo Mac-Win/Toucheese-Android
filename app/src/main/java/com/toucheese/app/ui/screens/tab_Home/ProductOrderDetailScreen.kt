@@ -35,16 +35,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.data.model.calendar_studio.CalendarTimeResponseItem
-import com.toucheese.app.data.model.product_detail.ProductDetailResponse
-import com.toucheese.app.data.model.saveCartData.CartData
+import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
+import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
+import com.toucheese.app.data.model.home.saveCartData.CartData
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.DatePickComponent
 import com.toucheese.app.ui.components.ProductOrderOptionComponent
 import com.toucheese.app.ui.components.calendar.CustomDatePickerComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -59,7 +59,7 @@ fun ProductOrderDetailScreen(
     tokenManager: TokenManager,
     memberId: Int,
     studioId: Int,
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     productId: Int,
     modifier: Modifier = Modifier,
     onBackButtonClicked: () -> Unit,
@@ -67,7 +67,7 @@ fun ProductOrderDetailScreen(
     onOrderClicked: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var productDetail by remember { mutableStateOf<ProductDetailResponse?>(null) }
+    var productDetail by remember { mutableStateOf<com.toucheese.app.data.model.home.product_detail.ProductDetailResponse?>(null) }
     LaunchedEffect(productId) {
         productDetail = viewModel.loadProductDetail(productId)
     }
@@ -76,8 +76,6 @@ fun ProductOrderDetailScreen(
     val calendarState = rememberSelectableCalendarState()
     // 선택된 옵션들
     var selectedOption by remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
-    // 날짜가 선택되었는지를 저장
-    val (isDateClicked, setDateClicked) = remember { mutableStateOf(false) }
     // 선택일자
     val (selectedDate, setSelectedDate) = remember { mutableStateOf<LocalDate>(LocalDate.now()) }
     // 선택일자의 운영시간
@@ -244,10 +242,10 @@ fun ProductOrderDetailScreen(
 
             if (showDialog) {
                 CustomDatePickerComponent(
+                    selectedTime = selectedTime,
                     selectedDate = selectedDate.toString(),
                     operationHours = operatingHours,
                     calendarState = calendarState,
-                    isDateClicked = isDateClicked,
                     onMonthChanged = { selectedMonth ->
                         // 서버 API 비동기 호출
                         coroutineScope.launch {
@@ -262,17 +260,14 @@ fun ProductOrderDetailScreen(
                     },
 
                     onDateClicked = { clickedDate ->
-                        if (isDateClicked && selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
-                            setDateClicked(false)
+                        if (selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
                             setSelectedDate(LocalDate.now())
                         } else { // 다른 날짜를 누른 경우
-                            setDateClicked(true)
                             setSelectedDate(clickedDate)
                         }
                     },
                     onDismissRequest = {
                         setDialog(false)
-                        setDateClicked(false)
                         setOperationHours(emptyList())
                     },
                     onTimeClicked = { date: String, time: String ->

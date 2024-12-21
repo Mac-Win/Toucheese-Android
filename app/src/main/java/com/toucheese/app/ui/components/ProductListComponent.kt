@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.toucheese.app.data.model.studio_detail.Product
+import com.toucheese.app.data.model.home.studio_detail.Product
 
 @Composable
-fun ProductList(products: List<Product>, modifier: Modifier = Modifier, onProductClicked: (Int) -> Unit) {
+fun ProductList(products: List<com.toucheese.app.data.model.home.studio_detail.Product>, modifier: Modifier = Modifier, onProductClicked: (Int) -> Unit) {
     Column(modifier = modifier) { // LazyColumn 대신 Column 사용
         products.forEach { product ->
             ProductItem(

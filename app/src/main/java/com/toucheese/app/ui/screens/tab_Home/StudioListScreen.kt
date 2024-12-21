@@ -24,11 +24,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.ui.components.FilterChipComponent
 import com.toucheese.app.ui.components.StudioListItemComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.viewmodel.StudioViewModel
+import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 @Composable
 fun StudioListScreen(
-    viewModel: StudioViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     conceptId: Int,
     onClickLeadingIcon: () -> Unit,
     onClickTrailingIcon: () -> Unit,
