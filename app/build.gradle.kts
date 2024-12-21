@@ -18,6 +18,34 @@ android {
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // local.properties에서 kakao_native_app_key 읽어오기
+        val kakaoNativeAppKey: String = if (project.hasProperty("kakao_native_app_key")) {
+            project.property("kakao_native_app_key") as String
+        } else {
+            ""
+        }
+
+        // BuildConfig에 Kakao 앱키 추가
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
+
+        // 네이버 클라이언트 아이디 추가
+        val naverClientId: String = if (project.hasProperty("naver_client_id")){
+            project.property("naver_client_id") as String
+        } else {
+            ""
+        }
+
+        // 네이버 클라이언트 시크릿 추가
+        val naverClientSecret: String = if (project.hasProperty("naver_client_secret")) {
+            project.property("naver_client_secret") as String
+        } else {
+            ""
+        }
+
+        // BuildConfig에 네이버 클라이언트 아이디 추가
+        buildConfigField("String", "NAVER_CLIENT_ID", "\"$naverClientId\"")
+        buildConfigField("String", "NAVER_CLIENT_SECRET", "\"$naverClientSecret\"")
     }
 
     buildTypes {
@@ -38,6 +66,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -74,7 +103,18 @@ dependencies {
     // Compose Calendar
     implementation("io.github.boguszpawlowski.composecalendar:composecalendar:1.3.0")
     implementation("io.github.boguszpawlowski.composecalendar:kotlinx-datetime:1.3.0")
+
+    //KaKao
+    implementation ("com.kakao.sdk:v2-all:2.20.0") // 전체 모듈 설치
+
+    // Naver SDK
+    implementation ("com.navercorp.nid:oauth:5.10.0")
+
 }
+
+
+
+
 
 // Allow references to generated code
 kapt {
