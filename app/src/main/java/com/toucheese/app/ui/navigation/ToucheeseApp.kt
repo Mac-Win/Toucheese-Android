@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -49,6 +50,8 @@ import com.toucheese.app.ui.screens.tab_Qna.QnaScreen
 import com.toucheese.app.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.toucheese.app.ui.screens.login.AdditionalInfoScreen
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.toucheese.app.ui.components.BookingScheduleChangeScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import kotlinx.coroutines.launch
@@ -129,7 +132,8 @@ fun ToucheeseApp(api: HomeService) {
                         // 환영 메시지
                         Toast.makeText(context, "${memberName}님 반갑습니다.", Toast.LENGTH_LONG).show()
                     }
-                }
+                },
+                navController = navController
             )
         }
         // 메인 화면
@@ -550,6 +554,14 @@ fun ToucheeseApp(api: HomeService) {
                     }
                 }
             }
+        }
+
+        // 추가 정보 입력 화면
+        composable("AddtionalInfo") {
+            AdditionalInfoScreen(
+                navController = navController,
+                viewModel = hiltViewModel()
+            )
         }
 
     }

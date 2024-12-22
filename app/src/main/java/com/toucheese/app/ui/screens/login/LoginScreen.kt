@@ -29,6 +29,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,10 +46,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.kakao.sdk.user.UserApiClient
 import com.toucheese.app.R
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.SocialLoginButton
 import com.toucheese.app.ui.components.textfield.TextFieldOutlinedComponent
+import com.toucheese.app.ui.viewmodel.KakaoLoginUiState
 import com.toucheese.app.ui.viewmodel.LoginViewModel
 import com.toucheese.app.ui.viewmodel.TAG
 import kotlinx.coroutines.launch
@@ -56,7 +62,8 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
-    onLoginClicked: (Int, String, Boolean) -> Unit
+    onLoginClicked: (Int, String, Boolean) -> Unit,
+    navController: NavController
 ) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
@@ -72,6 +79,79 @@ fun LoginScreen(
     val hostState = remember { SnackbarHostState() }
     // 키보드
     val imeController = LocalSoftwareKeyboardController.current
+    // 토큰
+    val tokenManager = TokenManager(context)
+
+    val memberId by viewModel.memberId.collectAsState()
+    // 로그인 상태 확인
+    val isLoggedIn = viewModel.isLoggedIn(tokenManager)
+
+    // 카카오 로그인 상태 관찰
+    val kakaoLoginUiState by viewModel.kakaoLoginState.collectAsState()
+
+
+    // 카카오 로그인 버튼 클릭 시 로직
+    fun performKakaoLogin() {
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+            // 카카오톡 앱을 통한 로그인
+            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+                if (error != null) {
+                    Log.d("KakaoLogin", "KakaoTalk Login failed: ${error.message}")
+                } else if (token != null) {
+                    // accessToken, idToken(있을 경우) 추출
+                    val accessToken = token.accessToken
+                    val idToken = token.idToken ?: ""
+                    coroutine.launch {
+                        viewModel.requestKakaoLogin(tokenManager, accessToken, idToken)
+                    }
+                }
+            }
+        } else {
+            // 카카오 계정 로그인 (카카오톡 미설치 시)
+            UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+                if (error != null) {
+                    Log.d("KakaoLogin", "KakaoAccount Login failed: ${error.message}")
+                } else if (token != null) {
+                    // accessToken, idToken(있을 경우) 추출
+                    val accessToken = token.accessToken
+                    val idToken = token.idToken ?: ""
+                    coroutine.launch {
+                        viewModel.requestKakaoLogin(tokenManager, accessToken, idToken)
+                    }
+                }
+            }
+        }
+    }
+
+    // 카카오 로그인 성공 시, isFirstLogin에 따라 추가정보 화면으로 보낼 수도 있음
+    LaunchedEffect(kakaoLoginUiState) {
+        when (kakaoLoginUiState) {
+            is KakaoLoginUiState.Success -> {
+                val data = (kakaoLoginUiState as KakaoLoginUiState.Success).data
+                Log.d("KakaoLogin", "카카오 로그인 성공: $data")
+                // isFirstLogin이면 추가정보 입력화면, 아니면 메인화면 등 분기
+                if (data.isFirstLogin) {
+                    navController.navigate("AdditionalInfo") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                } else {
+                    // 메인화면으로 등등
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            }
+            is KakaoLoginUiState.Error -> {
+                val msg = (kakaoLoginUiState as KakaoLoginUiState.Error).msg
+                coroutine.launch {
+                    hostState.showSnackbar("카카오 로그인 오류: $msg")
+                }
+            }
+            else -> {}
+        }
+    }
+
+
 
 
     Scaffold(
@@ -277,17 +357,17 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SocialLoginButton(
-                    backgroundColor = Color(0xFFFEE500), // 카카오 노란색
+                    backgroundColor = Color(0xFFFEE500),
                     icon = painterResource(R.drawable.kakaologo),
                     text = "카카오 로그인",
                     textColor = Color.Black,
-                    onClick = { /* 카카오 로그인 로직 */ }
+                    onClick = { performKakaoLogin() }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SocialLoginButton(
-                    backgroundColor = Color(0xFF03C75A), // 네이버 초록색
+                    backgroundColor = Color(0xFF03C75A),
                     icon = painterResource(R.drawable.naverlogo),
                     text = "네이버 로그인",
                     textColor = Color.White,
