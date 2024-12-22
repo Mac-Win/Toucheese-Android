@@ -38,14 +38,15 @@ fun SquareRadioButton(
             shape = RoundedCornerShape(4.dp),
             border = BorderStroke(1.dp, borderColor),
             modifier = Modifier.fillMaxSize(),
-        ) {}
-        if (selected) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Selected",
-                tint = checkColor,
-                modifier = Modifier.size(16.dp)
-            )
+        ) {
+            if (selected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = checkColor,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }

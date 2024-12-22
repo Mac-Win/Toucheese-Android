@@ -1,13 +1,18 @@
 package com.toucheese.app.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,8 +22,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,14 +40,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import com.toucheese.app.R
 import com.toucheese.app.data.model.home.concept_studio.Studio
 
 // 추후 parameter에 studio: Studio 추가
 @Composable
-fun StudioListItemComponent(studio: com.toucheese.app.data.model.home.concept_studio.Studio, isMarked: Boolean, modifier: Modifier = Modifier) {
+fun StudioListItemComponent(
+    studio: Studio,
+    modifier: Modifier = Modifier,
+    ) {
+    val (isMarked, setMarkState) = remember { mutableStateOf(false) }
     Column(
-        modifier = modifier.padding(top = 16.dp, start = 16.dp, bottom = 16.dp)
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp),
     ) {
         // Item Title
         StudioListItemTitleComponent(
@@ -46,7 +63,8 @@ fun StudioListItemComponent(studio: com.toucheese.app.data.model.home.concept_st
             studioRating = studio.rating,
             price = studio.price,
             isMarked,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            onMarkChanged = { setMarkState(!isMarked) }
         )
         // Item Carousel
         StudioListItemCarouselComponent(
@@ -60,10 +78,11 @@ fun StudioListItemComponent(studio: com.toucheese.app.data.model.home.concept_st
 private fun StudioListItemTitleComponent(
     studioName: String,
     studioProfileImageUrl: String,
-    studioRating: Double,
-    price: Int,
+    studioRating: Double, // 별점
+    price: Int, // 가격
     isMarked: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onMarkChanged: () -> Unit,
 ) {
     // 윗 부분
     Row(
@@ -83,50 +102,18 @@ private fun StudioListItemTitleComponent(
                     RoundedCornerShape(50.dp)
                 )
         )
-        // 상호명 및 별점
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(4.dp)
-        ) {
-            // 상호명
-            Text(
-//                text = studioName,
-                text = titleFilter(studioName),
-                fontSize = 24.sp,
-            )
-            // 별점
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 4.dp),
-
-                ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = Color(0xFFFFCC00),
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = "$studioRating", // rating 연결
-                    color = Color(0xFFFFCC00),
-                )
-            }
-        }
+        Spacer(modifier = Modifier.width(4.dp))
+        // 상호명
+        Text(
+            text = titleFilter(studioName),
+            fontSize = 24.sp,
+        )
 
         Spacer(Modifier.weight(1f))
 
-        // 가격
-        Text(
-            text = "${price / 1000},000원",
-            modifier = Modifier.padding(8.dp)
-        )
-
         // 북마크 버튼
         IconButton(
-            onClick = {
-
-            }
+            onClick = onMarkChanged
         ) {
             Icon(
                 imageVector = if (isMarked) ImageVector.vectorResource(R.drawable.bookmarkfull_24px) else ImageVector.vectorResource(
@@ -140,6 +127,65 @@ private fun StudioListItemTitleComponent(
             )
         }
     }
+
+    // 별점, 가격,
+    Row(
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+        // 별점
+        SuggestionChip(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Color(0xFFFFCC00),
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            shape = RoundedCornerShape(4.dp),
+            border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+            enabled = false,
+            label = {
+                Text(
+                    text = "$studioRating",
+                    style = MaterialTheme.typography.labelSmall
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                disabledLabelColor = Color.Black,
+                disabledContainerColor = Color(0xFFFAFAFA),
+            ),
+            onClick = {},
+        )
+
+
+        // 가격
+        SuggestionChip(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Star, // 아이콘 구해서 한 번에 수정
+                    contentDescription = null,
+                    tint = Color(0xFFFFCC00),
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            shape = RoundedCornerShape(4.dp),
+            border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+            enabled = false,
+            label = {
+                Text(
+                    text = "${price / 1000},000원~",
+                    style = MaterialTheme.typography.labelSmall
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                disabledLabelColor = Color.Black,
+                disabledContainerColor = Color(0xFFFAFAFA),
+            ),
+            onClick = {},
+        )
+    }
 }
 
 // Carousel
@@ -150,9 +196,8 @@ private fun StudioListItemCarouselComponent(
 ) {
     LazyRow(
         modifier = modifier,
-        contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(imageUrlList) {
             CarouselItem(imageUrl = it)
@@ -166,17 +211,15 @@ private fun StudioListItemCarouselComponent(
 @Composable
 private fun CarouselItem(imageUrl: String, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp)
     ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             alignment = Alignment.Center,
-            modifier = Modifier.size(150.dp)
+            modifier = Modifier.width(92.dp).height(120.dp)
         )
     }
 }

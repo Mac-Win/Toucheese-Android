@@ -80,10 +80,6 @@ fun HomeScreen(
     val isSearching by viewModel.isSearching.collectAsState()
     val searchResults by viewModel.searchStudios.collectAsState()
     var searchText by remember { mutableStateOf("") }
-    // 데이터 수신 확인
-    Log.d("HomeScreen", "${studios.value}")
-    Log.d("HomeScreen", "isSearching: $isSearching, searchResults: $searchResults")
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
