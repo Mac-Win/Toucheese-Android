@@ -2,6 +2,7 @@ package com.toucheese.app.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,7 +52,9 @@ fun StudioListItemComponent(
     ) {
     val (isMarked, setMarkState) = remember { mutableStateOf(false) }
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp),
     ) {
         // Item Title
         StudioListItemTitleComponent(
