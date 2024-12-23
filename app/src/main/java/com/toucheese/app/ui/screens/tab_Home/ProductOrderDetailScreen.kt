@@ -168,7 +168,7 @@ fun ProductOrderDetailScreen(
                         productInfo = productDetail!!.description, // 상품 설명
                         productImage = productDetail!!.productImage, // 상품 이미지,
                         onReviewButtonClicked = onReviewButtonClicked,
-                        reviewCount = productDetail!!.reviewCount
+                        reviewCount = productDetail!!.reviewCount,
                     )
                 }
                 item {
