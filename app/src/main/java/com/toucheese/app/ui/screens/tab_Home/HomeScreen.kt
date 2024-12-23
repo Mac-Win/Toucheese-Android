@@ -67,7 +67,6 @@ import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     selectedTab: Int,
@@ -76,7 +75,6 @@ fun HomeScreen(
     onStudioClick: (Int) -> Unit,
     onTabSelected: (Int) -> Unit
 ) {
-    val studios = viewModel.studios.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val searchResults by viewModel.searchStudios.collectAsState()
     var searchText by remember { mutableStateOf("") }
@@ -114,7 +112,6 @@ fun HomeScreen(
         ) {
             // 홈 화면 콘텐츠
             HomeContent(
-                studios = studios,
                 onCardClick = {
                     // 카드 클릭 시 선택된 스튜디오 컨셉 id 전달
                     onCardClick(it)
@@ -171,21 +168,14 @@ fun SearchBar(
         }, // 사용자가 입력한 텍스트를 업데이트
         leadingIcon = { // 왼쪽 아이콘
             Icon(
-                imageVector = Icons.Default.Menu, // 햄버거 메뉴 아이콘
-                contentDescription = "Menu Icon",
-                tint = Color.Gray
-            )
-        },
-        trailingIcon = { // 오른쪽 아이콘
-            Icon(
-                imageVector = Icons.Default.Search, // 돋보기 아이콘
+                imageVector = Icons.Default.Search, // 검색 아이콘
                 contentDescription = "Search Icon",
                 tint = Color.Gray
             )
         },
         placeholder = {
             Text(
-                text = "스튜디오 검색",
+                text = "스튜디오 찾기",
                 style = androidx.compose.ui.text.TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp // 한글 텍스트가 잘리지 않도록 설정
@@ -209,7 +199,7 @@ fun SearchBar(
 }
 
 @Composable
-fun CardGrid(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
+private fun CardGrid(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
     val cardData = listOf(
         Triple(R.drawable.image1, "생동감 있는", 1), // ID 추가
         Triple(R.drawable.image2, "플래쉬/유광", 2),
@@ -241,7 +231,7 @@ fun CardGrid(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
 }
 
 @Composable
-fun PhotoCard(
+private fun PhotoCard(
     imageRes: Int,
     title: String,
     modifier: Modifier = Modifier,
@@ -254,7 +244,7 @@ fun PhotoCard(
     Card(
         modifier = modifier
             .height(cardHeight / 3), // 카드 전체 높이
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         onClick = onCardClick
     ) {
@@ -304,7 +294,7 @@ fun ReusableTopBar(
     TopAppBar(
         title = {
             Image(
-                painter = painterResource(id = R.drawable.toucheeselogo),
+                painter = painterResource(id = R.drawable.toucheese_logo),
                 contentDescription = "",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -404,8 +394,7 @@ fun SearchResultBox(
 }
 
 @Composable
-fun HomeContent(
-    studios: State<List<com.toucheese.app.data.model.home.concept_studio.Studio>>,
+private fun HomeContent(
     onCardClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
