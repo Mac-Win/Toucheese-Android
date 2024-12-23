@@ -66,7 +66,6 @@ fun StudioProductReviewScreen(
                     .padding(innerPadding)
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
@@ -76,7 +75,8 @@ fun StudioProductReviewScreen(
                         productImage = productDetail!!.productImage,
                         modifier = Modifier,
                         onReviewButtonClicked = { },
-                        reviewCount = productDetail!!.reviewCount
+                        reviewCount = productDetail!!.reviewCount,
+                        showReviewButton = false
                     )
                 }
                 item {
