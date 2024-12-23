@@ -3,8 +3,9 @@ package com.toucheese.app.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toucheese.app.data.model.SocialLogin.Kakao.KakaoAuthCallbackResponse
-import com.toucheese.app.data.model.SocialLogin.Kakao.KakaoAuthResponse
+import com.toucheese.app.data.model.SocialLogin.SocialLoginRequest
+import com.toucheese.app.data.model.SocialLogin.SocialLoginResponse
+import com.toucheese.app.data.model.SocialLogin.UpdateMemberInfoRequest
 import com.toucheese.app.data.model.login.Login
 import com.toucheese.app.data.repository.LoginRepository
 import com.toucheese.app.data.token_manager.TokenManager
@@ -27,15 +28,25 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
     private val _memberName = MutableStateFlow("")
     val memberName: StateFlow<String> = _memberName
 
+    // 현재 로그인한 사람의 전화번호
+    private val _memberPhoneNumber = MutableStateFlow("")
+    val memberPhoneNumber: StateFlow<String> = _memberPhoneNumber
+
     // ------------- 카카오 로그인 StateFlow -------------
     private val _kakaoLoginState = MutableStateFlow<KakaoLoginUiState>(KakaoLoginUiState.Idle)
     val kakaoLoginState: StateFlow<KakaoLoginUiState> = _kakaoLoginState
+
+    // ------------- 추가 정보 업데이트 StateFlow -------------
+    private val _updateInfoState = MutableStateFlow<UpdateInfoUiState>(UpdateInfoUiState.Idle)
+    val updateInfoState: StateFlow<UpdateInfoUiState> = _updateInfoState
+
 
     // 로그인 여부 확인
     fun isLoggedIn(tokenManager: TokenManager): Boolean {
         val token = tokenManager.getAccessToken()
         return !token.isNullOrEmpty()
     }
+
 
     // 회원 로그인
     suspend fun requestLogin(tokenManager: TokenManager, email: String, password: String) {
@@ -76,98 +87,155 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
     // 멤버 아이디 조회
     fun getMemberId(): Int = memberId.value
 
-
-    fun submitAdditionalInfo(tokenManager: TokenManager, name: String, phoneNumber: String) {
+    // 추가 정보 입력
+    fun updateMemberInfo(
+        name: String,
+        phoneNumber: String,
+        tokenManager: TokenManager
+    ) {
         viewModelScope.launch {
-            val response = repository.updateMemberInfo(tokenManager.getAccessToken(), name, phoneNumber)
-            if (response.isSuccessful) {
-                val body = response.body()
-                if (body != null) {
-                    _memberName.value = body.name
-                    // 여기서도 실제로 서버 연동 시 Authorization 확인 후 로직 처리 가능
-                    // 현재 Mock 상태이므로 바로 성공 처리
-                    Log.d(TAG, "Additional Info saved: ${body.name}, ${body.phoneNumber}")
+            if (name.isEmpty() || phoneNumber.isEmpty()) {
+                _updateInfoState.value = UpdateInfoUiState.Error("모든 필드를 입력해주세요.")
+                return@launch
+            }
+
+            _updateInfoState.value = UpdateInfoUiState.Loading
+
+            try {
+                // 요청 객체 생성
+                val request = UpdateMemberInfoRequest(name = name, phone = phoneNumber)
+
+                // 1. Access Token 가져오기 (요청 전에 필요)
+                val token = tokenManager.getAccessToken()
+                Log.d(TAG, "Fetched Access Token: $token")
+                if (token.isNullOrEmpty()) {
+                    _updateInfoState.value = UpdateInfoUiState.Error("인증 토큰이 없습니다. 다시 로그인 해주세요.")
+                    return@launch
                 }
-            } else {
-                Log.d(TAG, "Additional Info Update Failed: ${response.code()}")
+
+                // 2. API 호출 (토큰을 사용하여 요청)
+                val response: Response<Unit> = repository.updateMemberInfo(token, request)
+
+                if (response.isSuccessful) {
+                    _updateInfoState.value = UpdateInfoUiState.Success
+                    Log.d(TAG, "추가 정보 업데이트 성공")
+
+                    // 6. 사용자 정보 업데이트
+                    _memberName.value = name
+                    _memberPhoneNumber.value = phoneNumber
+
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(TAG, "Update Member Info failed: ${response.code()} - ${response.message()} - $errorBody")
+                    _updateInfoState.value = UpdateInfoUiState.Error("업데이트 실패: ${response.message()}")
+                }
+                Log.d(TAG, "Current token after updateMemberInfo: ${tokenManager.getAccessToken()}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Update Member Info Exception: ${e.message}")
+                _updateInfoState.value = UpdateInfoUiState.Error("예외 발생: ${e.message}")
             }
         }
     }
-
-
-//    // 추가 정보
-//    suspend fun submitAdditionalInfo(name: String, phoneNumber: String) {
-//        val response = repository.updateMemberInfo(
-//            token = tokenManager.getAccessToken(),
-//            name = name,
-//            phoneNumber = phoneNumber
-//        )
-//        if (response.isSuccessful) {
-//            // 업데이트 성공 시 홈화면으로 이동
-//            // UI단에서 state 변화 감지 후 navController.navigate("home") 호출 가능
-//            _memberName.value = name
-//            // 성공 시 navigate 로직은 Screen에서 감지
-//        } else {
-//            // 업데이트 실패 처리(에러 메시지 표시 등)
-//        }
-//    }
 
     // -------------------------------
     // (3) 카카오 로그인(2단계)
     // -------------------------------
     //  1) POST(kakaoAccessToken, kakaoIdToken)
-    //  2) GET(token=서버에서 돌려준 accessToken 등)
+    //  2) 서버에서 받은 응답 처리
     // -------------------------------
-    fun requestKakaoLogin(tokenManager: TokenManager, kakaoAccessToken: String, kakaoIdToken: String) {
+    fun requestKakaoLogin(
+        tokenManager: TokenManager,
+        kakaoAccessToken: String,
+        kakaoIdToken: String
+    ) {
+        Log.d(TAG, "requestKakaoLogin 호출")
         viewModelScope.launch {
             if (kakaoAccessToken.isEmpty() || kakaoIdToken.isEmpty()) {
                 Log.d(TAG, "카카오 토큰(Access / ID)이 비어 있습니다.")
+                _kakaoLoginState.value = KakaoLoginUiState.Error("카카오 토큰이 비어 있습니다.")
                 return@launch
             }
 
             _kakaoLoginState.value = KakaoLoginUiState.Loading
 
             try {
-                // 1) 카카오 로그인 POST
-                val postResponse: Response<KakaoAuthCallbackResponse> = repository.requestKakaoLogin(
-                    KakaoAuthResponse(
-                        accessToken = kakaoAccessToken,
-                        idToken = kakaoIdToken
-                    )
+                // 1) 카카오 로그인 POST 요청
+                val socialLoginRequest = SocialLoginRequest(
+                    accessToken = kakaoAccessToken,
+                    idToken = kakaoIdToken,
+                    deviceId = tokenManager.getDeviceId() ?: "", // deviceId를 TokenManager에서 가져옴 로그인 안되면 이거 빈값으로 넣고 다시 매서드 불러오셈
+                    platform = "KAKAO" // 플랫폼 명확히 지정
                 )
+
+                val postResponse: Response<SocialLoginResponse> =
+                    repository.requestKakaoLogin(socialLoginRequest)
 
                 if (postResponse.isSuccessful) {
                     val postBody = postResponse.body()
                     Log.d(TAG, "KakaoLogin POST body: $postBody")
 
-                    // 일단 서버에서 accessToken을 새로 준다고 가정(예: JWT)
-                    // 실제로는 KakaoAuthCallbackResponse 안에 토큰 필드가 없으므로,
-                    // "콜백용 token"이 따로 있거나, 혹은 기존 kakaoAccessToken을 다시 쓸 수도 있습니다.
+                    if (postBody != null){
+                        // 1. Authorization 헤더에서 Access Token 추출 및 저장
+                        val authorizationHeader = postResponse.headers() ["Authorization"]
+                        val accessToken = authorizationHeader?.removePrefix("Bearer ")
 
-                    // 예시) 일단은 "kakaoAccessToken" 자체를 callback token으로 쓴다고 가정
-                    //      실제로는 postBody에 callbackToken이 있을 수도 있으므로 상황에 맞춰 수정
-                    val callbackToken = kakaoAccessToken
-
-                    // 2) 콜백 GET
-                    val getResponse: Response<KakaoAuthCallbackResponse> = repository.requestKakaoLoginCallback(callbackToken)
-                    if (getResponse.isSuccessful) {
-                        val getBody = getResponse.body()
-                        Log.d(TAG, "KakaoLogin GET body: $getBody")
-
-                        if (getBody != null) {
-                            // 콜백 결과 처리
-                            _kakaoLoginState.value = KakaoLoginUiState.Success(getBody)
-                            // 필요하다면 isFirstLogin, nickname 등을 이용해 추가 로직
-                            // ex) _memberName.value = getBody.nickname
+                        if (!accessToken.isNullOrEmpty()) {
+                            tokenManager.saveAccessToken(accessToken)
                         } else {
-                            _kakaoLoginState.value = KakaoLoginUiState.Error("Kakao Login Callback body is null.")
+                            _kakaoLoginState.value = KakaoLoginUiState.Error("Authorization 헤더에 유효한 토큰이 없습니다.")
                         }
-                    } else {
-                        _kakaoLoginState.value = KakaoLoginUiState.Error("Kakao Login Callback failed: ${getResponse.message()}")
                     }
 
+                    if (postBody != null) {
+                        // 서버에서 반환한 리프레시 토큰 저장
+                        if (postBody.refreshToken.isNotEmpty()) {
+                            tokenManager.saveRefreshToken(postBody.refreshToken)
+                            Log.d(TAG, "Refresh Token saved: ${postBody.refreshToken}")
+                        }
+
+                        // deviceId 저장
+                        if (postBody.deviceId.isNotEmpty()) {
+                            tokenManager.saveDeviceId(postBody.deviceId)
+                            Log.d(TAG, "Device ID saved: ${postBody.deviceId}")
+                        }
+
+
+                        // 로그인 상태 업데이트
+                        _kakaoLoginState.value = KakaoLoginUiState.Success(postBody)
+
+                        if (postBody.isFirstLogin) {
+                            // 첫 로그인 시 추가 정보 입력 필요
+                            Log.d(
+                                TAG,
+                                "First login detected. Member ID: ${postBody.memberId}"
+                            )
+                            // 추가 정보 입력 화면으로 이동하는 로직 추가
+                            // 예시:
+                            // navigateToAdditionalInfoScreen()
+                        } else {
+                            // 기존 사용자 처리
+                            _memberId.value = postBody.memberId
+                            _memberName.value = postBody.nickname
+                            Log.d(
+                                TAG,
+                                "Existing user. Member ID: ${postBody.memberId}, Nickname: ${postBody.nickname}"
+                            )
+                            // 홈 화면으로 이동하는 로직 추가
+                            // 예시:
+                            // navigateToHomeScreen()
+                        }
+                    } else {
+                        _kakaoLoginState.value =
+                            KakaoLoginUiState.Error("Kakao Login POST body is null.")
+                    }
                 } else {
-                    _kakaoLoginState.value = KakaoLoginUiState.Error("Kakao Login POST failed: ${postResponse.message()}")
+                    val errorBody = postResponse.errorBody()?.string()
+                    Log.e(
+                        TAG,
+                        "Kakao Login POST failed: ${postResponse.code()} - ${postResponse.message()} - $errorBody"
+                    )
+                    _kakaoLoginState.value =
+                        KakaoLoginUiState.Error("Kakao Login POST failed: ${postResponse.code()} - ${postResponse.message()}\n$errorBody")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -177,13 +245,20 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
     }
 }
 
-
 // -------------------------------
 // 카카오 로그인 상태 UI 관리용 Sealed Class
 // -------------------------------
 sealed class KakaoLoginUiState {
     object Idle : KakaoLoginUiState()
     object Loading : KakaoLoginUiState()
-    data class Success(val data: KakaoAuthCallbackResponse) : KakaoLoginUiState()
+    data class Success(val data: SocialLoginResponse?) : KakaoLoginUiState()
     data class Error(val msg: String) : KakaoLoginUiState()
+}
+
+// 추가 정보 업데이트 상태 관리용 Sealed Class
+sealed class UpdateInfoUiState {
+    object Idle : UpdateInfoUiState()
+    object Loading : UpdateInfoUiState()
+    object Success : UpdateInfoUiState()
+    data class Error(val msg: String) : UpdateInfoUiState()
 }

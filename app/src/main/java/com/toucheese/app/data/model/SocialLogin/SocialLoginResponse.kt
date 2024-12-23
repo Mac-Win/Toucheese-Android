@@ -1,8 +1,8 @@
-package com.toucheese.app.data.model.SocialLogin.Kakao
+package com.toucheese.app.data.model.SocialLogin
 
 import com.google.gson.annotations.SerializedName
 
-data class KakaoAuthCallbackResponse(
+data class SocialLoginResponse(
     @SerializedName("deviceId")
     val deviceId: String,
     @SerializedName("isFirstLogin")

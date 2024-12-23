@@ -17,4 +17,20 @@ class TokenManager(context: Context) {
     fun clearAccessToken() {
         prefs.edit().remove("accessToken").apply()
     }
+
+    fun saveRefreshToken(token: String) {
+        prefs.edit().putString("refreshToken", token).apply()
+    }
+
+    fun getRefreshToken(): String?{
+        return prefs.getString("refreshToken", null)
+    }
+
+    fun saveDeviceId(deviceId: String){
+        prefs.edit().putString("deviceId", deviceId).apply()
+    }
+
+    fun getDeviceId(): String?{
+        return prefs.getString("deviceId", null)
+    }
 }

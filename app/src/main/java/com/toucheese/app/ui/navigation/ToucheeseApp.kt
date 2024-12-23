@@ -52,7 +52,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.toucheese.app.ui.components.BookingScheduleChangeScreen
-import com.toucheese.app.ui.screen.login.AdditionalInfoScreen
+import com.toucheese.app.ui.screens.login.AdditionalInfoScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import kotlinx.coroutines.launch
 
@@ -124,16 +124,28 @@ fun ToucheeseApp(api: HomeService) {
                     // 로그인 성공
                     if (isLoggedIn){
                         // 홈 화면으로 이동
-                        navController.navigate(
-                            Screen.Home.route
-                        )
+                        navController.navigate(Screen.Home.route){
+                            popUpTo(navController.graph.id){ inclusive = true }
+                        }
                         // 멤버 Id 저장
                         memberId = memberLoginId
                         // 환영 메시지
                         Toast.makeText(context, "${memberName}님 반갑습니다.", Toast.LENGTH_LONG).show()
                     }
                 },
-                navController = navController
+                onKakaoFirstLoginClicked = {
+                    // 추가정보 화면으로 이동
+                    navController.navigate(Screen.AdditionalInfo.route) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                },
+                onKakaoLoginClicked = {
+                    // 메인화면으로 등등
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
+
             )
         }
         // 메인 화면
@@ -565,10 +577,10 @@ fun ToucheeseApp(api: HomeService) {
         }
 
         // 추가 정보 입력 화면
-        composable("AddtionalInfo") {
+        composable("AdditionalInfo") {
             AdditionalInfoScreen(
                 navController = navController,
-                viewModel = hiltViewModel()
+                tokenManager = tokenManager
             )
         }
 
