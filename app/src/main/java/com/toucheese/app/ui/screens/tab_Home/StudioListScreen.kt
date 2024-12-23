@@ -491,7 +491,7 @@ fun StudioListScreen(
                                         if (selectedLocations.isEmpty() || selectedLocations.contains(
                                                 0
                                             )
-                                        ) "지역선택" else if (selectedLocations.size == 1) regions[selectedLocations.sorted()[0]] else "${regions[selectedLocations.sorted()[0]]}외 ${selectedLocations.size - 1}개"
+                                        ) "지역선택" else if (selectedLocations.size == 1) regions[selectedLocations.sorted()[0]] else "${regions[selectedLocations.sorted()[0]]} · ${selectedLocations.size}"
 
                                     // 필터 선택 상태 적용
                                     isSelectedPrice = selectedPrice != 0
