@@ -1,6 +1,7 @@
 package com.toucheese.app.ui.screens.tab_Home
 
-import android.util.Log
+import android.widget.Space
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,11 +10,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,7 +26,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
@@ -32,41 +34,44 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.toucheese.app.R
-import com.toucheese.app.data.model.home.concept_studio.Studio
 import com.toucheese.app.data.model.home.search_studio.SearchResponseItem
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     selectedTab: Int,
@@ -75,9 +80,11 @@ fun HomeScreen(
     onStudioClick: (Int) -> Unit,
     onTabSelected: (Int) -> Unit
 ) {
-    val isSearching by viewModel.isSearching.collectAsState()
     val searchResults by viewModel.searchStudios.collectAsState()
-    var searchText by remember { mutableStateOf("") }
+    // 검색 내역
+    val (searchText, setSearchText) = remember { mutableStateOf("") }
+    // 검색 상태
+    val (isSearching, setSearchState) = remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -87,15 +94,37 @@ fun HomeScreen(
                     showBackButton = false, // 홈 화면에서는 뒤로가기 버튼 없음
                     showCartButton = false  // 홈 화면에서는 장바구니 버튼 없음
                 )
-                SearchBar(
-                    searchText = searchText,
-                    setText = { searchText = it },
-                    viewModel = viewModel,
-                    keyboardOptions = KeyboardOptions().copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                ) // 서치바를 탑바 아래에 추가
+
+                // Search
+                Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(horizontal = 16.dp)) {
+                    SuggestionChip(
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+                        colors = SuggestionChipDefaults.suggestionChipColors(
+                            containerColor = Color(0xFFFAFAFA),
+                            labelColor = Color(0xFF595959)
+                        ),
+                        label = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    tint = Color(0xFF262626),
+                                    contentDescription = null
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = "스튜디오 찾기",
+                                    color = Color(0xFF595959)
+                                )
+                            }
+                        },
+                        onClick = { setSearchState(true) }
+                    )
+                }
             }
         },
         bottomBar = {
@@ -109,6 +138,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(Color.White)
         ) {
             // 홈 화면 콘텐츠
             HomeContent(
@@ -116,33 +146,45 @@ fun HomeScreen(
                     // 카드 클릭 시 선택된 스튜디오 컨셉 id 전달
                     onCardClick(it)
                     // 검색창 닫아주기
-                    viewModel.stopSearch(isSearching)
                     // 검색 내용 클리어
-                    searchText = ""
+                    setSearchText("")
                 },
                 modifier = Modifier.fillMaxSize()
             )
 
             // 검색 결과 리스트 (조건부로 표시)
             if (isSearching) {
-                SearchResultBox(
-                    searchResults = searchResults,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .align(Alignment.TopStart)// 화면 상단에 정렬
-                        .background(Color(0xFFFFF2CC)),
-                    onRowClick = { studio ->
-                        // studioId와 address를 추출
-                        val studioId = studio.id
-                        // 검색창 닫아주기
-                        viewModel.stopSearch(isSearching)
-                        // 검색 내용 클리어
-                        searchText = ""
-                        // StudioDetailScreen으로 이동
-                        onStudioClick(studioId)
+                Dialog(
+                    properties = DialogProperties(
+                        dismissOnClickOutside = true,
+                        dismissOnBackPress = true,
+                    ),
+                    onDismissRequest = {
+                        //
+                        // 다이얼로그 닫기
+                        setSearchState(false)
                     }
-                )
+                ) {
+                    Text(text = "Hiu")
+                }
+//                SearchResultBox(
+//                    searchResults = searchResults,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 16.dp)
+//                        .align(Alignment.TopStart)// 화면 상단에 정렬
+//                        .background(Color(0xFFFFF2CC)),
+//                    onRowClick = { studio ->
+//                        // studioId와 address를 추출
+//                        val studioId = studio.id
+//                        // 검색창 닫아주기
+//                        viewModel.stopSearch(isSearching)
+//                        // 검색 내용 클리어
+//                        setSearchText("")
+//                        // StudioDetailScreen으로 이동
+//                        onStudioClick(studioId)
+//                    }
+//                )
             }
         }
     }
@@ -329,7 +371,7 @@ fun ReusableTopBar(
 fun SearchResultBox(
     searchResults: List<com.toucheese.app.data.model.home.search_studio.SearchResponseItem>,
     modifier: Modifier = Modifier,
-    onRowClick: (com.toucheese.app.data.model.home.search_studio.SearchResponseItem) -> Unit // SearchResponseItem을 전달
+    onRowClick: (SearchResponseItem) -> Unit // SearchResponseItem을 전달
 ) {
     Box(
         modifier = modifier
