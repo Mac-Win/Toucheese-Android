@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -69,7 +70,10 @@ fun InfoListItemComponent(
                     )
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        minLines = 1,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Spacer(modifier= Modifier.weight(1f))
@@ -96,7 +100,9 @@ fun InfoListItemComponent(
                         Text(
                             text = content,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFF434343)
+                            color = Color(0xFF434343),
+                            minLines = 1,
+                            overflow = TextOverflow.Visible
                         )
                     } else {
                         Text(
@@ -143,7 +149,8 @@ fun InfoListItemComponent(
 
                     Text(
                         text = " | 작성일: $createDate",
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
+
                     )
                 }
             }
@@ -155,7 +162,7 @@ fun InfoListItemComponent(
 @Preview
 @Composable
 private fun InfoListItemPreview() {
-    val title = "제목을 입력해주세요"
+    val title = "제목을 입력해주세요\n 제목을 입력하는 중입니다"
     val content = "문의 내용입니다.\n문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다. 문의 내용입니다."
     val createDate = "24.11.04"
     val userName = "홍길동"

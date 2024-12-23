@@ -6,6 +6,7 @@ import com.toucheese.app.data.model.SocialLogin.SocialLoginRequest
 import com.toucheese.app.data.model.SocialLogin.UpdateMemberInfoRequest
 import com.toucheese.app.data.model.login.Login
 import com.toucheese.app.data.network.LoginService
+import okhttp3.Headers
 import retrofit2.Response
 import javax.inject.Inject
 
