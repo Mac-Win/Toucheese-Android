@@ -13,10 +13,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.toucheese.app.data.model.qna.load_qnadetail.QnaDetailResponse
+import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.components.listitem.InfoListItemComponent
 import com.toucheese.app.ui.components.listitem.InfoListItemComponentNoChip
@@ -25,12 +33,21 @@ import com.toucheese.app.ui.viewmodel.QnaViewModel
 
 @Composable
 fun QnaContentScreen(
+    questionId: Int,
     selectedTab: Int,
+    tokenManager: TokenManager,
     viewModel: QnaViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onTabSelected: (Int) -> Unit,
 ) {
+    // token
+    val token = tokenManager.getAccessToken()
+    // 특정 문의글
+    var qnaDetail by remember { mutableStateOf<QnaDetailResponse?>(null) }
+    LaunchedEffect(questionId) {
+        qnaDetail = viewModel.loadQnaDetail(token, questionId)
+    }
 
     Scaffold(
         topBar = {
@@ -74,40 +91,47 @@ fun QnaContentScreen(
             )
 
             // 추후에 item으로 바꾸고 단일 데이터를 넣어준다
-            items(testDataList){ item ->
-                // 사용자 문의 내용
-                InfoListItemComponent(
-                    title = item,
-                    content = "문의 내용입니다.\n문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다.문의 내용입니다. 문의 내용입니다.",
-                    createDate = "2024-12-15",
-                    userName = "홍길동",
-                    replyState = true,
-                    isContentShowed = true,
-                    modifier = Modifier.padding(
-                        start = 12.dp,
-                        end = 12.dp,
-                        bottom = 12.dp,
-                        top = 16.dp
-                    ),
-                    onItemClicked = { Log.d("QnaContentScreen", "문의 item 클릭 : ${item}") }
-                )
+            item {
+                if (qnaDetail != null){
+                    val replyState = qnaDetail!!.answerStatus != "답변대기"
+                    // 사용자 문의 내용
+                    InfoListItemComponent(
+                        title = qnaDetail!!.title,
+                        content = qnaDetail!!.content,
+                        createDate = qnaDetail!!.createDate,
+                        userName = "작성자",
+                        replyState = replyState,
+                        isContentShowed = qnaDetail!!.content.isNotBlank(),
+                        modifier = Modifier.padding(
+                            start = 12.dp,
+                            end = 12.dp,
+                            bottom = 12.dp,
+                            top = 16.dp
+                        ),
+                        onItemClicked = { Log.d("QnaContentScreen", "문의 item 클릭 : ${qnaDetail!!.answerStatus}") }
+                    )
 
-                Spacer(modifier= Modifier.height(12.dp))
+                    if (replyState){
+                        Spacer(modifier= Modifier.height(12.dp))
 
-                // 스튜디오 (미미팀) 답변
-                InfoListItemComponentNoChip(
-                    title = "터치즈 담당자",
-                    content = "안녕하세요 OOO님.\n문의내용 답변이 들어갑니다. 감사합니다.",
-                    createDate = "2024-11-04",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                        start = 12.dp,
-                        end = 12.dp,
-                        bottom = 12.dp,
-                        top = 16.dp
-                    ),
-                )
+                        val answerResponse = qnaDetail!!.answerResponse
+                        // 스튜디오 (미미팀) 답변
+                        InfoListItemComponentNoChip(
+                            title = "터치즈 담당자",
+                            content = answerResponse.content,
+                            createDate = answerResponse.createDate,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = 12.dp,
+                                    end = 12.dp,
+                                    bottom = 12.dp,
+                                    top = 16.dp
+                                ),
+                        )
+                    }
+                }
+
 
             }
         }

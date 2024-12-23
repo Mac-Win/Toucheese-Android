@@ -1,5 +1,6 @@
 package com.toucheese.app.ui.screens.tab_Qna
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.components.listitem.InfoListItemComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
@@ -32,23 +36,34 @@ import com.toucheese.app.ui.viewmodel.QnaViewModel
 @Composable
 fun QnaScreen(
     selectedTab: Int,
+    tokenManager: TokenManager,
     viewModel: QnaViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onTabSelected: (Int) -> Unit,
-    onItemClicked: () -> Unit,
+    onItemClicked: (Int) -> Unit,
     onButtonClicked: () -> Unit,
 ) {
     // LazyColumn의 스크롤 상태 추적
     val listState = rememberLazyListState()
+    // 토큰
+    val token = tokenManager.getAccessToken()
+    // 자신의 모든 문의 글 리스트
+    val qnaList by viewModel.qnaList.collectAsState()
+    LaunchedEffect(Unit) {
+        // 자신의 모든 문의 글 리스트 조회
+        viewModel.loadQnaList(token)
+    }
 
     // FAB의 가시성 상태
     val isFabVisible by remember (listState) {
         derivedStateOf {
             val visibleItemInfo = listState.layoutInfo.visibleItemsInfo
-            if (visibleItemInfo.isEmpty()) true
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+
+            if (visibleItemInfo.isEmpty() || totalItemsCount <= 4) true
             else {
                 val lastVisibleItemIndex = visibleItemInfo.lastOrNull()?.index ?: 0
-                lastVisibleItemIndex < (listState.layoutInfo.totalItemsCount - 1)
+                lastVisibleItemIndex < (totalItemsCount - 1)
             }
         }
     }
@@ -86,23 +101,7 @@ fun QnaScreen(
             }
         }
     ) { innerPadding ->
-        // 임시 데이터 -> 추후 데이터 연결 때 객체 리스트로 전환
-        val testDataList = listOf(
-            "테스트 문의1",
-            "",
-            "테스트 문의3",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4",
-            "테스트 문의4"
-        )
+
         LazyColumn(
             state = listState,
             modifier = Modifier.padding(innerPadding),
@@ -112,14 +111,15 @@ fun QnaScreen(
         ) {
 
             // 문의 내역 리스트 - 답변 대기
-            items(testDataList) { item ->
+            items(qnaList) { item ->
+                Log.d("QnaScreen", "답변 상태 : ${item.answerStatus}")
                 // 문의 내역 아이템
                 InfoListItemComponent(
-                    title = item,
-                    content = "",
-                    createDate = "2024-12-15",
-                    userName = "홍길동",
-                    replyState = item.isNotEmpty(),
+                    title = item.title,
+                    content = item.content,
+                    createDate = item.createDate,
+                    userName = "작성자",
+                    replyState = item.answerStatus != "답변대기",
                     isContentShowed = false,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)
@@ -129,7 +129,10 @@ fun QnaScreen(
                         bottom = 12.dp,
                         top = 16.dp
                     ),
-                    onItemClicked = onItemClicked,
+                    onItemClicked ={
+                        val questionId = item.id
+                        onItemClicked(questionId)
+                    },
                 )
             }
         }
