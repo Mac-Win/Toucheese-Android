@@ -108,7 +108,7 @@ fun HomeScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start,
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Search,
@@ -145,9 +145,6 @@ fun HomeScreen(
                 onCardClick = {
                     // 카드 클릭 시 선택된 스튜디오 컨셉 id 전달
                     onCardClick(it)
-                    // 검색창 닫아주기
-                    // 검색 내용 클리어
-                    setSearchText("")
                 },
                 modifier = Modifier.fillMaxSize()
             )
@@ -160,31 +157,31 @@ fun HomeScreen(
                         dismissOnBackPress = true,
                     ),
                     onDismissRequest = {
-                        //
                         // 다이얼로그 닫기
                         setSearchState(false)
                     }
                 ) {
-                    Text(text = "Hiu")
+                    // SearchBar
+
+                    SearchResultBox(
+                        searchResults = searchResults,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .align(Alignment.TopStart)// 화면 상단에 정렬
+                            .background(Color(0xFFFFF2CC)),
+                        onRowClick = { studio ->
+                            // studioId와 address를 추출
+                            val studioId = studio.id
+                            // 검색창 닫아주기
+                            viewModel.stopSearch(isSearching)
+                            // 검색 내용 클리어
+                            setSearchText("")
+                            // StudioDetailScreen으로 이동
+                            onStudioClick(studioId)
+                        }
+                    )
                 }
-//                SearchResultBox(
-//                    searchResults = searchResults,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = 16.dp)
-//                        .align(Alignment.TopStart)// 화면 상단에 정렬
-//                        .background(Color(0xFFFFF2CC)),
-//                    onRowClick = { studio ->
-//                        // studioId와 address를 추출
-//                        val studioId = studio.id
-//                        // 검색창 닫아주기
-//                        viewModel.stopSearch(isSearching)
-//                        // 검색 내용 클리어
-//                        setSearchText("")
-//                        // StudioDetailScreen으로 이동
-//                        onStudioClick(studioId)
-//                    }
-//                )
             }
         }
     }
