@@ -27,7 +27,7 @@ fun StudioTopAppBarComponent(
             // 공유하기 버튼
             IconButton(onClick = onShare) {
                 Icon(
-                    painter = painterResource(id = R.drawable.share),
+                    painter = painterResource(id = R.drawable.iconarea),
                     contentDescription = "공유하기"
                 )
             }
