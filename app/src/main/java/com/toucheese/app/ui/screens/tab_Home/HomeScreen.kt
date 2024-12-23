@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -60,6 +61,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -159,28 +161,66 @@ fun HomeScreen(
                     onDismissRequest = {
                         // 다이얼로그 닫기
                         setSearchState(false)
-                    }
+                        viewModel.stopSearch()
+                    },
                 ) {
-                    // SearchBar
-
-                    SearchResultBox(
-                        searchResults = searchResults,
+                    Column(
+                        verticalArrangement = Arrangement.Top,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
-                            .align(Alignment.TopStart)// 화면 상단에 정렬
-                            .background(Color(0xFFFFF2CC)),
-                        onRowClick = { studio ->
-                            // studioId와 address를 추출
-                            val studioId = studio.id
-                            // 검색창 닫아주기
-                            viewModel.stopSearch(isSearching)
-                            // 검색 내용 클리어
-                            setSearchText("")
-                            // StudioDetailScreen으로 이동
-                            onStudioClick(studioId)
-                        }
-                    )
+                            .clip(shape = RoundedCornerShape(12.dp))
+                            .heightIn(min=300.dp)
+                            .background(Color.White),
+                    ) {
+                        // SearchBar
+                        OutlinedTextField(
+                            value = searchText,
+                            singleLine = true,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    tint = Color(0xFF262626),
+                                    contentDescription = null
+                                )
+                            },
+                            placeholder = {
+                                Text(
+                                    text = "스튜디오 찾기",
+                                    color = Color(0xFF595959)
+                                )
+                            },
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                focusedBorderColor = Color.White,
+                                focusedLabelColor = Color(0xFFF0F0F0),
+                                unfocusedContainerColor = Color.White,
+                                unfocusedBorderColor = Color.White,
+                                unfocusedLabelColor = Color(0xFFF0F0F0),
+                                cursorColor = Color.Black,
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            onValueChange = { searchText ->
+                                setSearchText(searchText)
+                                viewModel.searchStudios(searchText) // 검색 API 호출
+                            },
+                        )
+
+                        SearchResultBox(
+                            searchResults = searchResults,
+                            modifier = Modifier.fillMaxWidth(),
+                            onRowClick = { studio ->
+                                // studioId와 address를 추출
+                                val studioId = studio.id
+                                // 검색창 닫아주기
+                                viewModel.stopSearch()
+                                // 검색 내용 클리어
+                                // StudioDetailScreen으로 이동
+                                onStudioClick(studioId)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -366,7 +406,7 @@ fun ReusableTopBar(
 
 @Composable
 fun SearchResultBox(
-    searchResults: List<com.toucheese.app.data.model.home.search_studio.SearchResponseItem>,
+    searchResults: List<SearchResponseItem>,
     modifier: Modifier = Modifier,
     onRowClick: (SearchResponseItem) -> Unit // SearchResponseItem을 전달
 ) {
@@ -389,20 +429,9 @@ fun SearchResultBox(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(studio.profileImage),
-                        contentDescription = "${studio.name} 프로필 이미지",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(4.dp)
-                            .clip(RoundedCornerShape(50.dp))
-                    )
 
                     Column(
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
