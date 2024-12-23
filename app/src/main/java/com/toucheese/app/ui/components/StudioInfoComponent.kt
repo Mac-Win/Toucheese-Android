@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,10 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
+import com.toucheese.app.R
 import com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse
 import io.github.boguszpawlowski.composecalendar.kotlinxDateTime.now
 import kotlinx.datetime.LocalDate
@@ -59,6 +63,7 @@ fun StudioInfoComponent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(Color.White)
                 .padding(16.dp) // 내부 패딩
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -83,18 +88,21 @@ fun StudioInfoComponent(
             Row(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFFFFDE6))
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
                     text = if (isExpanded) studio.description else studio.description.take(50) + "...",
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
-                        imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        painter = painterResource(if (isExpanded) R.drawable.arrow_drop_down else R.drawable.arrow_drop_down),
                         contentDescription = if (isExpanded) "접기" else "펼치기"
                     )
                 }
@@ -109,25 +117,55 @@ fun StudioInfoComponent(
                 .padding(16.dp) // 내부 여백 설정
         ) {
             // 평점과 하트 아이콘
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.star),
+                        contentDescription = "Star Icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "${studio.rating}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            // 리뷰 텍스트
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable {
+                        // 리뷰 섹션 클릭 시 동작 추가
+                    }
             ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorite Icon",
-                    tint = Color.Red,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "평점: ${studio.rating} (${studio.reviewCount} 리뷰)",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "리뷰 ${studio.reviewCount}개 >",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
                 )
             }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
             // 주소
             Row {
                 Icon(
-                    imageVector = Icons.Default.LocationOn,
+                    painter = painterResource(R.drawable.location_on),
                     contentDescription = "Location Icon",
                     modifier = Modifier.size(16.dp)
                 )
@@ -152,7 +190,7 @@ fun StudioInfoComponent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.DateRange,
+                        painter = painterResource(R.drawable.watch),
                         contentDescription = "Operation Hours",
                         modifier = Modifier.size(16.dp)
                     )
@@ -164,7 +202,7 @@ fun StudioInfoComponent(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Icon(
-                        imageVector = if (isOperationHoursExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        painter = painterResource(if (isOperationHoursExpanded) R.drawable.arrow_drop_down else R.drawable.arrow_drop_down),
                         contentDescription = if (isOperationHoursExpanded) "운영시간 열림" else "운영시간 접힘",
                     )
                 }
@@ -197,7 +235,6 @@ fun StudioInfoComponent(
             }
         }
     }
-}
 
 // 오늘 요일 구하기
 fun getCurrentDayOfWeekInKorean(): String {
