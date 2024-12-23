@@ -50,9 +50,9 @@ import com.toucheese.app.ui.screens.tab_Qna.QnaScreen
 import com.toucheese.app.ui.screens.tab_Qna.QnaWriteScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.toucheese.app.ui.screens.login.AdditionalInfoScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.toucheese.app.ui.components.BookingScheduleChangeScreen
+import com.toucheese.app.ui.screen.login.AdditionalInfoScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import kotlinx.coroutines.launch
 
@@ -367,6 +367,7 @@ fun ToucheeseApp(api: HomeService) {
         composable(Screen.Qna.route){
             QnaScreen(
                 selectedTab = bottomNavSelectedTab,
+                tokenManager = tokenManager,
                 onTabSelected = { selectedTab ->
                     // 탭 이동
                     bottomNavClicked(
@@ -375,9 +376,9 @@ fun ToucheeseApp(api: HomeService) {
                     )
                     bottomNavSelectedTab = selectedTab
                 },
-                onItemClicked = {
+                onItemClicked = { questionId ->
                     // 문의 내역 화면으로 이동
-                    navController.navigate(Screen.QnaContent.route)
+                    navController.navigate(Screen.QnaContent.route.replace("{questionId}", "$questionId"))
                 },
 
                 onButtonClicked = {
@@ -388,10 +389,17 @@ fun ToucheeseApp(api: HomeService) {
         }
 
         // 문의내역 화면
-        composable(Screen.QnaContent.route){
+        composable(
+            Screen.QnaContent.route,
+            arguments = listOf(
+                navArgument("questionId"){ type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val questionId = backStackEntry.arguments?.getInt("questionId") ?: 0
             QnaContentScreen(
+                questionId = questionId,
                 selectedTab = bottomNavSelectedTab,
-
+                tokenManager = tokenManager,
                 onClickLeadingIcon = {
                     // 뒤로가기
                     navController.navigateUp()
@@ -411,7 +419,7 @@ fun ToucheeseApp(api: HomeService) {
         composable(Screen.QnaWrite.route){
             QnaWriteScreen(
                 selectedTab = bottomNavSelectedTab,
-
+                tokenManager = tokenManager,
                 onClickLeadingIcon = {
                     // 뒤로가기
                     navController.navigateUp()
