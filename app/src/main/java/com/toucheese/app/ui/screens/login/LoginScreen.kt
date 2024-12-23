@@ -63,7 +63,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onLoginClicked: (Int, String, Boolean) -> Unit,
-    navController: NavController
+    onKakaoFirstLoginClicked: () -> Unit,
+    onKakaoLoginClicked: () -> Unit,
 ) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
@@ -130,15 +131,10 @@ fun LoginScreen(
                 val data = (kakaoLoginUiState as KakaoLoginUiState.Success).data
                 Log.d("KakaoLogin", "카카오 로그인 성공: $data")
                 // isFirstLogin이면 추가정보 입력화면, 아니면 메인화면 등 분기
-                if (data.isFirstLogin) {
-                    navController.navigate("AdditionalInfo") {
-                        popUpTo("login") { inclusive = true }
-                    }
+                if (data!!.isFirstLogin) {
+                    onKakaoFirstLoginClicked()
                 } else {
-                    // 메인화면으로 등등
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
+                    onKakaoLoginClicked()
                 }
             }
             is KakaoLoginUiState.Error -> {
