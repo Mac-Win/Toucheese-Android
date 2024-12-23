@@ -59,6 +59,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
+import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.QnaViewModel
@@ -66,18 +67,22 @@ import com.toucheese.app.ui.viewmodel.QnaViewModel
 @Composable
 fun QnaWriteScreen(
     selectedTab: Int,
+    tokenManager: TokenManager,
     viewModel: QnaViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onTabSelected: (Int) -> Unit,
     onEnrolledClicked: () -> Unit,
 ) {
+    // 토큰
+    val token = tokenManager.getAccessToken()
     // 문의 제목
     val (textFieldTitle, setTitle) = remember { mutableStateOf("") }
     // 문의 내용
     val (textFieldContent, setContent) = remember { mutableStateOf("") }
     // 문의 작성했는지 여부
-    val isValidate: Boolean = textFieldTitle.isNotBlank() && textFieldContent.isNotBlank()
+    val isValidate: Boolean =
+        isValidateTitle(title = textFieldTitle) && isValidateContent(content = textFieldContent)
     // 사진 촬영 및 앨범 선택 드롭다운 확장 여부
     val (dropdownSate, setDropdownState) = remember { mutableStateOf(false) }
     // 사진 삭제 여부 드롭다운 확장 여부
@@ -139,6 +144,7 @@ fun QnaWriteScreen(
                 OutlinedTextField(
                     value = textFieldTitle,
                     singleLine = true,
+                    isError = textFieldTitle.isNotBlank() && !isValidateTitle(title = textFieldTitle),
                     modifier = Modifier.fillMaxWidth(),
                     onValueChange = setTitle,
                     keyboardOptions = KeyboardOptions().copy(
@@ -149,6 +155,15 @@ fun QnaWriteScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xFFECECEC)
                     ),
+                    supportingText = {
+                        Row {
+                            if (!isValidateTitle(title = textFieldTitle)) {
+                                Text(text = "제목은 10자 내로 작성해주세요")
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(text = "${textFieldTitle.length}/10")
+                        }
+                    },
                     placeholder = {
                         Text(
                             text = "제목을 입력해주세요.",
@@ -173,6 +188,17 @@ fun QnaWriteScreen(
 
                 OutlinedTextField(
                     value = textFieldContent,
+                    isError = textFieldContent.isNotBlank() && !isValidateContent(content = textFieldContent),
+                    supportingText = {
+                        Row {
+                            if (!isValidateContent(textFieldContent)){
+                                Text(text = "내용은 50자 이상 400자 이내로 작성해주세요")
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(text = "${textFieldContent.length}/400")
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 300.dp), // 최소 높이 설정
@@ -334,7 +360,11 @@ fun QnaWriteScreen(
                                             },
                                             onTap = {
                                                 // 삭제 방법 알림
-                                                Toast.makeText(context, "사진을 길게 누를 경우 삭제할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    "사진을 길게 누를 경우 삭제할 수 있습니다.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         )
                                     },
@@ -387,7 +417,16 @@ fun QnaWriteScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 14.dp, horizontal = 8.dp),
-                        onClick = onEnrolledClicked,
+                        onClick = {
+                            // 서버에 데이터 전송
+                            viewModel.writeQnaDetail(
+                                token = token,
+                                title = textFieldTitle,
+                                content = textFieldContent
+                            )
+                            // 화면 이동
+                            onEnrolledClicked()
+                        },
                     ) {
                         Text(
                             text = "문의 등록",
@@ -406,3 +445,8 @@ sealed class Media {
     data class ImageUri(val uri: Uri) : Media()
     data class ImageBitmap(val bitmap: Bitmap) : Media()
 }
+
+// 제목 유효성
+private fun isValidateTitle(title: String) = title.length in 1..10
+// 내용 유효성
+private fun isValidateContent(content: String) = content.length in 50 .. 400
