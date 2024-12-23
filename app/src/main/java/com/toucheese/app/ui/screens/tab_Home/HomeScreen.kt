@@ -161,6 +161,8 @@ fun HomeScreen(
                     onDismissRequest = {
                         // 다이얼로그 닫기
                         setSearchState(false)
+                        // 검색 초기화
+                        setSearchText("")
                         viewModel.stopSearch()
                     },
                 ) {
