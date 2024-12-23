@@ -26,9 +26,6 @@ class HomeViewModel @Inject constructor(
     val searchStudios: StateFlow<List<com.toucheese.app.data.model.home.search_studio.SearchResponseItem>> =
         _searchStudios
 
-    private val _isSearching = MutableStateFlow(false)
-    val isSearching: StateFlow<Boolean> = _isSearching // 현재 검색중인지 여부를 확인
-
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
@@ -49,16 +46,8 @@ class HomeViewModel @Inject constructor(
     val specificReview: StateFlow<com.toucheese.app.data.model.home.specific_review.ReviewResponse?> =
         _specificReview
 
-    private val _cartItems =
-        MutableStateFlow<List<com.toucheese.app.data.model.home.carts_list.CartListResponseItem>>(
-            emptyList()
-        )
-    val cartItems: StateFlow<List<com.toucheese.app.data.model.home.carts_list.CartListResponseItem>> =
-        _cartItems
-
-    // 로딩 상태를 관리
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _cartItems = MutableStateFlow<List<com.toucheese.app.data.model.home.carts_list.CartListResponseItem>>(emptyList())
+    val cartItems: StateFlow<List<com.toucheese.app.data.model.home.carts_list.CartListResponseItem>> = _cartItems
 
     // 컨셉 이름
     private val _conceptName = MutableStateFlow("")
@@ -77,19 +66,15 @@ class HomeViewModel @Inject constructor(
     fun searchStudios(keyword: String) {
         viewModelScope.launch {
             if (keyword.isBlank()) {
-                _isSearching.value = false
                 _searchStudios.value = emptyList() // 검색어가 없을 경우 빈 리스트로 초기화
                 return@launch
             }
-
-            _isSearching.value = true // 검색 시작
 
             try {
 
                 val result = repository.searchStudios(keyword = keyword)
                 _searchStudios.value = result
                 Log.d("Search", "Results: $result")
-                _isSearching.value = true
             } catch (e: Exception) {
                 Log.d("Search", "${e.message}")
                 _searchStudios.value = emptyList() // 에러 발생 시 빈 리스트로 초기화
@@ -277,7 +262,6 @@ class HomeViewModel @Inject constructor(
     // 장바구니 목록 조회
     fun loadCartList(token: String?) {
         viewModelScope.launch {
-            _isLoading.value = true
             try {
                 val cartData = repository.loadCartList(token = "Bearer $token").toList()
                 _cartItems.value = cartData
@@ -285,7 +269,6 @@ class HomeViewModel @Inject constructor(
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "Error fetching cart list: ${error.message}", error)
             } finally {
-                _isLoading.value = false
             }
         }
     }
@@ -343,8 +326,7 @@ class HomeViewModel @Inject constructor(
 
 
     // 검색 상태 변환
-    fun stopSearch(isSearching: Boolean) {
-        _isSearching.value = !isSearching
+    fun stopSearch() {
         _searchStudios.value = emptyList()
     }
 
