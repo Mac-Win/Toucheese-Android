@@ -1,5 +1,6 @@
 package com.toucheese.app.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -174,6 +175,8 @@ fun CartItemComponent(
 
             // 옵션 변경 버튼
             Button(
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFAFAFA),
                     contentColor = Color(0xFF141414)
