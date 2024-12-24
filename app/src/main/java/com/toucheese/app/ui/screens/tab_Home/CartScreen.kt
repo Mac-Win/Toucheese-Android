@@ -1,14 +1,36 @@
 package com.toucheese.app.ui.screens.tab_Home
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,12 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
-import com.toucheese.app.data.model.home.carts_list.SelectAddOption
-import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import com.toucheese.app.data.token_manager.TokenManager
-import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.components.ChangeOptionBottomSheetComponent
 import com.toucheese.app.ui.components.CartItemComponent
+import com.toucheese.app.ui.components.ChangeOptionBottomSheetComponent
+import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -62,7 +82,7 @@ fun CartScreen(
     val totalAmount = "₩${cartItems.sumOf { it.totalPrice }}"
 
     // 장바구니 아이템 삭제 로직
-    fun onDeleteCartItem(cartItem: com.toucheese.app.data.model.home.carts_list.CartListResponseItem) {
+    fun onDeleteCartItem(cartItem: CartListResponseItem) {
         viewModel.deleteCartItem(token, cartItem.cartId)
     }
 
@@ -91,6 +111,9 @@ fun CartScreen(
         Log.d("CartScreen", "SelectedOptionIds initialized: $selectedOptionIds")
     }
 
+    // 선택한 장바구니 아이템 데이터
+    var selectedCartItem by remember { mutableStateOf<Set<Int>>( emptySet()) }
+
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
@@ -104,16 +127,21 @@ fun CartScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = Color(0xFFFFFCF5),
-                contentColor = Color.Black
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
             ) {
                 Button(
                     enabled = isCartItemsExists,
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = Color(0xFFECECEC)
+                        disabledContainerColor = Color(0xFFE0E0E0),
+                        contentColor = Color(0xFF1F1F1F),
+                        disabledContentColor = Color(0xFFA2A2A2),
                     ),
+                    border = BorderStroke(1.dp, if (isCartItemsExists) MaterialTheme.colorScheme.primary else Color(0xFFD9D9D9)),
                     onClick = {
                         val cartIds = cartItems.map { it.cartId }
                         onCheckoutClick(cartIds)
@@ -123,7 +151,7 @@ fun CartScreen(
                         .padding(8.dp),
                 ) {
                     Text(
-                        text = "예약하기 ($totalAmount)",
+                        text = "예약하기 (총 ${totalAmount}원)",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -134,8 +162,7 @@ fun CartScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(Color(0xFFFFFCF5)),
+                    .padding(paddingValues),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (cartItems.isEmpty()) {
@@ -158,26 +185,26 @@ fun CartScreen(
                     items(
                         items = cartItems,
                     ) { cartItem ->
+                        val cartId = cartItem.cartId
+                        val isCardClicked = selectedCartItem.contains(cartId)
+
                         CartItemComponent(
-                            cartItem = cartItem,
-                            onDeleteClick = { cartListResponseItem ->
-                                viewModel.deleteCartItem(token, cartListResponseItem.cartId)
-                            },
-                            onOptionChangeClick = {
-                                selectedItem = cartItem
-                                // 선택된 옵션 ID를 현재 선택된 옵션으로 초기화
-                                selectedOptionIds = cartItem.selectAddOptions.map { it.selectOptionId }.toSet()
-                                Log.d("CartScreen", "Opening Bottom Sheet with SelectedOptionIds: $selectedOptionIds")
-                                isBottomSheetVisible = true
-                                coroutine.launch {
-                                    if (bottomSheetState.isVisible) {
-                                        bottomSheetState.hide()
-                                    } else {
-                                        bottomSheetState.expand()
-                                    }
+                            isCardClicked = isCardClicked,
+                            studioName = cartItem.studioName,
+                            productName = cartItem.productName,
+                            productImage = cartItem.productImage,
+                            personal = cartItem.personnel,
+                            createDate = cartItem.reservationDate,
+                            createTime = cartItem.reservationTime,
+                            totalPrice = cartItem.totalPrice,
+                            onCardClicked = {
+                                selectedCartItem = if (isCardClicked) {
+                                    selectedCartItem.minus(cartId)
+                                } else {
+                                    selectedCartItem.plus(cartId)
                                 }
                             },
-                            modifier = Modifier.padding(16.dp)
+                            onOptionChangeClicked = {},
                         )
                     }
                 }

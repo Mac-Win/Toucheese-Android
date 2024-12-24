@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CartListResponseItem(
     @SerializedName("addOptions")
-    val addOptions: List<com.toucheese.app.data.model.home.carts_list.AddOption>,
+    val addOptions: List<AddOption>,
     @SerializedName("cartId")
     val cartId: Int,
     @SerializedName("personnel")
@@ -23,7 +23,7 @@ data class CartListResponseItem(
     @SerializedName("reservationTime")
     val reservationTime: String,
     @SerializedName("selectAddOptions")
-    val selectAddOptions: List<com.toucheese.app.data.model.home.carts_list.SelectAddOption>,
+    val selectAddOptions: List<SelectAddOption>,
     @SerializedName("studioImage")
     val studioImage: String,
     @SerializedName("studioName")
