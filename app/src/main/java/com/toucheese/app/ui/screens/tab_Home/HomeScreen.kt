@@ -213,11 +213,14 @@ fun HomeScreen(
                             searchResults = searchResults,
                             modifier = Modifier.fillMaxWidth(),
                             onRowClick = { studio ->
+                                // 검색 내용 클리어
+                                setSearchText("")
+                                // 다이얼로그 닫기
+                                setSearchState(false)
                                 // studioId와 address를 추출
                                 val studioId = studio.id
                                 // 검색창 닫아주기
                                 viewModel.stopSearch()
-                                // 검색 내용 클리어
                                 // StudioDetailScreen으로 이동
                                 onStudioClick(studioId)
                             }

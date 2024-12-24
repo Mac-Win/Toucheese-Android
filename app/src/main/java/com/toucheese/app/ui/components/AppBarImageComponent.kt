@@ -4,6 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,66 +33,79 @@ fun AppBarImageComponent(
     showReviewButton: Boolean = true,
     reviewCount: Int,
 ) {
-    Box(
-        modifier = Modifier
-            .safeDrawingPadding()
-            .background(color = MaterialTheme.colorScheme.background)
-            .fillMaxWidth(),
-        contentAlignment = Alignment.TopStart,
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+        modifier = Modifier.padding(16.dp)
     ) {
-        // 내부 Column을 사용하여 이미지, 텍스트, 버튼을 세로로 배치
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+                .safeDrawingPadding(),
+            contentAlignment = Alignment.TopStart,
         ) {
-            // 상품 이미지
-            AsyncImage(
-                model = productImage,
-                contentDescription = "Photo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(300.dp)
-                    .border(BorderStroke(1.dp, Color.Black))
-            )
-
-            // 상품명
-            Text(
-                text = productName,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            // 상품 상세설명
-            Text(
-                text = productInfo,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                color = Color.Gray,
-                modifier = Modifier
-                    .width(220.dp)
-                    .padding(top = 4.dp)
-            )
-
-            // 리뷰 보러가기 버튼
-            if (showReviewButton) {
-                TextButton(
-                    onClick = onReviewButtonClicked,
+            // 내부 Column을 사용하여 이미지, 텍스트, 버튼을 세로로 배치
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                // 상품 이미지
+                Card(
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .fillMaxWidth(0.5f)
+                        .height(300.dp)
                 ) {
-                    Text(
-                        text = "리뷰 ${reviewCount}개 >",
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
+                    AsyncImage(
+                        model = productImage,
+                        contentDescription = "Photo",
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.fillMaxSize()
                     )
+                }
+
+                // 상품명
+                Text(
+                    text = productName,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+
+                // 상품 상세설명
+                Text(
+                    text = productInfo,
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .width(220.dp)
+                        .padding(top = 4.dp)
+                )
+
+                // 리뷰 보러가기 버튼
+                if (showReviewButton) {
+                    TextButton(
+                        onClick = onReviewButtonClicked,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                    ) {
+                        Text(
+                            text = "리뷰 ${reviewCount}개",
+                            color = Color(0xFF8C8C8C),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                            tint = Color(0xFF8C8C8C),
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }
