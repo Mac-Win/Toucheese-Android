@@ -1,14 +1,18 @@
 package com.toucheese.app.ui.screens.tab_Home
 
 import android.util.Log
+import android.widget.Space
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
@@ -19,6 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,9 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
 import com.toucheese.app.data.token_manager.TokenManager
@@ -63,7 +73,8 @@ fun CartScreen(
     val cartItems by viewModel.cartItems.collectAsState() // ViewModel에서 상태 관찰
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
-
+    // context
+    val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     // 토큰 받아오기
     val token = tokenManager.getAccessToken()
@@ -93,6 +104,8 @@ fun CartScreen(
     }
     // 장바구니 선택내역이 있는지 확인
     val isSelectedCartItemsExists = selectedCartItem.isNotEmpty()
+    // 삭제 Dialog 상태
+    var isDialogShowed by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
@@ -209,11 +222,13 @@ fun CartScreen(
 
                             // 선택 상품 삭제
                             SuggestionChip(
+                                enabled = selectedCartItem.isNotEmpty(),
                                 shape = RoundedCornerShape(8.dp),
                                 label = {
                                     Text(
                                         text = "선택 상품 삭제",
-                                        style = MaterialTheme.typography.bodyLarge
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = if (selectedCartItem.isNotEmpty()) Color(0xFF1F1F1F) else Color(0xFFBFBFBF)
                                     )
                                 },
                                 border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
@@ -222,11 +237,8 @@ fun CartScreen(
                                     labelColor = Color(0xFF1F1F1F)
                                 ),
                                 onClick = {
-                                    // 선택 상품 제거
-                                    viewModel.deleteCartItem(
-                                        token = token,
-                                        cartIds = selectedCartItem.toList()
-                                    )
+                                    // Dialog를 띄워준다
+                                    isDialogShowed = true
                                 }
                             )
                         }
@@ -261,7 +273,85 @@ fun CartScreen(
         }
     )
 
-    if (isBottomSheetVisible) {
+    // 상품 삭제 시 나타나는 Dialog
+    if (isDialogShowed) {
+        Dialog(
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = true,
+            ),
+            onDismissRequest = { isDialogShowed = false }
+        ) {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+
+                ) {
+                    // 삭제 문구
+                    Text(
+                        text = "선택한 상품을 삭제하시겠습니까?",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp)
+                    )
+
+                    // 버튼
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // 아니오
+                        Button(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFF3F3F3),
+                                contentColor = Color(0xFF7A7A7A),
+                            ),
+                            modifier = Modifier.weight(1f),
+                            onClick = { isDialogShowed = false }
+                        ) {
+                            Text(
+                                text = "아니오",
+                                textAlign = TextAlign.Center,
+
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // 예
+                        Button(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color(0xFF1F1F1F),
+                            ),
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                isDialogShowed = false
+                                // 선택 상품 제거
+                                viewModel.deleteCartItem(
+                                    token = token,
+                                    cartIds = selectedCartItem.toList()
+                                )
+                                // 삭제 알림 Toast
+                                Toast.makeText(context, "상품이 삭제되었습니다", Toast.LENGTH_SHORT).show()
+                            }
+                        ) {
+                            Text(
+                                text = "예",
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+
+                }
+            }
+        }
 
     }
 }
