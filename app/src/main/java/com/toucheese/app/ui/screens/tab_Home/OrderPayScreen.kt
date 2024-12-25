@@ -3,16 +3,21 @@ package com.toucheese.app.ui.screens.tab_Home
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,7 +48,7 @@ fun OrderPayScreen(
     // 코루틴
     val coroutine = rememberCoroutineScope()
     // 선택한 상품들
-    var orderPayResponse by remember { mutableStateOf<com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse?>(null) }
+    var orderPayResponse by remember { mutableStateOf<OrderPayResponse?>(null) }
     // cartIds List<Int> -> String
     val cartIds = selectedCartIds.joinToString(separator = ",")
     LaunchedEffect(selectedCartIds) {
@@ -75,7 +80,7 @@ fun OrderPayScreen(
         topBar = {
             TopAppBarComponent(
                 title = "주문/결제",
-                leadingIcon = Icons.AutoMirrored.Default.ArrowBack,
+                leadingIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 showLeadingIcon = true,
                 showTrailingIcon = false,
                 onClickLeadingIcon = onBackClick,
@@ -83,65 +88,77 @@ fun OrderPayScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = Color(0xFFFFFCF5)
-            ) {
-                Button(
-                    enabled = isPaymentMethodSelected,
-                    onClick = {
-                        coroutine.launch {
-                            // 서버에 데이터를 전송
-                            viewModel.saveReservationData(token, cartIds)
-                        }
-                        // 예약일정 화면으로 이동
-                        onConfirmOrder()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = Color(0xFFECECEC)
-                    )
-                ) {
-                    Text(text = "예약하기 (₩$totalPrice)", fontSize = 16.sp)
+            Button(
+                enabled = isPaymentMethodSelected,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color(0xFF1F1F1F),
+                    disabledContainerColor = Color(0xFFD9D9D9),
+                    disabledContentColor = Color(0xFF8C8C8C),
+                    ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                onClick = {
+                    coroutine.launch {
+                        // 서버에 데이터를 전송
+                        viewModel.saveReservationData(token, cartIds)
+                    }
+                    // 예약일정 화면으로 이동
+                    onConfirmOrder()
                 }
+            ) {
+                Text(
+                    text = "결제하기 (총 ${totalPrice / 1000},000원)",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
-        }
+        },
+        modifier = Modifier.fillMaxSize().safeDrawingPadding(),
     ) { paddingValues ->
+
         LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            item {
-                SectionTitle("주문 확인")
-            }
-
             // 사용자 정보
             item {
-                OrderPayMyInfoComponent(
-                    name = name,
-                    phone = phone,
-                    email = email
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-                    thickness = 1.dp
-                )
-            }
-
-            item {
-                SectionTitle("상품확인")
-            }
-
-            item {
-                OrderPayProductListComponent(
-                    productItems = orderPayResponse?.cartPaymentList ?: emptyList(),
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     modifier = Modifier.fillMaxWidth()
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-                    thickness = 1.dp
-                )
+                ) {
+                    // 내 정보
+                    Text(
+                        text = "내 정보",
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 16.dp)
+                    )
+                    // 성함, 연락처, 이메일
+                    OrderPayMyInfoComponent(
+                        name = name,
+                        phone = phone,
+                        email = email,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp, start = 32.dp, end = 16.dp)
+                    )
+                }
+            }
+
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // 상품 확인
+                    Text(
+                        text = "상품 확인",
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 16.dp)
+                    )
+                    //
+                    OrderPayProductListComponent(
+                        productItems = orderPayResponse?.cartPaymentList ?: emptyList(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
 
             item {
