@@ -200,12 +200,14 @@ fun CartScreen(
                                     if (isAllItemClicked) {
                                         // 전체 선택을 해제하는 경우
                                         selectedCartItem = emptySet()
+                                        Toast.makeText(context, "전체 상품이 선택해제되었습니다", Toast.LENGTH_SHORT).show()
                                     } else {
                                         // 전체 선택을 설정하는 경우
                                         selectedCartItem = selectedCartItem.toMutableSet().apply {
                                             clear() // 초기화
                                             cartItems.forEach { cartItem -> add(cartItem.cartId) }
                                         }
+                                        Toast.makeText(context, "전체 상품이 선택되었습니다", Toast.LENGTH_SHORT).show()
                                     }
                                 },
                             )
