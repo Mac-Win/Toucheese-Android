@@ -1,19 +1,6 @@
 package com.toucheese.app.data.network
 
-import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponse
-import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
-import com.toucheese.app.data.model.home.carts_list.CartListResponse
-import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
-import com.toucheese.app.data.model.home.concept_studio.StudioResponse
-import com.toucheese.app.data.model.home.filter_studio.FilterResponse
 import com.toucheese.app.data.model.home.load_concept.ConceptResponse
-import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
-import com.toucheese.app.data.model.home.review_studio.StudioReviewResponse
-import com.toucheese.app.data.model.home.saveCartData.CartData
-import com.toucheese.app.data.model.home.saveReservationData.SaveReservationRequest
-import com.toucheese.app.data.model.home.search_studio.SearchResponse
-import com.toucheese.app.data.model.home.specific_review.ReviewResponse
-import com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -138,7 +125,7 @@ interface HomeService {
     @DELETE("v1/members/carts/{cartId}")
     suspend fun deleteCartItem(
         @Header("Authorization") token: String?,
-        @Path("cartId") cartId: Int
+        @Path("cartId") cartIds: String
     )
 
     // 장바구니 결제 조회

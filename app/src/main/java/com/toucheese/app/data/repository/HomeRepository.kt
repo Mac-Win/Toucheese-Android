@@ -1,18 +1,6 @@
 package com.toucheese.app.data.repository
 
-import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponse
-import com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse
-import com.toucheese.app.data.model.home.carts_list.CartListResponse
-import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
-import com.toucheese.app.data.model.home.concept_studio.Studio
 import com.toucheese.app.data.model.home.load_concept.ConceptResponse
-import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
-import com.toucheese.app.data.model.home.review_studio.StudioReviewResponse
-import com.toucheese.app.data.model.home.saveCartData.CartData
-import com.toucheese.app.data.model.home.saveReservationData.SaveReservationRequest
-import com.toucheese.app.data.model.home.search_studio.SearchResponseItem
-import com.toucheese.app.data.model.home.specific_review.ReviewResponse
-import com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse
 import com.toucheese.app.data.network.HomeService
 import javax.inject.Inject
 
@@ -71,7 +59,7 @@ class HomeRepository @Inject constructor(private val apiService: HomeService) {
 
 
     // 해당  장바구니 삭제
-    suspend fun deleteCartItem(token:String?, cartId: Int) = apiService.deleteCartItem(token, cartId)
+    suspend fun deleteCartItem(token:String?, cartIds: String) = apiService.deleteCartItem(token, cartIds)
 
     // 장바구니 결제 조회
     suspend fun loadOrderPayData(token: String?, cartIds: String): com.toucheese.app.data.model.home.cart_order_pay.OrderPayResponse = apiService.loadOrderPayData(token, cartIds)

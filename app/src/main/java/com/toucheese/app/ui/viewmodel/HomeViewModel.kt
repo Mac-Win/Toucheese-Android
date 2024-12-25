@@ -274,17 +274,18 @@ class HomeViewModel @Inject constructor(
     }
 
     // 해당 장바구니 삭제
-    fun deleteCartItem(token: String?, cartId: Int) {
+    fun deleteCartItem(token: String?, cartIds: List<Int>) {
         viewModelScope.launch {
             try {
+                // cartIds를 콤마로 구분하며 String으로 변환
+                val requestCartIds = cartIds.joinToString(
+                    separator = ",",
+                )
                 // API 호출을 통해 서버에서 항목 삭제
-                Log.d("StudioViewModel", "CartId: $cartId")
-                Log.d("StudioViewModel,", "token: $token")
-                repository.deleteCartItem("Bearer $token", cartId)
-                Log.d("StudioViewModel", "CartId2: $cartId")
+                repository.deleteCartItem("Bearer $token", requestCartIds)
                 loadCartList(token)
                 // 로컬 상태에서 삭제된 항목 제거
-                _cartItems.value = _cartItems.value.filter { it.cartId != cartId }
+                _cartItems.value = _cartItems.value.filter { it.cartId !in cartIds }
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "장바구니 삭제 중 오류 발생: ${error.localizedMessage}")
             }

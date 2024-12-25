@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -46,7 +44,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.CartItemComponent
-import com.toucheese.app.ui.components.ChangeOptionBottomSheetComponent
 import com.toucheese.app.ui.components.SquareRadioButton
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
@@ -66,8 +63,6 @@ fun CartScreen(
     val cartItems by viewModel.cartItems.collectAsState() // ViewModel에서 상태 관찰
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
-    // 장바구니 내역이 있는지 확인
-    val isCartItemsExists = cartItems.isNotEmpty()
     // BottomSheetModal 상태 관리
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutine = rememberCoroutineScope()
@@ -86,7 +81,7 @@ fun CartScreen(
 
     // 장바구니 아이템 삭제 로직
     fun onDeleteCartItem(cartItem: CartListResponseItem) {
-        viewModel.deleteCartItem(token, cartItem.cartId)
+//        viewModel.deleteCartItem(token, cartItem.cartId)
     }
 
     // 총 가격 재계산 함수
@@ -127,6 +122,8 @@ fun CartScreen(
         // 정제된 장바구니 데이터 중 총 가격의 총합을 구함
         cartItem.totalPrice
     }
+    // 장바구니 선택내역이 있는지 확인
+    val isSelectedCartItemsExists = selectedCartItem.isNotEmpty()
 
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
@@ -147,7 +144,7 @@ fun CartScreen(
                     .padding(horizontal = 16.dp, vertical = 16.dp)
             ) {
                 Button(
-                    enabled = isCartItemsExists,
+                    enabled = isSelectedCartItemsExists,
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -157,7 +154,7 @@ fun CartScreen(
                     ),
                     border = BorderStroke(
                         1.dp,
-                        if (isCartItemsExists) MaterialTheme.colorScheme.primary else Color(
+                        if (isSelectedCartItemsExists) MaterialTheme.colorScheme.primary else Color(
                             0xFFD9D9D9
                         )
                     ),
@@ -256,7 +253,11 @@ fun CartScreen(
                                     labelColor = Color(0xFF1F1F1F)
                                 ),
                                 onClick = {
-//                                    viewModel.deleteCartItem(token, c)
+                                    // 선택 상품 제거
+                                    viewModel.deleteCartItem(
+                                        token = token,
+                                        cartIds = selectedCartItem.toList()
+                                    )
                                 }
                             )
                         }
@@ -292,128 +293,129 @@ fun CartScreen(
     )
 
     if (isBottomSheetVisible) {
-        ModalBottomSheet(
-            sheetState = bottomSheetState, // 바텀시트 상태 전달
-            onDismissRequest = {
-                Log.d("CartScreen", "Bottom sheet dismissed")
-                coroutine.launch {
-                    bottomSheetState.hide()
-                }
-                Log.d("CartScreen", "Bottom sheet is visible? : ${bottomSheetState.isVisible}")
-                isBottomSheetVisible = false
-            },
-            modifier = Modifier.wrapContentHeight(),
-            containerColor = Color(0xFFFFFCF5),
-        ) {
-            selectedItem?.let { item ->
-                ChangeOptionBottomSheetComponent(
-                    cartItem = item,
-                    productNumOfPeople = item.productStandard,
-                    productNumOfPeoplePrice = item.productPrice,
-                    productOptions = item.addOptions,
-                    numOfPeople = item.personnel,
-                    reviewCount = 5,
-                    isOverFlow = item.personnel > item.productStandard,
-                    isOnlyOne = item.productStandard == 1,
-                    selectedOption = selectedOptionIds,
-                    onDecreaseClicked = {
-                        if (item.personnel > 1) {
-                            val updatedPersonnel = item.personnel - 1
-                            val changedCartItem =
-                                com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-                                    personnel = updatedPersonnel,
-                                    addOptions = selectedOptionIds.toList(),
-                                    totalPrice = recalcTotalPrice(
-                                        updatedPersonnel,
-                                        selectedOptionIds
-                                    )
-                                )
-                            Log.d("CartScreen", "ChangedCartItem onDecrease: $changedCartItem")
-                            viewModel.updateCartItem(token, item.cartId, changedCartItem)
-                            isBottomSheetVisible = false
-                        }
-                    },
-                    onIncreaseClicked = {
-                        val updatedPersonnel = item.personnel + 1
-                        val changedCartItem =
-                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-                                personnel = updatedPersonnel,
-                                addOptions = selectedOptionIds.toList(),
-                                totalPrice = recalcTotalPrice(updatedPersonnel, selectedOptionIds)
-                            )
-                        Log.d("CartScreen", "ChangedCartItem onIncrease: $changedCartItem")
-                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
-                        isBottomSheetVisible = false
-                    },
-                    onReviewButtonClicked = {
-                        Log.d("CartScreen", "Review button clicked in bottom sheet")
-                        /* 리뷰 보기 로직 */
-                    },
-                    onOptionClicked = { optionId ->
-                        // 옵션 선택/해제 로직
-                        val updatedOptions =
-                            if (item.selectAddOptions.any { it.selectOptionId == optionId }) {
-                                item.selectAddOptions.filterNot { it.selectOptionId == optionId }
-                            } else {
-                                val selectedOption = item.addOptions.find { it.id == optionId }
-                                if (selectedOption != null) {
-                                    item.selectAddOptions + com.toucheese.app.data.model.home.carts_list.SelectAddOption(
-                                        selectOptionId = selectedOption.id,
-                                        selectOptionName = selectedOption.name,
-                                        selectOptionPrice = selectedOption.price
-                                    )
-                                } else {
-                                    item.selectAddOptions
-                                }
-                            }
-                        val updatedOptionIds = updatedOptions.map { it.selectOptionId }.toSet()
-                        val changedCartItem =
-                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-                                personnel = item.personnel,
-                                addOptions = updatedOptionIds.toList(),
-                                totalPrice = recalcTotalPrice(item.personnel, updatedOptionIds)
-                            )
-                        Log.d("CartScreen", "ChangedCartItem onOptionClicked: $changedCartItem")
-                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
-                    },
-                    onDeleteClick = {
-                        Log.d("CartScreen", "Delete button clicked in bottom sheet")
-                        onDeleteCartItem(it)
-                        isBottomSheetVisible = false
-                    },
-                    onOptionChangeClick = { updatedCartItem: com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem ->
-                        // 업데이트 할 때 최신 상태 반영
-                        Log.d("CartScreen", "OptionChangeClick: $updatedCartItem")
-                        viewModel.updateCartItem(token, item.cartId, updatedCartItem)
-                        isBottomSheetVisible = false
-                    },
-                    onClose = {
-                        Log.d("CartScreen", "Close button clicked in bottom sheet")
-                        isBottomSheetVisible = false
-                    },
-                    onConfirm = {
-                        // 확인 시 ChangedCartItem 전송
-                        val changedCartItem =
-                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-                                personnel = item.personnel,
-                                addOptions = selectedOptionIds.toList(),
-                                totalPrice = recalcTotalPrice(item.personnel, selectedOptionIds)
-                            )
-                        Log.d("CartScreen", "ChangedCartItem onConfirm: $changedCartItem")
-                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
-                        isBottomSheetVisible = false
-                    },
-                    selectedOptionChanged = { optionId ->
-                        selectedOptionIds = if (selectedOptionIds.contains(optionId)) {
-                            selectedOptionIds - optionId
-                        } else {
-                            selectedOptionIds + optionId
-                        }
-                        Log.d("CartScreen", "SelectedOptionIds after change: $selectedOptionIds")
-                    },
 
-                    )
-            }
-        }
+//        ModalBottomSheet(
+//            sheetState = bottomSheetState, // 바텀시트 상태 전달
+//            onDismissRequest = {
+//                Log.d("CartScreen", "Bottom sheet dismissed")
+//                coroutine.launch {
+//                    bottomSheetState.hide()
+//                }
+//                Log.d("CartScreen", "Bottom sheet is visible? : ${bottomSheetState.isVisible}")
+//                isBottomSheetVisible = false
+//            },
+//            modifier = Modifier.wrapContentHeight(),
+//            containerColor = Color(0xFFFFFCF5),
+//        ) {
+//            selectedItem?.let { item ->
+//                ChangeOptionBottomSheetComponent(
+//                    cartItem = item,
+//                    productNumOfPeople = item.productStandard,
+//                    productNumOfPeoplePrice = item.productPrice,
+//                    productOptions = item.addOptions,
+//                    numOfPeople = item.personnel,
+//                    reviewCount = 5,
+//                    isOverFlow = item.personnel > item.productStandard,
+//                    isOnlyOne = item.productStandard == 1,
+//                    selectedOption = selectedOptionIds,
+//                    onDecreaseClicked = {
+//                        if (item.personnel > 1) {
+//                            val updatedPersonnel = item.personnel - 1
+//                            val changedCartItem =
+//                                com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+//                                    personnel = updatedPersonnel,
+//                                    addOptions = selectedOptionIds.toList(),
+//                                    totalPrice = recalcTotalPrice(
+//                                        updatedPersonnel,
+//                                        selectedOptionIds
+//                                    )
+//                                )
+//                            Log.d("CartScreen", "ChangedCartItem onDecrease: $changedCartItem")
+//                            viewModel.updateCartItem(token, item.cartId, changedCartItem)
+//                            isBottomSheetVisible = false
+//                        }
+//                    },
+//                    onIncreaseClicked = {
+//                        val updatedPersonnel = item.personnel + 1
+//                        val changedCartItem =
+//                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+//                                personnel = updatedPersonnel,
+//                                addOptions = selectedOptionIds.toList(),
+//                                totalPrice = recalcTotalPrice(updatedPersonnel, selectedOptionIds)
+//                            )
+//                        Log.d("CartScreen", "ChangedCartItem onIncrease: $changedCartItem")
+//                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
+//                        isBottomSheetVisible = false
+//                    },
+//                    onReviewButtonClicked = {
+//                        Log.d("CartScreen", "Review button clicked in bottom sheet")
+//                        /* 리뷰 보기 로직 */
+//                    },
+//                    onOptionClicked = { optionId ->
+//                        // 옵션 선택/해제 로직
+//                        val updatedOptions =
+//                            if (item.selectAddOptions.any { it.selectOptionId == optionId }) {
+//                                item.selectAddOptions.filterNot { it.selectOptionId == optionId }
+//                            } else {
+//                                val selectedOption = item.addOptions.find { it.id == optionId }
+//                                if (selectedOption != null) {
+//                                    item.selectAddOptions + com.toucheese.app.data.model.home.carts_list.SelectAddOption(
+//                                        selectOptionId = selectedOption.id,
+//                                        selectOptionName = selectedOption.name,
+//                                        selectOptionPrice = selectedOption.price
+//                                    )
+//                                } else {
+//                                    item.selectAddOptions
+//                                }
+//                            }
+//                        val updatedOptionIds = updatedOptions.map { it.selectOptionId }.toSet()
+//                        val changedCartItem =
+//                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+//                                personnel = item.personnel,
+//                                addOptions = updatedOptionIds.toList(),
+//                                totalPrice = recalcTotalPrice(item.personnel, updatedOptionIds)
+//                            )
+//                        Log.d("CartScreen", "ChangedCartItem onOptionClicked: $changedCartItem")
+//                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
+//                    },
+//                    onDeleteClick = {
+//                        Log.d("CartScreen", "Delete button clicked in bottom sheet")
+//                        onDeleteCartItem(it)
+//                        isBottomSheetVisible = false
+//                    },
+//                    onOptionChangeClick = { updatedCartItem: com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem ->
+//                        // 업데이트 할 때 최신 상태 반영
+//                        Log.d("CartScreen", "OptionChangeClick: $updatedCartItem")
+//                        viewModel.updateCartItem(token, item.cartId, updatedCartItem)
+//                        isBottomSheetVisible = false
+//                    },
+//                    onClose = {
+//                        Log.d("CartScreen", "Close button clicked in bottom sheet")
+//                        isBottomSheetVisible = false
+//                    },
+//                    onConfirm = {
+//                        // 확인 시 ChangedCartItem 전송
+//                        val changedCartItem =
+//                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
+//                                personnel = item.personnel,
+//                                addOptions = selectedOptionIds.toList(),
+//                                totalPrice = recalcTotalPrice(item.personnel, selectedOptionIds)
+//                            )
+//                        Log.d("CartScreen", "ChangedCartItem onConfirm: $changedCartItem")
+//                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
+//                        isBottomSheetVisible = false
+//                    },
+//                    selectedOptionChanged = { optionId ->
+//                        selectedOptionIds = if (selectedOptionIds.contains(optionId)) {
+//                            selectedOptionIds - optionId
+//                        } else {
+//                            selectedOptionIds + optionId
+//                        }
+//                        Log.d("CartScreen", "SelectedOptionIds after change: $selectedOptionIds")
+//                    },
+//
+//                    )
+//            }
+//        }
     }
 }
