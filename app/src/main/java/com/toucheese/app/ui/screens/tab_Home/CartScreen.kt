@@ -63,51 +63,20 @@ fun CartScreen(
     val cartItems by viewModel.cartItems.collectAsState() // ViewModel에서 상태 관찰
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<CartListResponseItem?>(null) }
-    // BottomSheetModal 상태 관리
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     val coroutine = rememberCoroutineScope()
     // 토큰 받아오기
     val token = tokenManager.getAccessToken()
     Log.d("CartScreen", "Current Token: $token")
-
-    LaunchedEffect(Unit) {
-        // 토큰에 해당하는 장바구니 목록
-        viewModel.loadCartList(token)
-        // 바텀시트 처음에 expanded 상태로 설정
-        coroutine.launch {
-            bottomSheetState.expand()
-        }
-    }
-
-    // 장바구니 아이템 삭제 로직
-    fun onDeleteCartItem(cartItem: CartListResponseItem) {
-//        viewModel.deleteCartItem(token, cartItem.cartId)
-    }
-
-    // 총 가격 재계산 함수
-    fun recalcTotalPrice(personnel: Int, selectedOptionIds: Set<Int>): Int {
-        val productPrice = selectedItem?.productPrice ?: 0
-        val productStandard = selectedItem?.productStandard ?: 1
-
-        val chargeablePeople = max(personnel, productStandard)
-        val pricePerPerson = if (productStandard != 0) productPrice / productStandard else 0
-        val peoplePrice = pricePerPerson * chargeablePeople
-
-        val selectedOptionsPrice = selectedItem?.addOptions
-            ?.filter { selectedOptionIds.contains(it.id) }
-            ?.sumOf { it.price } ?: 0
-
-        return peoplePrice + selectedOptionsPrice
-    }
 
     // `selectedOptionIds` 상태 변수 정의
     var selectedOptionIds by remember { mutableStateOf(setOf<Int>()) }
 
     // `selectedItem`이 변경될 때마다 `selectedOptionIds` 업데이트
     LaunchedEffect(selectedItem) {
-        selectedOptionIds =
-            selectedItem?.selectAddOptions?.map { it.selectOptionId }?.toSet() ?: setOf()
-        Log.d("CartScreen", "SelectedOptionIds initialized: $selectedOptionIds")
+        selectedOptionIds = selectedItem?.selectAddOptions?.map { it.selectOptionId }?.toSet() ?: setOf()
+        // 토큰에 해당하는 장바구니 목록
+        viewModel.loadCartList(token)
     }
 
     // 선택한 장바구니 아이템 데이터
@@ -294,128 +263,5 @@ fun CartScreen(
 
     if (isBottomSheetVisible) {
 
-//        ModalBottomSheet(
-//            sheetState = bottomSheetState, // 바텀시트 상태 전달
-//            onDismissRequest = {
-//                Log.d("CartScreen", "Bottom sheet dismissed")
-//                coroutine.launch {
-//                    bottomSheetState.hide()
-//                }
-//                Log.d("CartScreen", "Bottom sheet is visible? : ${bottomSheetState.isVisible}")
-//                isBottomSheetVisible = false
-//            },
-//            modifier = Modifier.wrapContentHeight(),
-//            containerColor = Color(0xFFFFFCF5),
-//        ) {
-//            selectedItem?.let { item ->
-//                ChangeOptionBottomSheetComponent(
-//                    cartItem = item,
-//                    productNumOfPeople = item.productStandard,
-//                    productNumOfPeoplePrice = item.productPrice,
-//                    productOptions = item.addOptions,
-//                    numOfPeople = item.personnel,
-//                    reviewCount = 5,
-//                    isOverFlow = item.personnel > item.productStandard,
-//                    isOnlyOne = item.productStandard == 1,
-//                    selectedOption = selectedOptionIds,
-//                    onDecreaseClicked = {
-//                        if (item.personnel > 1) {
-//                            val updatedPersonnel = item.personnel - 1
-//                            val changedCartItem =
-//                                com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-//                                    personnel = updatedPersonnel,
-//                                    addOptions = selectedOptionIds.toList(),
-//                                    totalPrice = recalcTotalPrice(
-//                                        updatedPersonnel,
-//                                        selectedOptionIds
-//                                    )
-//                                )
-//                            Log.d("CartScreen", "ChangedCartItem onDecrease: $changedCartItem")
-//                            viewModel.updateCartItem(token, item.cartId, changedCartItem)
-//                            isBottomSheetVisible = false
-//                        }
-//                    },
-//                    onIncreaseClicked = {
-//                        val updatedPersonnel = item.personnel + 1
-//                        val changedCartItem =
-//                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-//                                personnel = updatedPersonnel,
-//                                addOptions = selectedOptionIds.toList(),
-//                                totalPrice = recalcTotalPrice(updatedPersonnel, selectedOptionIds)
-//                            )
-//                        Log.d("CartScreen", "ChangedCartItem onIncrease: $changedCartItem")
-//                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
-//                        isBottomSheetVisible = false
-//                    },
-//                    onReviewButtonClicked = {
-//                        Log.d("CartScreen", "Review button clicked in bottom sheet")
-//                        /* 리뷰 보기 로직 */
-//                    },
-//                    onOptionClicked = { optionId ->
-//                        // 옵션 선택/해제 로직
-//                        val updatedOptions =
-//                            if (item.selectAddOptions.any { it.selectOptionId == optionId }) {
-//                                item.selectAddOptions.filterNot { it.selectOptionId == optionId }
-//                            } else {
-//                                val selectedOption = item.addOptions.find { it.id == optionId }
-//                                if (selectedOption != null) {
-//                                    item.selectAddOptions + com.toucheese.app.data.model.home.carts_list.SelectAddOption(
-//                                        selectOptionId = selectedOption.id,
-//                                        selectOptionName = selectedOption.name,
-//                                        selectOptionPrice = selectedOption.price
-//                                    )
-//                                } else {
-//                                    item.selectAddOptions
-//                                }
-//                            }
-//                        val updatedOptionIds = updatedOptions.map { it.selectOptionId }.toSet()
-//                        val changedCartItem =
-//                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-//                                personnel = item.personnel,
-//                                addOptions = updatedOptionIds.toList(),
-//                                totalPrice = recalcTotalPrice(item.personnel, updatedOptionIds)
-//                            )
-//                        Log.d("CartScreen", "ChangedCartItem onOptionClicked: $changedCartItem")
-//                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
-//                    },
-//                    onDeleteClick = {
-//                        Log.d("CartScreen", "Delete button clicked in bottom sheet")
-//                        onDeleteCartItem(it)
-//                        isBottomSheetVisible = false
-//                    },
-//                    onOptionChangeClick = { updatedCartItem: com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem ->
-//                        // 업데이트 할 때 최신 상태 반영
-//                        Log.d("CartScreen", "OptionChangeClick: $updatedCartItem")
-//                        viewModel.updateCartItem(token, item.cartId, updatedCartItem)
-//                        isBottomSheetVisible = false
-//                    },
-//                    onClose = {
-//                        Log.d("CartScreen", "Close button clicked in bottom sheet")
-//                        isBottomSheetVisible = false
-//                    },
-//                    onConfirm = {
-//                        // 확인 시 ChangedCartItem 전송
-//                        val changedCartItem =
-//                            com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem(
-//                                personnel = item.personnel,
-//                                addOptions = selectedOptionIds.toList(),
-//                                totalPrice = recalcTotalPrice(item.personnel, selectedOptionIds)
-//                            )
-//                        Log.d("CartScreen", "ChangedCartItem onConfirm: $changedCartItem")
-//                        viewModel.updateCartItem(token, item.cartId, changedCartItem)
-//                        isBottomSheetVisible = false
-//                    },
-//                    selectedOptionChanged = { optionId ->
-//                        selectedOptionIds = if (selectedOptionIds.contains(optionId)) {
-//                            selectedOptionIds - optionId
-//                        } else {
-//                            selectedOptionIds + optionId
-//                        }
-//                        Log.d("CartScreen", "SelectedOptionIds after change: $selectedOptionIds")
-//                    },
-//
-//                    )
-//            }
-//        }
     }
 }
