@@ -1,9 +1,9 @@
 package com.toucheese.app.ui.screens.tab_Home
 
+import ReviewListComponent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
 import com.toucheese.app.data.model.home.review_studio.StudioReviewResponseItem
 import com.toucheese.app.ui.components.AppBarImageComponent
-import com.toucheese.app.ui.components.ReviewListComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 
