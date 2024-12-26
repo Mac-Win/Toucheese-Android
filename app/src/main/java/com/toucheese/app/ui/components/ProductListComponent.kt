@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.toucheese.app.data.model.home.studio_detail.Product
 
@@ -46,7 +44,7 @@ fun ProductList(
                             // 상품 클릭 시 상품번호 전달
                             onProductClicked(product.id)
                         }
-                        .padding(vertical = 8.dp) // 각 상품 간 세로 간격
+                        .padding(vertical = 2.dp) // 각 상품 간 세로 간격
                 )
             }
         }

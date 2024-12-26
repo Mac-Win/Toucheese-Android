@@ -35,7 +35,7 @@ fun ProductItem(product: Product, modifier: Modifier = Modifier) {
             painter = rememberAsyncImagePainter(model = product.productImage),
             contentDescription = "상품 이미지",
             modifier = Modifier
-                .size(128.dp) // 이미지 크기 조정 (필요 시 변경 가능)
+                .size(88.dp, 120.dp) // 이미지 크기 조정 (필요 시 변경 가능)
                 .clip(RoundedCornerShape(8.dp)), // 원형으로 클립
             contentScale = ContentScale.Crop
         )
