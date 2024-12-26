@@ -26,15 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.toucheese.app.R
-import com.toucheese.app.ui.components.ProfileComponent
 import com.toucheese.app.ui.components.ReviewContent
 import com.toucheese.app.ui.components.ReviewImageDialog
 import com.toucheese.app.ui.components.ReviewPhotoComponent
 import com.toucheese.app.ui.components.ReviewStudioAndCommentComponent
 import com.toucheese.app.ui.components.ShareBottomSheetComponent
 import com.toucheese.app.ui.components.StudioTopAppBarComponent
-import com.toucheese.app.ui.components.dummyComments
+import com.toucheese.app.ui.components.dummyReviewContent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,10 +65,9 @@ fun ReviewDetailScreen(
     Scaffold(
         topBar = {
             StudioTopAppBarComponent(
-                isBookmarked = false, // 임의 값
-                onNavigateBack = navigateBack,
-                onShare = { isShareSheetVisible = true },
-                onBookmarkToggle = { /* 북마크 처리 */ }
+                showActions = false, // 공유하기 북마크 숨기기
+                showProfile = true, // 프로필 정보 표시
+                onNavigateBack = navigateBack
             )
         }
     ) { innerPadding ->
@@ -82,19 +79,10 @@ fun ReviewDetailScreen(
                     .padding(innerPadding), // 전체 배경색
                 verticalArrangement = Arrangement.spacedBy(16.dp) // 요소 간 간격
             ) {
-                // 프로필 섹션
-                item {
-                    ProfileComponent(
-                        profileDrawableRes = R.drawable.profileimage, // 드로어블 리소스 ID
-                        profileNickname = "정두콩"
-                    )
-                }
-
                 // 리뷰 사진
                 item {
                     specificReview?.reviewImages?.let { photoUrls ->
                         ReviewPhotoComponent(
-                            modifier = Modifier.padding(8.dp),
                             photoUrls = photoUrls,
                             onPhotoClick = { index ->
                                 selectedPhotoIndex = index
@@ -114,8 +102,8 @@ fun ReviewDetailScreen(
                 // 디바이더
                 item {
                     HorizontalDivider(
-                        color = Color(0xFFFFC000),
-                        thickness = 1.dp
+                        color = Color(0xFFFAFAFA),
+                        thickness = 8.dp
                     )
                 }
 
@@ -123,7 +111,7 @@ fun ReviewDetailScreen(
                 item {
                     ReviewStudioAndCommentComponent(
                         studio = studio,
-                        comments = dummyComments
+                        comments = dummyReviewContent
                     )
                 }
             }
