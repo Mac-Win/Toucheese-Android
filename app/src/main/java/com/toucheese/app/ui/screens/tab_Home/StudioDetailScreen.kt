@@ -1,6 +1,8 @@
 package com.toucheese.app.ui.screens.tab_Home
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.ui.components.BottomActionButtons
 import com.toucheese.app.ui.components.ImageSliderComponent
-import com.toucheese.app.ui.components.NoticeSectionComponent
 import com.toucheese.app.ui.components.ProductList
 import com.toucheese.app.ui.components.ReviewListComponent
 import com.toucheese.app.ui.components.StudioInfoComponent
@@ -36,6 +37,7 @@ import com.toucheese.app.ui.components.StudioTopAppBarComponent
 import com.toucheese.app.ui.components.TabBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StudioDetailScreen(
     selectedTab: Int,
@@ -60,13 +62,21 @@ fun StudioDetailScreen(
 
     if (studio != null) {
         Scaffold(
+            // 상단 앱바 설정
             topBar = {
-
+                StudioTopAppBarComponent(
+                    isBookmarked = isBookmarked,
+                    onNavigateBack = navigateBack,
+                    onShare = onShare,
+                    onBookmarkToggle = {
+                        viewModel.toggleBookmark()
+                        onBookmark(isBookmarked)
+                    }
+                )
             },
-
+            // 하단 예약 버튼 설정
             bottomBar = {
-                if (selectedTab == 0){
-                    // 예약바
+                if (selectedTab == 0) {
                     BottomActionButtons(modifier = Modifier)
                 }
             },
@@ -78,25 +88,14 @@ fun StudioDetailScreen(
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+                // 이미지 슬라이더
                 item {
-                    // 이미지 슬라이더 및 상단 바
-                    Box {
-                        ImageSliderComponent(
-                            images = studio!!.facilityImageUrls,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(300.dp)
-                        )
-                        StudioTopAppBarComponent(
-                            isBookmarked = false,
-                            onNavigateBack = navigateBack,
-                            onShare = onShare,
-                            onBookmarkToggle = {
-                                viewModel.toggleBookmark()
-                                onBookmark(isBookmarked)
-                            }
-                        )
-                    }
+                    ImageSliderComponent(
+                        images = studio!!.facilityImageUrls,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                    )
                 }
 
                 // 스튜디오 정보
@@ -110,21 +109,13 @@ fun StudioDetailScreen(
                    )
                 }
 
+
                 // 탭 컴포넌트
                 item {
                     TabBarComponent(
                         selectedTabIndex = selectedTab,
                         onTabSelected = onSelectedTabChanged,
-                        tabTitles = listOf("가격", "리뷰")
-                    )
-                }
-
-                // 공지사항: 항상 마지막에 표시
-                item {
-                    NoticeSectionComponent(
-                        notice = studio!!.notice,
-                        expanded = expandedNotice,
-                        onToggleExpand = { expandedNotice = !expandedNotice }
+                        tabTitles = listOf("상품", "리뷰")
                     )
                 }
 
