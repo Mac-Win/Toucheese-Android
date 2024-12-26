@@ -67,15 +67,18 @@ fun ChangeOptionBottomSheetComponent(
             )
     ) {
         item {
-            // CartItemComponent 표시
-            CartItemComponent(
-                cartItem = cartItem,
-                onDeleteClick = onDeleteClick,
-                onOptionChangeClick = { /* 필요시 구현 */ },
-                modifier = Modifier.padding(bottom = 16.dp),
-                showDeleteIcon = false,
-                showOptionChangeButton = false
-            )
+//            // CartItemComponent 표시
+//            CartItemComponent(
+//                cartItem = cartItem,
+//                onDeleteClick = onDeleteClick,
+//                onOptionChangeClick = { /* 필요시 구현 */ },
+//                modifier = Modifier.padding(bottom = 16.dp),
+//                showDeleteIcon = false,
+//                showOptionChangeButton = false,
+//                onCardItemClicked = {
+//                    // 장바구니 아이템 선택 로직
+//                }
+//            )
 
             // ProductOrderOptionComponent 표시
             ProductOrderOptionComponent(
