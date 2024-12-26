@@ -51,7 +51,7 @@ fun CartItemComponent(
     ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .fillMaxWidth()
