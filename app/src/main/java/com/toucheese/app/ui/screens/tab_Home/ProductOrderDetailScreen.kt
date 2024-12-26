@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
-import com.toucheese.app.data.model.home.product_detail.ProductDetailResponse
 import com.toucheese.app.data.model.home.saveCartData.CartData
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.AppBarImageComponent
@@ -49,7 +48,6 @@ import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.DateTimeFormatter
 
 val TAG = "ProductOrderDetailScreen"
 
@@ -78,14 +76,14 @@ fun ProductOrderDetailScreen(
     var selectedOption by remember { mutableStateOf(setOf<Int>()) } // 선택된 옵션의 Index를 저장
     // 선택일자
     val (selectedDate, setSelectedDate) = remember { mutableStateOf<LocalDate>(LocalDate.now()) }
+    // 선택 시간
+    var selectedTime by remember { mutableStateOf("") }
     // 선택일자의 운영시간
     val (operatingHours, setOperationHours) = remember {
         mutableStateOf<List<CalendarTimeResponseItem>>(
             emptyList()
         )
     }
-    // 선택 시간
-    var selectedTime by remember { mutableStateOf("") }
     // 시간 선택했는지 여부
     val isTimeSelected = selectedTime.isNotEmpty()
     // context
@@ -242,10 +240,7 @@ fun ProductOrderDetailScreen(
 
             if (showDialog) {
                 CustomDatePickerComponent(
-                    selectedTime = selectedTime,
-                    selectedDate = selectedDate.toString(),
-                    operationHours = operatingHours,
-                    calendarState = calendarState,
+                    monthDateTimeList = operatingHours,
                     onMonthChanged = { selectedMonth ->
                         // 서버 API 비동기 호출
                         coroutineScope.launch {
@@ -258,29 +253,15 @@ fun ProductOrderDetailScreen(
                             setOperationHours(result)
                         }
                     },
-
-                    onDateClicked = { clickedDate ->
-                        if (selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
-                            setSelectedDate(LocalDate.now())
-                        } else { // 다른 날짜를 누른 경우
-                            setSelectedDate(clickedDate)
-                        }
-                    },
                     onDismissRequest = {
                         setDialog(false)
                         setOperationHours(emptyList())
                     },
-                    onTimeClicked = { date: String, time: String ->
-                        // 포맷팅
-                        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                        val parsedDate = LocalDate.parse(date, dateFormatter)
-
-                        // 날짜 설정
-                        setSelectedDate(parsedDate)
-                        // 시간 설정
-                        selectedTime = time
-                        Log.d("ProductOrderDetailScreen", "선택 일자 : ${selectedDate}")
-                        Log.d("ProductOrderDetailScreen", "선택 시간 : ${selectedTime}")
+                    onConfirmClicked = { reservationDate: LocalDate, reservationTime: String ->
+                        // 예약일자 전송
+                        setSelectedDate(reservationDate)
+                        // 예약 시간 저장
+                        selectedTime = reservationTime
                     }
                 )
             }
