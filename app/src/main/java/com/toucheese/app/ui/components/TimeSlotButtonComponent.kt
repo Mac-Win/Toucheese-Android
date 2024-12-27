@@ -44,9 +44,9 @@ import java.time.format.DateTimeParseException
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeSlotButtonComponent(
+    selectedTime: String,
     date: String,
     times: List<String>,
-    selectedTime: String,
     modifier: Modifier,
     onTimeClick: (String) -> Unit
 ) {

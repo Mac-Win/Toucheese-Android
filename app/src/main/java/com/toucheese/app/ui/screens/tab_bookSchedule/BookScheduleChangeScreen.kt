@@ -68,16 +68,46 @@ fun BookingScheduleChangeScreen(
     val (calendarVisibleState, setCalendarVisibleState) = remember { mutableStateOf(false) }
     // 운영시간
     val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
-    // 운영시간
-    // 예약 날짜
-    LaunchedEffect(reservationId, studioId) {
-        // 사용자 예약 내역 조회
-        viewModel.loadUserBookList(token)
-    }
     // 선택된 날짜를 상태로 관리
     var selectedDate by remember { mutableStateOf(LocalDate.now())  }
     // 선택된 시간을 상태로 관리
     var selectedTime by remember { mutableStateOf( "" ) }
+    LaunchedEffect(reservationId, studioId) {
+        // 사용자 예약 내역 조회
+        viewModel.loadUserBookList(token)
+    }
+
+    LaunchedEffect(userBook) {
+        if (userBook != null){
+            selectedDate = castToLocalDate(userBook.createDate)
+            selectedTime = userBook.createTime
+
+            // 월 데이터 변경
+            val currentMonth = YearMonth.from(castToLocalDate(userBook.createDate))
+            Log.d("BookChangeScreen", "캘린더에서 선택한 연월 데이터 : ${currentMonth}")
+            // 선택한 월이 될 때까지 이동
+            while (calendarState.monthState.currentMonth != currentMonth) {
+                // 현재 달력 데이터가 선택한 날짜보다 이전인 경우
+                if (calendarState.monthState.currentMonth.isBefore(currentMonth)) {
+                    Log.d("BookChangeScreen", "변경된 캘린더 연월 데이터 +1 : ${calendarState.monthState.currentMonth}")
+                    // 달 + 1
+                    calendarState.monthState.currentMonth = calendarState.monthState.currentMonth.plusMonths(1)
+                }
+                // 현재 달력 데이터가 선택한 날짜보다 이후인 경우
+                else {
+                    Log.d("BookChangeScreen", "변경된 캘린더 연월 데이터 -1 : ${calendarState.monthState.currentMonth}")
+                    // 달 - 1
+                    calendarState.monthState.currentMonth = calendarState.monthState.currentMonth.minusMonths(1)
+                }
+            }
+            // 해당 월의 예약 가능 시간 데이터 불러오기
+            val result = viewModel.loadCalendarTime(
+                studioId = studioId,
+                yearMonth = calendarState.monthState.currentMonth.toString()
+            )
+            setOperationHours(result)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -122,20 +152,6 @@ fun BookingScheduleChangeScreen(
                     // 버튼 label 텍스트
                     val buttonLabelText = uiValues.third
 
-                    LaunchedEffect(reservationId, studioId) {
-                        val date = castToLocalDate(userBook.createDate)
-                        // 캘린더 내역 불러오기
-                        Log.d("BookChangeScreen", "date = $date")
-                        Log.d("BookChangeScreen",
-                            "yearMonth = ${date.year}-${date.monthValue}-${date.dayOfMonth}"
-                        )
-                        // 해당 월의 예약 가능 시간 데이터 불러오기
-                        val result = viewModel.loadCalendarTime(
-                            studioId = studioId,
-                            yearMonth = calendarState.monthState.currentMonth.toString()
-                        )
-                        setOperationHours(result)
-                    }
                     Log.d("BookChangeScreen", "userBook = ${userBook}")
                     Log.d("BookChangeScreen", "calendar schedule = ${operatingHours}")
                     // 카드 아이템
