@@ -41,8 +41,10 @@ import com.toucheese.app.ui.components.calendar.CustomDatePickerWeekComponent
 import io.github.boguszpawlowski.composecalendar.CalendarState
 import io.github.boguszpawlowski.composecalendar.selection.DynamicSelectionState
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -111,7 +113,6 @@ fun BookingScheduleChangeItemComponent(
             ) {
                 // 날짜 Chip
                 AssistChip(
-                    onClick = onCalendarOpenRequest,
                     label = {
                         Text(
                             text =  "${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일",
@@ -136,13 +137,15 @@ fun BookingScheduleChangeItemComponent(
                     colors = AssistChipDefaults.assistChipColors(
                         labelColor = Color(0xFF595959)
                     ),
-                    border = BorderStroke(1.dp, Color(0xFFF0F0F0))
+                    border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+                    onClick = onCalendarOpenRequest
                 )
 
                 // 요일 및 날짜 표시
                 CustomDatePickerWeekComponent(
                     selectedDate = selectedDate,
                     calendarState = calendarState,
+                    onSelectedDateChanged = setSelectedDate,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -167,10 +170,10 @@ fun BookingScheduleChangeItemComponent(
                 if (morningTimes.isNotEmpty()) {
                     Log.d("BookScheduleScreen", "오전 시간 : ${morningTimes}")
                     TimeSlotButtonComponent(
+                        date = selectedDate.toString(),
                         times = morningTimes,
                         selectedTime = selectedTime,
                         onTimeClick = setSelectedTime,
-//                    isPast = ,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(16.dp)) // 섹션 간 간격
@@ -186,10 +189,10 @@ fun BookingScheduleChangeItemComponent(
                 if (afternoonTimes.isNotEmpty()) {
                     Log.d("BookScheduleScreen", "오후 시간 : ${afternoonTimes}")
                     TimeSlotButtonComponent(
+                        date = selectedDate.toString(),
                         times = afternoonTimes,
                         selectedTime = selectedTime,
                         onTimeClick = setSelectedTime,
-//                    isPast = ,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -214,4 +217,29 @@ fun castToLocalTime(time: String): LocalTime {
     val refinedTime = if (time.length == 4) "0$time" else time
     val format = DateTimeFormatter.ofPattern("HH:mm") // 시간 형식 정의
     return LocalTime.parse(refinedTime, format)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun isPastTime(date: String, time: String): Boolean {
+    return try {
+        // `time` 정규화: 한 자리 숫자를 두 자리로 패딩
+        val normalizedTime = if (time.length == 4) "0$time" else time
+
+        // 날짜와 시간 파싱
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val parsedDate = LocalDate.parse(date, dateFormatter)
+        val parsedTime = LocalTime.parse(normalizedTime, timeFormatter)
+
+        // `date`와 `time`을 결합해 LocalDateTime 생성
+        val inputDateTime = parsedDate.atTime(parsedTime)
+
+        // 현재 시각
+        val now = LocalDateTime.now()
+
+        // 입력이 과거인지 판단
+        !inputDateTime.isBefore(now)
+    } catch (e: DateTimeParseException) {
+        false // 형식 오류 발생 시 false 반환
+    }
 }

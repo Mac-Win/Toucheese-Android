@@ -31,6 +31,7 @@ fun CustomDatePickerWeekComponent(
     selectedDate: LocalDate,
     calendarState: CalendarState<DynamicSelectionState>,
     modifier: Modifier = Modifier,
+    onSelectedDateChanged: (LocalDate) -> Unit,
 ) {
     SelectableCalendar(
         calendarState = calendarState,
@@ -43,22 +44,27 @@ fun CustomDatePickerWeekComponent(
             // 선택된 날짜와 같은 주에 속하는지 여부
             val isSameWeek: Boolean = isSameWeek(selectedDate, date)
             // 선택된 날짜인지 여부
-            val isSelectedDate = selectionState.selection.contains(date)
+            val isSelectedDate = selectedDate == date
             // 활성화 여부
             val isPastDate = date.isBefore(LocalDate.now())
             Log.d("CustomDatePickerWeekComponent", "같은 주에 속하나? : $isSameWeek")
 
             if (isSameWeek) {
                 Card(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .padding(4.dp),
+                    enabled = !isPastDate,
+                    onClick = {
+                        onSelectedDateChanged(date)
+                    },
                     // 휴무일이거나 과거인 경우 비활성화
                     colors = CardDefaults.cardColors(
                         containerColor = if (isSelectedDate) MaterialTheme.colorScheme.primary else Color.Transparent,
-                        disabledContainerColor = Color.Gray,
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = Color.Gray.copy(0.5f)
                     ),
                     shape = RoundedCornerShape(50.dp),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .padding(4.dp),
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),

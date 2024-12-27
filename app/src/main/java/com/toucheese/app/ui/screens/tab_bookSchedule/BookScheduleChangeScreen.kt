@@ -149,7 +149,7 @@ fun BookingScheduleChangeScreen(
                         chipContainerColor = chipContainerColor,
                         buttonLabelText = buttonLabelText,
                         calendarState = calendarState,
-                        selectedDate = selectedDate ?: LocalDate.now(),
+                        selectedDate = selectedDate,
                         selectedTime = selectedTime,
                         operationTimeList = operatingHours,
                         modifier = Modifier.fillMaxWidth(),
