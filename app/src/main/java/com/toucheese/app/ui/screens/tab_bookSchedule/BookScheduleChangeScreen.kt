@@ -70,7 +70,7 @@ fun BookingScheduleChangeScreen(
     val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
     // 운영시간
     // 예약 날짜
-    LaunchedEffect(Unit) {
+    LaunchedEffect(reservationId, studioId) {
         // 사용자 예약 내역 조회
         viewModel.loadUserBookList(token)
     }
@@ -112,7 +112,7 @@ fun BookingScheduleChangeScreen(
                 .padding(16.dp),
         ) {
             item {
-                if (userBook != null){
+                if (userBook != null) {
                     // 값
                     val uiValues = viewModel.makeValue(state = userBook.status)
                     // 예약상태에 따른 chip text 색상
@@ -122,15 +122,17 @@ fun BookingScheduleChangeScreen(
                     // 버튼 label 텍스트
                     val buttonLabelText = uiValues.third
 
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(reservationId, studioId) {
                         val date = castToLocalDate(userBook.createDate)
                         // 캘린더 내역 불러오기
                         Log.d("BookChangeScreen", "date = $date")
-                        Log.d("BookChangeScreen", "yearMonth = ${date.year}-${date.monthValue}-${date.dayOfMonth}")
+                        Log.d("BookChangeScreen",
+                            "yearMonth = ${date.year}-${date.monthValue}-${date.dayOfMonth}"
+                        )
                         // 해당 월의 예약 가능 시간 데이터 불러오기
                         val result = viewModel.loadCalendarTime(
                             studioId = studioId,
-                            yearMonth = "${date.year}-${date.monthValue}"
+                            yearMonth = calendarState.monthState.currentMonth.toString()
                         )
                         setOperationHours(result)
                     }
@@ -156,7 +158,10 @@ fun BookingScheduleChangeScreen(
                         onCalendarOpenRequest = {
                             // 서버에서 해당 월의 데이터 불러옴
                             coroutine.launch {
-                                val result = viewModel.loadCalendarTime(studioId = studioId, yearMonth = YearMonth.from(LocalDate.now()).toString())
+                                val result = viewModel.loadCalendarTime(
+                                    studioId = studioId,
+                                    yearMonth = YearMonth.from(LocalDate.now()).toString()
+                                )
                                 setOperationHours(result)
                             }
                             setCalendarVisibleState(true)
@@ -164,7 +169,7 @@ fun BookingScheduleChangeScreen(
                     )
 
                     // 캘린더 모달
-                    if (calendarVisibleState){
+                    if (calendarVisibleState) {
                         CustomDatePickerComponent(
                             monthDateTimeList = operatingHours,
                             onMonthChanged = { selectedMonth ->
@@ -193,9 +198,9 @@ fun BookingScheduleChangeScreen(
                                 val currentMonth = YearMonth.from(reservationDate)
                                 Log.d("BookChangeScreen", "캘린더에서 선택한 연월 데이터 : ${currentMonth}")
                                 // 선택한 월이 될 때까지 이동
-                                while (calendarState.monthState.currentMonth != currentMonth){
+                                while (calendarState.monthState.currentMonth != currentMonth) {
                                     // 현재 달력 데이터가 선택한 날짜보다 이전인 경우
-                                    if (calendarState.monthState.currentMonth.isBefore(currentMonth)){
+                                    if (calendarState.monthState.currentMonth.isBefore(currentMonth)) {
                                         Log.d("BookChangeScreen", "변경된 캘린더 연월 데이터 +1 : ${calendarState.monthState.currentMonth}")
                                         // 달 + 1
                                         calendarState.monthState.currentMonth = calendarState.monthState.currentMonth.plusMonths(1)
@@ -216,7 +221,7 @@ fun BookingScheduleChangeScreen(
     }
 
     // 예약변경 모달
-    if (changeModalState){
+    if (changeModalState) {
         Dialog(
             properties = DialogProperties(
                 dismissOnClickOutside = false,

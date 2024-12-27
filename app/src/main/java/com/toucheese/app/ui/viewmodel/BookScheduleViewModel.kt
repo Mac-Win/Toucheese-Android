@@ -77,9 +77,12 @@ class BookScheduleViewModel @Inject constructor(private val repository: BookSche
         yearMonth: String
     ): List<CalendarTimeResponseItem> {
         return try {
+            Log.d("BookScheduleViewModel", "캘린더 내역 조회 studioId : ${studioId}")
+            Log.d("BookScheduleViewModel", "캘린더 내역 조회 yearMonth : ${yearMonth}")
             repository.loadCalendarTime(studioId, yearMonth).toList()
         } catch (error: Exception) {
-            Log.d(TAG, "error = ${error.message}")
+            Log.e(TAG, "캘린더 내역 조회 에러 error = ${error.message}")
+            Log.e(TAG, "캘린더 내역 조회 에러 error = ${error.localizedMessage}")
             emptyList()
         }
     }
