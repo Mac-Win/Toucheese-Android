@@ -304,6 +304,16 @@ fun CartScreen(
                                 optionChangedCartId = cartId
                                 // 카트 아이템 저장
                                 optionChangedCartItem = cartItem
+                                Log.d("CartScreen", "선택된 아이템 : ${optionChangedCartItem}")
+                                if (optionChangedCartItem != null){
+                                    // 선택한 옵션 값 전달
+                                    selectedOptionIds = selectedOptionIds.toMutableSet().apply {
+                                        // 기존 선택 옵션에 새로운 옵션 추가
+                                        optionChangedCartItem!!.selectAddOptions.forEach { item ->
+                                            this.add(item.selectOptionId) // `this`는 MutableSet
+                                        }
+                                    }
+                                }
                             },
                         )
                     }
@@ -408,6 +418,7 @@ fun CartScreen(
         )
 
         // 옵션 변경 데이터 보유
+        Log.d("CartScreen", "장바구니 추가 옵션 변경 전 조회 : ${selectedOptionIds}")
         // 선택한 옵션
         var selectedOption by remember { mutableStateOf(selectedOptionIds) }
         // 선택 인원
@@ -515,7 +526,7 @@ fun CartScreen(
                             // 창닫기
                             isBottomSheetVisible = false
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().padding(16.dp)
                     ) {
                         Text(
                             text = "옵션 변경하기 (총 ${selectedTotalPrice / 1000},000원)",
