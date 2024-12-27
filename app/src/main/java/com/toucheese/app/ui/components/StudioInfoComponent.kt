@@ -1,36 +1,18 @@
 package com.toucheese.app.ui.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,98 +24,158 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.toucheese.app.R
+import com.toucheese.app.data.model.home.studio_detail.OperatingHour
 import com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse
-import io.github.boguszpawlowski.composecalendar.kotlinxDateTime.now
-import kotlinx.datetime.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StudioInfoComponent(
-    studio: com.toucheese.app.data.model.home.studio_detail.StudioDetailResponse,
+    studio: StudioDetailResponse,
     modifier: Modifier = Modifier
 ) {
+    var isExpanded by remember { mutableStateOf(false) } // 설명 펼치기/접기 상태
+    var isOperationHoursExpanded by remember { mutableStateOf(false) }
 
-    var isExpanded by remember { mutableStateOf(false) } // 펼치기/접기
-    val (isOperationHoursExpanded, setOperationHoursExpanded) = remember { mutableStateOf(false) }
-    // 오늘 날짜
-    val today = getCurrentDayOfWeekInKorean()
+    val today = getCurrentDayOfWeekInKorean() // 오늘 요일
+    val currentDateTime = LocalDateTime.now()
+    val currentTime = currentDateTime.toLocalTime()
+
+    // 오늘의 운영 시간 찾기
+    val todayOperatingHour = studio.operatingHours.find { it.dayOfWeek == today }
+
+    // 현재 상태 결정
+    val currentStatus = when {
+        todayOperatingHour == null -> "Unknown"
+        todayOperatingHour.openTime == "휴무" -> "휴무"
+        else -> {
+            val open = parseTime(todayOperatingHour.openTime)
+            val close = parseTime(todayOperatingHour.closeTime)
+            if (currentTime.isAfter(open) && currentTime.isBefore(close)) {
+                "영업중"
+            } else {
+                "영업종료"
+            }
+        }
+    }
+
+    // 상태에 따른 색상 설정
+    val statusColor = when (currentStatus) {
+        "영업중" -> Color.Blue
+        "휴무", "영업종료" -> Color.Red
+        else -> Color.Black
+    }
+
     Column(
         modifier = modifier
+            .fillMaxWidth()
+            .background(Color.White) // 전체 배경 흰색
+            .padding(16.dp) // 기본 패딩
     ) {
-        // 노란 배경 안에 로고와 스튜디오 이름
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(16.dp) // 내부 패딩
+        // 로고와 이름
+        Row(
+            verticalAlignment = Alignment.CenterVertically, // 수직 중앙 정렬
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = studio.profileImage),
-                    contentDescription = "스튜디오 로고",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = studio.name,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+            Image(
+                painter = rememberAsyncImagePainter(model = studio.profileImage),
+                contentDescription = "스튜디오 로고",
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape), // 원형으로 클립
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // 로고와 텍스트 간 간격
+            Text(
+                text = studio.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold // 굵은 글씨
+            )
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            // 스튜디오 설명 - 펼치기/접기 기능 추가
-            Row(
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween,
+        // 설명 및 펼치기/접기
+        if (isExpanded) {
+            // 펼쳐졌을 때: 텍스트와 아이콘을 Column으로 배치
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFFFFDE6))
-                    .padding(horizontal = 16.dp)
+                    .background(Color(0xFFFFFDE6)) // 배경 노란색
+                    .padding(16.dp) // 내부 여백 조정
             ) {
                 Text(
-                    text = if (isExpanded) studio.description else studio.description.take(50) + "...",
+                    text = studio.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { isExpanded = false } // 텍스트 클릭 시 접기
                 )
-                IconButton(onClick = { isExpanded = !isExpanded }) {
-                    Icon(
-                        painter = painterResource(if (isExpanded) R.drawable.arrow_drop_down else R.drawable.arrow_drop_down),
-                        contentDescription = if (isExpanded) "접기" else "펼치기"
-                    )
-                }
+                Icon(
+                    tint = MaterialTheme.colorScheme.primary,
+                    painter = painterResource(R.drawable.arrow_up_yellow),
+                    contentDescription = "접기",
+                    modifier = Modifier
+                        .size(12.dp)
+                        .align(Alignment.End)
+                        .clickable { isExpanded = false }
+                )
+            }
+        } else {
+            // 접혔을 때: Row로 텍스트와 아이콘을 배치
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFFFFDE6)) // 배경 노란색
+                    .padding(vertical = 4.dp, horizontal = 8.dp) // 내부 여백 조정
+            ) {
+                Text(
+                    text = if (studio.description.length > 50) studio.description.take(50) + "..." else studio.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1, // 한 줄만 표시
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .weight(1f)
+                        .clickable { isExpanded = true } // 텍스트 클릭 시 펼치기
+                )
+                Icon(
+                    tint = MaterialTheme.colorScheme.primary,
+                    painter = painterResource(R.drawable.arrow_drop_down),
+                    contentDescription = "펼치기",
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable { isExpanded = true }
+                )
             }
         }
 
-        // 하얀색 배경 영역
-        Column(
-            modifier = Modifier
-                .fillMaxWidth() // 화면 너비 꽉 채우기
-                .background(Color.White) // 하얀 배경
-                .padding(16.dp) // 내부 여백 설정
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 평점과 리뷰 섹션
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            // 평점과 하트 아이콘
+            // 평점 카드
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                modifier = Modifier.size(width = 60.dp, height = 30.dp) // 크기 조정
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                        .fillMaxSize()
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.star),
-                        contentDescription = "Star Icon",
-                        modifier = Modifier.size(20.dp)
+                        contentDescription = "별 아이콘",
+                        modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
@@ -144,89 +186,111 @@ fun StudioInfoComponent(
                 }
             }
 
-            // 리뷰 텍스트
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Spacer(modifier = Modifier.width(16.dp)) // 카드와 리뷰 간 간격
+
+            // 리뷰 갯수
+            Text(
+                text = "리뷰 ${studio.reviewCount}개 >",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
+                    .align(Alignment.CenterVertically)
                     .clickable {
-                        // 리뷰 섹션 클릭 시 동작 추가
+                        // 리뷰 클릭 동작 추가
                     }
-            ) {
-                Text(
-                    text = "리뷰 ${studio.reviewCount}개 >",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-            // 주소
-            Row {
-                Icon(
-                    painter = painterResource(R.drawable.location_on),
-                    contentDescription = "Location Icon",
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "주소: ${studio.address}",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+        Spacer(modifier = Modifier.height(8.dp)) // 간격 줄임
 
-            // 운영시간
-            Column(
-                modifier = Modifier
-                    .wrapContentWidth(Alignment.End)
-                    .clickable {
-                        // 확장 클릭 반대로
-                        setOperationHoursExpanded(!isOperationHoursExpanded)
-                    }
+        // 주소 섹션
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(R.drawable.location_on),
+                contentDescription = "주소 아이콘",
+                modifier = Modifier.size(21.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "${studio.address}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp)) // 간격 줄임
+
+        // 운영시간 섹션
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isOperationHoursExpanded = !isOperationHoursExpanded }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                // horizontalArrangement = Arrangement.SpaceBetween, // 제거
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                // R.drawable.watch 아이콘과 현재 상태 텍스트 및 아이콘
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.watch),
-                        contentDescription = "Operation Hours",
-                        modifier = Modifier.size(16.dp)
+                        contentDescription = "운영 시간 아이콘",
+                        modifier = Modifier.size(18.dp)
                     )
-
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text = "운영시간:",
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = currentStatus,
+                        color = statusColor,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Icon(
-                        painter = painterResource(if (isOperationHoursExpanded) R.drawable.arrow_drop_down else R.drawable.arrow_drop_down),
-                        contentDescription = if (isOperationHoursExpanded) "운영시간 열림" else "운영시간 접힘",
+                        tint = Color.Blue,
+                        painter = painterResource(
+                            if (isOperationHoursExpanded) R.drawable.arrow_up_gray else R.drawable.arrow_drop_down
+                        ),
+                        contentDescription = if (isOperationHoursExpanded) "접기" else "펼치기",
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(12.dp)
+                            .clickable { isOperationHoursExpanded = !isOperationHoursExpanded }
                     )
                 }
-                // 운영 시간
-                if (isOperationHoursExpanded) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    ) {
-                        studio.operatingHours.forEach { operatingHour ->
-                            // 요일
-                            if (operatingHour.openTime == "휴무") { // 휴무일
-                                Text(
-                                    text = "${operatingHour.dayOfWeek} ---- 휴무일 ----",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Red,
-                                    fontWeight = if (operatingHour.dayOfWeek == today) FontWeight.Bold else FontWeight.Medium
-                                )
-                            } else {
+            }
 
+            if (isOperationHoursExpanded) {
+                Column(modifier = Modifier.padding(start = 16.dp)) {
+                    studio.operatingHours.forEach { operatingHour ->
+                        // 휴무일인 경우
+                        if (operatingHour.openTime == "휴무") {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
                                 Text(
-                                    text = "${operatingHour.dayOfWeek} ${operatingHour.openTime} ~ ${operatingHour.closeTime}",
+                                    text = "${operatingHour.dayOfWeek} : ",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "휴무",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = if (operatingHour.dayOfWeek == today) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (operatingHour.dayOfWeek == today) Color.Blue else Color.Black
+                                    color = Color.Red
+                                )
+                            }
+                        } else {
+                            // 영업일인 경우
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "${operatingHour.dayOfWeek} : ",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "${operatingHour.openTime} ~ ${operatingHour.closeTime}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
                                 )
                             }
                         }
@@ -235,10 +299,12 @@ fun StudioInfoComponent(
             }
         }
     }
+}
 
 // 오늘 요일 구하기
+@RequiresApi(Build.VERSION_CODES.O)
 fun getCurrentDayOfWeekInKorean(): String {
-    val today = LocalDate.now()
+    val today = LocalDateTime.now()
     val koreanDays = mapOf(
         "MONDAY" to "월",
         "TUESDAY" to "화",
@@ -248,5 +314,30 @@ fun getCurrentDayOfWeekInKorean(): String {
         "SATURDAY" to "토",
         "SUNDAY" to "일"
     )
-    return koreanDays[today.dayOfWeek.name] ?: "Unknown Day"
+    return koreanDays[today.dayOfWeek.name] ?: "Unknown"
+}
+
+// 현재 영업 중인지 확인하는 함수
+@RequiresApi(Build.VERSION_CODES.O)
+fun isCurrentlyOpen(
+    operatingHour: OperatingHour,
+    todayKorean: String,
+    currentTime: LocalTime
+): Boolean {
+    if (operatingHour.dayOfWeek != todayKorean) return false
+    if (operatingHour.openTime == "휴무") return false
+    val open = parseTime(operatingHour.openTime)
+    val close = parseTime(operatingHour.closeTime)
+    return currentTime.isAfter(open) && currentTime.isBefore(close)
+}
+
+// 문자열 시간을 LocalTime으로 변환
+@RequiresApi(Build.VERSION_CODES.O)
+fun parseTime(timeStr: String): LocalTime {
+    return try {
+        LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"))
+    } catch (e: Exception) {
+        // 예외 처리: 기본 시간 반환 또는 에러 메시지
+        LocalTime.MIDNIGHT
+    }
 }

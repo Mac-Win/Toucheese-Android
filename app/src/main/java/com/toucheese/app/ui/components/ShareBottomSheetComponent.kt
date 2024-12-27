@@ -22,7 +22,7 @@ fun ShareBottomSheetComponent(
     pageLink: String
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
