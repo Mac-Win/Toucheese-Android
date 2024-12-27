@@ -71,6 +71,7 @@ fun BookingScheduleItemComponent(
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
+                // 스튜디오 이미지
                 Image(
                     painter = rememberAsyncImagePainter(studioImage),
                     contentDescription = "Studio Profile Image",
@@ -85,6 +86,7 @@ fun BookingScheduleItemComponent(
                         .align(Alignment.CenterVertically)
                         .padding(8.dp)
                 ) {
+                    // 스튜디오 이름
                     Text(
                         text = studioName,
                         style = MaterialTheme.typography.bodyLarge,
@@ -97,6 +99,7 @@ fun BookingScheduleItemComponent(
                             contentDescription = "Calender",
                             tint = Color.Gray
                         )
+                        // 작성 일자 및 작성 시간
                         Text(
                             text = "${createDate} ${createTime}",
                             style = MaterialTheme.typography.bodySmall,
@@ -105,6 +108,7 @@ fun BookingScheduleItemComponent(
                 }
                 Spacer(modifier = Modifier.weight(1f))
 
+                // 예약 상태
                 SuggestionChip(
                     shape = RoundedCornerShape(6.dp),
                     colors = SuggestionChipDefaults.suggestionChipColors(

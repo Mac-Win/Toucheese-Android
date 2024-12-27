@@ -18,5 +18,5 @@ class BookScheduleRepository @Inject constructor(private val apiService: BookSch
     // ----- 스튜디오 API -----
 
     // 캘린더 휴무일 및 예약 희망 시간
-    suspend fun loadCalendarTime(studioId: Int, yearMonth: String): com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponse = apiService.loadCalendarTime(studioId, yearMonth)
+    suspend fun loadCalendarTime(studioId: Int, yearMonth: String): CalendarTimeResponse = apiService.loadCalendarTime(studioId, yearMonth)
 }

@@ -24,13 +24,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
 import com.toucheese.app.data.token_manager.TokenManager
 import com.toucheese.app.ui.components.calendar.CustomDatePickerComponent
-import com.toucheese.app.ui.components.dialog.TwoButtonTextDialog
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.BookScheduleViewModel
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 
@@ -54,29 +53,26 @@ fun BookingScheduleChangeScreen(
     // 사용자 예약 내역 조회
     val userBookList by viewModel.userBookList.collectAsState()
     // 사용자 예약 내역
-    val temp = userBookList.filter { item ->
-        item.reservationId == reservationId
+    val userBook = userBookList.find { bookItem ->
+        bookItem.reservationId == reservationId
     }
-    val userBook = if (temp.isNotEmpty()) temp[0] else null
-    // 해당 요일
-    val date = userBook?.createDate?.let { viewModel.castToLocalDate(it) }
-    LaunchedEffect(date) {
-        viewModel.loadUserBookList(token)
-        viewModel.loadCalendarDateTime(
-            studioId = studioId,
-            yearMonth = "${date?.year}-${date?.monthValue}",
-            date = date.toString()
-        )
-    }
-    val calendarMonthTimeList by viewModel.calendarMonthTimeList.collectAsState()
-    val calendarDateTimeList by viewModel.calendarDateTimeList.collectAsState()
-    // ---- 캘린더 ----
-    // 캘린더 오픈 여부
-    val (isCalendarOpen, setCalendarOpen) = remember { mutableStateOf(false) }
-    // 선택일자의 운영시간
-    val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
-    // 예약 변경 모달 클릭
+    // 예약변경 모달 상태
     val (changeModalState, setChangeModalState) = remember { mutableStateOf(false) }
+    // 예약변경 캘린더 상태
+    val (calendarVisibleState, setCalendarVisibleState) = remember { mutableStateOf(false) }
+    // 운영시간
+    val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
+    // 운영시간
+    // 예약 날짜
+    LaunchedEffect(Unit) {
+        // 사용자 예약 내역 조회
+        viewModel.loadUserBookList(token)
+    }
+    // 선택된 날짜를 상태로 관리
+    var selectedDate by remember { mutableStateOf(LocalDate.now())  }
+    // 선택된 시간을 상태로 관리
+    var selectedTime by remember { mutableStateOf( "" ) }
+
     Scaffold(
         topBar = {
             TopAppBarComponent(
@@ -110,8 +106,7 @@ fun BookingScheduleChangeScreen(
                 .padding(16.dp),
         ) {
             item {
-                if (temp.isNotEmpty() && calendarDateTimeList.isNotEmpty()){
-                    val userBook = temp[0]
+                if (userBook != null){
                     // 값
                     val uiValues = viewModel.makeValue(state = userBook.status)
                     // 예약상태에 따른 chip text 색상
@@ -121,14 +116,20 @@ fun BookingScheduleChangeScreen(
                     // 버튼 label 텍스트
                     val buttonLabelText = uiValues.third
 
-
-                    // 선택된 날짜를 상태로 관리
-                    var selectedDate by remember { mutableStateOf(date)  }
-                    // 선택된 시간을 상태로 관리
-                    var selectedTime by remember { mutableStateOf( userBook.createTime ) }
-                    // 예약가능한 시간을 상태로 관리
-                    var operationTime by remember { mutableStateOf( calendarDateTimeList ) }
-
+                    LaunchedEffect(Unit) {
+                        val date = castToLocalDate(userBook.createDate)
+                        // 캘린더 내역 불러오기
+                        Log.d("BookChangeScreen", "date = $date")
+                        Log.d("BookChangeScreen", "yearMonth = ${date.year}-${date.monthValue}-${date.dayOfMonth}")
+                        // 해당 월의 예약 가능 시간 데이터 불러오기
+                        val result = viewModel.loadCalendarTime(
+                            studioId = studioId,
+                            yearMonth = "${date.year}-${date.monthValue}"
+                        )
+                        setOperationHours(result)
+                    }
+                    Log.d("BookChangeScreen", "userBook = ${userBook}")
+                    Log.d("BookChangeScreen", "calendar schedule = ${operatingHours}")
                     // 카드 아이템
                     BookingScheduleChangeItemComponent(
                         studioName = userBook.studioName,
@@ -142,42 +143,64 @@ fun BookingScheduleChangeScreen(
                         calendarState = calendarState,
                         selectedDate = selectedDate ?: LocalDate.now(),
                         selectedTime = selectedTime,
-                        operationTimeList = operationTime,
+                        operationTimeList = operatingHours,
                         modifier = Modifier.fillMaxWidth(),
                         setSelectedTime = { selectedTime = it },
                         setSelectedDate = { selectedDate = it },
                         onCalendarOpenRequest = {
-                            setCalendarOpen(true)
-                            viewModel.loadCalendarMonthTime(studioId = studioId, yearMonth = calendarState.monthState.currentMonth.toString())
-                            setOperationHours(calendarMonthTimeList)
+                            // 서버에서 해당 월의 데이터 불러옴
+                            coroutine.launch {
+                                val result = viewModel.loadCalendarTime(studioId = studioId, yearMonth = calendarState.monthState.currentMonth.toString())
+                                setOperationHours(result)
+                            }
+                            setCalendarVisibleState(true)
                         }
                     )
 
                     // 캘린더 모달
-                    if (isCalendarOpen){
+                    if (calendarVisibleState){
                         CustomDatePickerComponent(
                             monthDateTimeList = operatingHours,
                             onMonthChanged = { selectedMonth ->
                                 // 서버 API 비동기 호출
                                 coroutine.launch {
-                                    val result = viewModel.loadCalendarMonthTime(
+                                    val result = viewModel.loadCalendarTime(
                                         studioId = studioId,
                                         yearMonth = selectedMonth.toString(),
                                     )
-                                    Log.d("ProductOrderDetailScreen", "API result: ${result}")
                                     // 그 월에 해당하는 운영시간 로드
-                                    setOperationHours(calendarMonthTimeList)
+                                    setOperationHours(result)
                                 }
                             },
                             onDismissRequest = {
-                                setCalendarOpen(false)
-                                setOperationHours(emptyList())
+                                setCalendarVisibleState(false)
                             },
                             onConfirmClicked = { reservationDate: LocalDate, reservationTime: String ->
                                 // 예약일자 전송
                                 selectedDate = reservationDate
                                 // 예약 시간 저장
                                 selectedTime = reservationTime
+                                // 데이터 저장
+                                calendarState.selectionState.onDateSelected(reservationDate)
+
+                                // 월 데이터 변경
+                                val currentMonth = YearMonth.from(reservationDate)
+                                Log.d("BookChangeScreen", "캘린더에서 선택한 연월 데이터 : ${currentMonth}")
+                                // 선택한 월이 될 때까지 이동
+                                while (calendarState.monthState.currentMonth != currentMonth){
+                                    // 현재 달력 데이터가 선택한 날짜보다 이전인 경우
+                                    if (calendarState.monthState.currentMonth.isBefore(currentMonth)){
+                                        Log.d("BookChangeScreen", "변경된 캘린더 연월 데이터 +1 : ${calendarState.monthState.currentMonth}")
+                                        // 달 + 1
+                                        calendarState.monthState.currentMonth = calendarState.monthState.currentMonth.plusMonths(1)
+                                    }
+                                    // 현재 달력 데이터가 선택한 날짜보다 이후인 경우
+                                    else {
+                                        Log.d("BookChangeScreen", "변경된 캘린더 연월 데이터 -1 : ${calendarState.monthState.currentMonth}")
+                                        // 달 - 1
+                                        calendarState.monthState.currentMonth = calendarState.monthState.currentMonth.minusMonths(1)
+                                    }
+                                }
                             }
                         )
                     }

@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -54,7 +57,7 @@ fun BookingScheduleChangeItemComponent(
     chipContainerColor: Color,
     buttonLabelText: String,
     // 캘린더 부분
-    selectedDate: LocalDate,
+    selectedDate: LocalDate, // 선택된 날짜
     calendarState: CalendarState<DynamicSelectionState>,
     // 시간대 부분
     selectedTime: String,
@@ -64,130 +67,143 @@ fun BookingScheduleChangeItemComponent(
     setSelectedDate: (LocalDate) -> Unit,
     onCalendarOpenRequest: () -> Unit,
 ) {
-    val morningTimes = operationTimeList[0].times.filter { time ->
-        // LocalTime으로 변경
-        val localTime = castToLocalTime(time)
-        localTime < LocalTime.of(12, 0)
-    }
-    val afternoonTimes = operationTimeList[0].times.filter { time ->
-        // LocalTime으로 변경
-        val localTime = castToLocalTime(time)
-        localTime >= LocalTime.of(12, 0)
-    }
+    if (operationTimeList.isNotEmpty()){
 
+        val morningTimes = operationTimeList[0].times.filter { time ->
+            // LocalTime으로 변경
+            val localTime = castToLocalTime(time)
+            localTime < LocalTime.of(12, 0)
+        }
+        val afternoonTimes = operationTimeList[0].times.filter { time ->
+            // LocalTime으로 변경
+            val localTime = castToLocalTime(time)
+            localTime >= LocalTime.of(12, 0)
+        }
 
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        BookingScheduleItemComponent(
-            studioName = studioName,
-            studioImage = studioImage,
-            statusLabel = statusLabel,
-            createDate = createDate,
-            createTime = createTime,
-            chipTextColor = chipTextColor,
-            chipContainerColor = chipContainerColor,
-            chipBorderColor = chipContainerColor,
-            showButton = false,
-            buttonLabel2 = buttonLabelText,
-            elevation = CardDefaults.cardElevation(0.dp),
-            onButtonClicked1 = { /* 버튼 자체가 표시 안 됨 */ },
-            onButtonClicked2 = { /* 버튼 자체가 표시 안 됨 */ }
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(8.dp)
         ) {
-            AssistChip(
-                onClick = onCalendarOpenRequest,
-                label = {
-                    Text(
-                        text =  "${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일",
-                        color = Color(0xFF595959)
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.calendar_36px),
-                        contentDescription = "Calender Icon",
-                        tint = Color(0xFF8C8C8C)
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Arrow Forward Icon",
-                        tint = Color(0xFF8C8C8C)
-                    )
-                },
-                shape = RoundedCornerShape(8.dp),
-                colors = AssistChipDefaults.assistChipColors(
-                    labelColor = Color(0xFF595959)
-                ),
-                border = BorderStroke(1.dp, Color(0xFFF0F0F0))
+            // 스튜디오 이미지, 스튜디오 이름, 예약일자 및 예약 시간, 예약 상태
+            BookingScheduleItemComponent(
+                studioName = studioName,
+                studioImage = studioImage,
+                statusLabel = statusLabel,
+                createDate = createDate, // 예약 작성 일자
+                createTime = createTime, // 예약 작성 시간
+                chipTextColor = chipTextColor,
+                chipContainerColor = chipContainerColor,
+                chipBorderColor = chipContainerColor,
+                showButton = false,
+                buttonLabel2 = buttonLabelText,
+                elevation = CardDefaults.cardElevation(0.dp),
+                onButtonClicked1 = { /* 버튼 자체가 표시 안 됨 */ },
+                onButtonClicked2 = { /* 버튼 자체가 표시 안 됨 */ }
             )
 
-            // 요일 및 날짜 표시
-            CustomDatePickerWeekComponent(
-                selectedDate = selectedDate,
-                calendarState = calendarState,
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // 날짜 표시
-            Spacer(modifier = Modifier.height(16.dp)) // 추가 간격
-
-            // 예약 가능한 시간대 텍스트
-            Text(
-                text = "예약 가능한 시간대",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            // 오전 섹션
-            Text(
-                text = "오전",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-            if (morningTimes.isNotEmpty()) {
-                Log.d("BookScheduleScreen", "오전 시간 : ${morningTimes}")
-                TimeSlotButtonComponent(
-                    times = morningTimes,
-                    selectedTime = selectedTime,
-                    onTimeClick = setSelectedTime,
-//                    isPast = ,
-                    modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp)
+            ) {
+                // 날짜 Chip
+                AssistChip(
+                    onClick = onCalendarOpenRequest,
+                    label = {
+                        Text(
+                            text =  "${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일",
+                            color = Color(0xFF595959)
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.calendar_36px),
+                            contentDescription = "Calender Icon",
+                            tint = Color(0xFF8C8C8C)
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Arrow Forward Icon",
+                            tint = Color(0xFF8C8C8C)
+                        )
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = AssistChipDefaults.assistChipColors(
+                        labelColor = Color(0xFF595959)
+                    ),
+                    border = BorderStroke(1.dp, Color(0xFFF0F0F0))
                 )
-                Spacer(modifier = Modifier.height(16.dp)) // 섹션 간 간격
-            }
 
-            // 오후 섹션
-            Text(
-                text = "오후",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-            if (afternoonTimes.isNotEmpty()) {
-                Log.d("BookScheduleScreen", "오후 시간 : ${afternoonTimes}")
-                TimeSlotButtonComponent(
-                    times = afternoonTimes,
-                    selectedTime = selectedTime,
-                    onTimeClick = setSelectedTime,
-//                    isPast = ,
-                    modifier = Modifier.fillMaxWidth()
+                // 요일 및 날짜 표시
+                CustomDatePickerWeekComponent(
+                    selectedDate = selectedDate,
+                    calendarState = calendarState,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // 날짜 표시
+                Spacer(modifier = Modifier.height(16.dp)) // 추가 간격
+
+                // 예약 가능한 시간대 텍스트
+                Text(
+                    text = "예약 가능한 시간대",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // 오전 섹션
+                Text(
+                    text = "오전",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+                if (morningTimes.isNotEmpty()) {
+                    Log.d("BookScheduleScreen", "오전 시간 : ${morningTimes}")
+                    TimeSlotButtonComponent(
+                        times = morningTimes,
+                        selectedTime = selectedTime,
+                        onTimeClick = setSelectedTime,
+//                    isPast = ,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp)) // 섹션 간 간격
+                }
+
+                // 오후 섹션
+                Text(
+                    text = "오후",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+                if (afternoonTimes.isNotEmpty()) {
+                    Log.d("BookScheduleScreen", "오후 시간 : ${afternoonTimes}")
+                    TimeSlotButtonComponent(
+                        times = afternoonTimes,
+                        selectedTime = selectedTime,
+                        onTimeClick = setSelectedTime,
+//                    isPast = ,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
+        }
+    } else {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = "데이터 불러오는 중"
+            )
         }
     }
 }
