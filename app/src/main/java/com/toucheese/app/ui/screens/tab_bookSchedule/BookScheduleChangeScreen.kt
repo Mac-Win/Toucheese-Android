@@ -74,7 +74,7 @@ fun BookingScheduleChangeScreen(
     // 캘린더 오픈 여부
     val (isCalendarOpen, setCalendarOpen) = remember { mutableStateOf(false) }
     // 선택일자의 운영시간
-    var operatingHours by remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
+    val (operatingHours, setOperationHours) = remember { mutableStateOf<List<CalendarTimeResponseItem>>(emptyList()) }
     // 예약 변경 모달 클릭
     val (changeModalState, setChangeModalState) = remember { mutableStateOf(false) }
     Scaffold(
@@ -149,64 +149,40 @@ fun BookingScheduleChangeScreen(
                         onCalendarOpenRequest = {
                             setCalendarOpen(true)
                             viewModel.loadCalendarMonthTime(studioId = studioId, yearMonth = calendarState.monthState.currentMonth.toString())
-                            operatingHours = calendarMonthTimeList
+                            setOperationHours(calendarMonthTimeList)
                         }
                     )
 
                     // 캘린더 모달
                     if (isCalendarOpen){
-                        Log.d("BookScheduleChangeScreen", "calendarMonthTimeList: ${calendarMonthTimeList}")
-                        Log.d("BookScheduleChangeScreen", "operationHours: ${operatingHours}")
                         CustomDatePickerComponent(
-                            selectedTime =  selectedTime,
-                            selectedDate = selectedDate.toString(),
-                            operationHours = calendarMonthTimeList,
-                            calendarState = calendarState,
+                            monthDateTimeList = operatingHours,
                             onMonthChanged = { selectedMonth ->
                                 // 서버 API 비동기 호출
-                                viewModel.loadCalendarMonthTime(studioId = studioId, yearMonth = selectedMonth.toString())
-                            },
-                            onDateClicked = { clickedDate ->
-                                if (selectedDate == clickedDate) { // 같은 날짜를 다시 누른 경우
-                                    selectedDate = date
-                                } else { // 다른 날짜를 누른 경우
-                                    selectedDate = clickedDate
-                                }
                                 coroutine.launch {
-                                    // 해당 일자의 예약 시간대 호출
-                                    viewModel.loadCalendarDateTime(
+                                    val result = viewModel.loadCalendarMonthTime(
                                         studioId = studioId,
-                                        yearMonth = "${date?.year}-${date?.monthValue}",
-                                        date = clickedDate.toString()
+                                        yearMonth = selectedMonth.toString(),
                                     )
+                                    Log.d("ProductOrderDetailScreen", "API result: ${result}")
+                                    // 그 월에 해당하는 운영시간 로드
+                                    setOperationHours(calendarMonthTimeList)
                                 }
                             },
                             onDismissRequest = {
                                 setCalendarOpen(false)
+                                setOperationHours(emptyList())
                             },
-                            onTimeClicked = { date: String, time: String ->
-                                // 포맷팅
-                                val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                                val parsedDate = LocalDate.parse(date, dateFormatter)
-
-                                // 날짜 설정
-                                selectedDate = parsedDate
-                                // 시간 설정
-                                selectedTime = time
-                                Log.d("ProductOrderDetailScreen", "선택 일자 : ${selectedDate}")
-                                Log.d("ProductOrderDetailScreen", "선택 시간 : ${selectedTime}")
+                            onConfirmClicked = { reservationDate: LocalDate, reservationTime: String ->
+                                // 예약일자 전송
+                                selectedDate = reservationDate
+                                // 예약 시간 저장
+                                selectedTime = reservationTime
                             }
                         )
                     }
                 }
             }
-        }
-
-        // 예약 변경 모달
-        if (changeModalState){
-//            TwoButtonTextDialog(
-//                date =
-//            ) { }
         }
     }
 }

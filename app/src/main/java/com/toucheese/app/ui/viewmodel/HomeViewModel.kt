@@ -3,6 +3,7 @@ package com.toucheese.app.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import com.toucheese.app.data.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -296,7 +297,7 @@ class HomeViewModel @Inject constructor(
     fun updateCartItem(
         token: String?,
         cartId: Int,
-        changedCartItem: com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
+        changedCartItem: ChangedCartItem
     ) {
         viewModelScope.launch {
             try {
