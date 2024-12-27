@@ -166,7 +166,8 @@ fun StudioDetailScreen(
                     isShareSheetVisible = false
                     scope.launch { sheetState.show() }
                 },
-                sheetState = sheetState
+                sheetState = sheetState,
+                containerColor = Color.White
             ) {
                 ShareBottomSheetComponent(
                     modifier = Modifier.fillMaxWidth(),
