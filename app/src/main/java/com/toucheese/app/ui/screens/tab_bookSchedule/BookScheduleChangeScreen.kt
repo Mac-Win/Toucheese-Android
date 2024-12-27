@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -18,8 +19,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
 import com.toucheese.app.data.token_manager.TokenManager
@@ -42,6 +47,7 @@ fun BookingScheduleChangeScreen(
     viewModel: BookScheduleViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    onScheduleChangeClicked: () -> Unit,
 ) {
     // token
     val token = tokenManager.getAccessToken()
@@ -204,6 +210,93 @@ fun BookingScheduleChangeScreen(
                             }
                         )
                     }
+                }
+            }
+        }
+    }
+
+    // 예약변경 모달
+    if (changeModalState){
+        Dialog(
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = true,
+            ),
+            onDismissRequest = { setChangeModalState(false) }
+        ) {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+
+                    ) {
+                    // 예약 변경 문구
+                    Text(
+                        text = "${selectedDate.year}년 ${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일 ${selectedTime}으로\n예약일정을 변경하시겠습니까?",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 24.dp)
+                    )
+
+                    // 버튼
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // 아니오
+                        Button(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFF3F3F3),
+                                contentColor = Color(0xFF7A7A7A),
+                            ),
+                            modifier = Modifier.weight(1f),
+                            onClick = { setChangeModalState(false) }
+                        ) {
+                            Text(
+                                text = "아니오",
+                                textAlign = TextAlign.Center,
+
+                                )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // 예
+                        Button(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color(0xFF1F1F1F),
+                            ),
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                setChangeModalState(false)
+                                // 예약 변경 API 호출
+                                viewModel.updateUserBookSchedule(
+                                    token = token,
+                                    reservationId = reservationId,
+                                    createDate = selectedDate.toString(),
+                                    createTime = selectedTime
+                                )
+                                // 예약 변경 알림 Toast
+                                Toast.makeText(context, "예약이 변경되었습니다", Toast.LENGTH_SHORT).show()
+                                // 화면 이동 -> 뒤로가기
+                                onScheduleChangeClicked()
+                            }
+                        ) {
+                            Text(
+                                text = "예",
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+
                 }
             }
         }

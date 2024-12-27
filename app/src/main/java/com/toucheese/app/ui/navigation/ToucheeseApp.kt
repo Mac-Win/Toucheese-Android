@@ -522,6 +522,10 @@ fun ToucheeseApp(api: HomeService) {
                     // 뒤로가기
                     navController.navigateUp()
                 },
+                onScheduleChangeClicked = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                }
             )
         }
 
