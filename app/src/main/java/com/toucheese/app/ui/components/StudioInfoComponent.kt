@@ -107,7 +107,7 @@ fun StudioInfoComponent(
                     .padding(16.dp) // 내부 여백 조정
             ) {
                 Text(
-                    text = studio.description,
+                    text = studio.notice,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -132,7 +132,7 @@ fun StudioInfoComponent(
                     .padding(vertical = 4.dp, horizontal = 8.dp) // 내부 여백 조정
             ) {
                 Text(
-                    text = if (studio.description.length > 50) studio.description.take(50) + "..." else studio.description,
+                    text = if (studio.notice.length > 50) studio.notice.take(50) + "..." else studio.notice,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1, // 한 줄만 표시
                     overflow = TextOverflow.Ellipsis,
