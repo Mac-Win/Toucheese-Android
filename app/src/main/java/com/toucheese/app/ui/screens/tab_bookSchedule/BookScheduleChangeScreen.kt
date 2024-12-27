@@ -150,7 +150,7 @@ fun BookingScheduleChangeScreen(
                         onCalendarOpenRequest = {
                             // 서버에서 해당 월의 데이터 불러옴
                             coroutine.launch {
-                                val result = viewModel.loadCalendarTime(studioId = studioId, yearMonth = calendarState.monthState.currentMonth.toString())
+                                val result = viewModel.loadCalendarTime(studioId = studioId, yearMonth = YearMonth.from(LocalDate.now()).toString())
                                 setOperationHours(result)
                             }
                             setCalendarVisibleState(true)

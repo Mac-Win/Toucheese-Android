@@ -40,19 +40,15 @@ fun CustomDatePickerWeekComponent(
         dayContent = { state ->
             val date = state.date
             val selectionState = state.selectionState
-            Log.d(
-                "CustomDatePickerWeekComponent",
-                "state = ${date}, selectionState = ${selectionState}"
-            )
             // 선택된 날짜와 같은 주에 속하는지 여부
-//            val isSameWeek: Boolean = isSameWeek(selectedDate, date)
+            val isSameWeek: Boolean = isSameWeek(selectedDate, date)
             // 선택된 날짜인지 여부
-            val isSelectedDate: Boolean = selectedDate == date
+            val isSelectedDate = selectionState.selection.contains(date)
             // 활성화 여부
             val isPastDate = date.isBefore(LocalDate.now())
-//            Log.d("CustomDatePickerWeekComponent", "같은 주에 속하나? : $isSameWeek")
+            Log.d("CustomDatePickerWeekComponent", "같은 주에 속하나? : $isSameWeek")
 
-//            if (isSameWeek) {
+            if (isSameWeek) {
                 Card(
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -77,7 +73,7 @@ fun CustomDatePickerWeekComponent(
                         )
                     }
                 }
-//            }
+            }
         }
     )
 }
