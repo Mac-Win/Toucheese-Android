@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class QnaListResponse(
     @SerializedName("content")
-    val qnaList: List<QnaListItem>,
+    val qnaListItem: List<QnaListItem>,
     @SerializedName("empty")
     val empty: Boolean,
     @SerializedName("first")
