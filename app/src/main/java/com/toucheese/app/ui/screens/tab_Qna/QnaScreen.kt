@@ -118,8 +118,9 @@ fun QnaScreen(
                     title = item.title,
                     content = item.content,
                     createDate = item.createDate,
-                    userName = "작성자",
+                    userName = item.authorName,
                     replyState = item.answerStatus != "답변대기",
+                    imageList = item.imageUrls,
                     isContentShowed = false,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)

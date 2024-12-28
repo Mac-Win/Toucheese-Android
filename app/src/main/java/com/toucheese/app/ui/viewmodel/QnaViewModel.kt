@@ -72,7 +72,7 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
                     token = "Bearer $token",
                     page = page
                 )
-                _qnaList.value = result.qnaList
+                _qnaList.value = result.qnaListItem
             } catch (error: Exception){
                 Log.d(TAG, "모든 문의 글 조회 error: ${error.message}")
             }
