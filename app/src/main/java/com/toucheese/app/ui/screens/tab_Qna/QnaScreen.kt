@@ -51,7 +51,7 @@ fun QnaScreen(
     val qnaList by viewModel.qnaList.collectAsState()
     LaunchedEffect(Unit) {
         // 자신의 모든 문의 글 리스트 조회
-        viewModel.loadQnaList(token)
+        viewModel.loadQnaList(token, page = 1)
     }
 
     // FAB의 가시성 상태
@@ -60,11 +60,11 @@ fun QnaScreen(
             val visibleItemInfo = listState.layoutInfo.visibleItemsInfo
             val totalItemsCount = listState.layoutInfo.totalItemsCount
 
-            if (visibleItemInfo.isEmpty() || totalItemsCount <= 4) true
-            else {
-                val lastVisibleItemIndex = visibleItemInfo.lastOrNull()?.index ?: 0
-                lastVisibleItemIndex < (totalItemsCount - 1)
-            }
+            // 현재 화면에 표시되는 항목 개수
+            val visibleItemsCount = visibleItemInfo.size
+
+            // 리스트가 비어 있거나, 현재 화면에 보이는 항목이 전체 항목보다 적은 경우 FAB 표시
+            qnaList.isEmpty() || visibleItemsCount <= totalItemsCount
         }
     }
 

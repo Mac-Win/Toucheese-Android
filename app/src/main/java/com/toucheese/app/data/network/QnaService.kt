@@ -3,15 +3,16 @@ package com.toucheese.app.data.network
 import com.toucheese.app.data.model.qna.load_qnadetail.QnaDetailResponse
 import com.toucheese.app.data.model.qna.load_qnalist.QnaListResponse
 import com.toucheese.app.data.model.qna.update_qnadetail.UpdateQnaBody
-import com.toucheese.app.data.model.qna.write_qnadetail.QnaDetailBody
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -49,10 +50,12 @@ interface QnaService {
     ): QnaListResponse
 
     // 문의하기 글 생성
-    @FormUrlEncoded // Map 데이터 전송을 위한 Annotation 추가
+    @Multipart
     @POST("v1/questions")
     suspend fun writeQnaDetail(
         @Header("Authorization") token: String?,
-        @FieldMap qnaDetail: Map<String, String>, // Map 데이터 전송을 위한 Annotation 추가
+        @Part("title") title: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part uploadFiles: List<MultipartBody.Part>
     )
 }

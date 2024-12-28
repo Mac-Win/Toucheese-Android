@@ -431,19 +431,10 @@ fun ToucheeseApp(api: HomeService) {
         // 문의작성 화면
         composable(Screen.QnaWrite.route){
             QnaWriteScreen(
-                selectedTab = bottomNavSelectedTab,
                 tokenManager = tokenManager,
                 onClickLeadingIcon = {
                     // 뒤로가기
                     navController.navigateUp()
-                },
-                onTabSelected = { selectedTab ->
-                    // 탭 이동
-                    bottomNavClicked(
-                        selectedTab = selectedTab,
-                        navController = navController,
-                    )
-                    bottomNavSelectedTab = selectedTab
                 },
                 onEnrolledClicked = {
                     // 문의하기 탭으로 이동

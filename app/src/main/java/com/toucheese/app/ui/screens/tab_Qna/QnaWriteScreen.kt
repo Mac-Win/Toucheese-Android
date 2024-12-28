@@ -66,12 +66,10 @@ import com.toucheese.app.ui.viewmodel.QnaViewModel
 
 @Composable
 fun QnaWriteScreen(
-    selectedTab: Int,
     tokenManager: TokenManager,
     viewModel: QnaViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
-    onTabSelected: (Int) -> Unit,
     onEnrolledClicked: () -> Unit,
 ) {
     // 토큰
@@ -117,10 +115,41 @@ fun QnaWriteScreen(
             )
         },
         bottomBar = {
-            BottomNavigationBarComponent(
-                selectedTab = selectedTab,
-                onTabSelected = onTabSelected,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 36.dp)
+            ) {
+                Button(
+                    enabled = isValidate,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        disabledContainerColor = Color(0xFFECECEC)
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 14.dp, horizontal = 8.dp),
+                    onClick = {
+                        // 서버에 데이터 전송
+                        viewModel.writeQnaDetail(
+                            token = token,
+                            title = textFieldTitle,
+                            content = textFieldContent,
+                            mediaList = mediaList,
+                            context = context,
+                        )
+                        // 화면 이동
+                        onEnrolledClicked()
+                    },
+                ) {
+                    Text(
+                        text = "문의 등록",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+            }
         }
     ) { innerPadding ->
 
@@ -397,43 +426,6 @@ fun QnaWriteScreen(
                             }
                         }
                     }
-                }
-            }
-
-            // 문의 등록
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 36.dp)
-                ) {
-                    Button(
-                        enabled = isValidate,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            disabledContainerColor = Color(0xFFECECEC)
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 14.dp, horizontal = 8.dp),
-                        onClick = {
-                            // 서버에 데이터 전송
-                            viewModel.writeQnaDetail(
-                                token = token,
-                                title = textFieldTitle,
-                                content = textFieldContent
-                            )
-                            // 화면 이동
-                            onEnrolledClicked()
-                        },
-                    ) {
-                        Text(
-                            text = "문의 등록",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
                 }
             }
         }

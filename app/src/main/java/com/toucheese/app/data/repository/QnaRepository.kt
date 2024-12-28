@@ -3,8 +3,9 @@ package com.toucheese.app.data.repository
 import com.toucheese.app.data.model.qna.load_qnadetail.QnaDetailResponse
 import com.toucheese.app.data.model.qna.load_qnalist.QnaListResponse
 import com.toucheese.app.data.model.qna.update_qnadetail.UpdateQnaBody
-import com.toucheese.app.data.model.qna.write_qnadetail.QnaDetailBody
 import com.toucheese.app.data.network.QnaService
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class QnaRepository @Inject constructor(private val apiService: QnaService){
@@ -23,5 +24,5 @@ class QnaRepository @Inject constructor(private val apiService: QnaService){
     suspend fun loadQnaList(token: String?, page: Int): QnaListResponse = apiService.loadQnaList(token, page)
 
     // 문의하기 글 생성
-    suspend fun writeQnaDetail(token: String?, qnaDetail: Map<String, String>) = apiService.writeQnaDetail(token, qnaDetail)
+    suspend fun writeQnaDetail(token: String?, title: RequestBody, content: RequestBody, uploadFiles: List<MultipartBody.Part>) = apiService.writeQnaDetail(token, title, content, uploadFiles)
 }
