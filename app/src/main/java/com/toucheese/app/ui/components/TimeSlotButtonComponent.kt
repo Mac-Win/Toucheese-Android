@@ -1,5 +1,7 @@
 package com.toucheese.app.ui.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,12 +35,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.toucheese.app.ui.theme.ToucheeseAppTheme
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeSlotButtonComponent(
-    times: List<String>,
     selectedTime: String,
-//    isPast: Boolean,
+    date: String,
+    times: List<String>,
     modifier: Modifier,
     onTimeClick: (String) -> Unit
 ) {
@@ -50,9 +58,9 @@ fun TimeSlotButtonComponent(
     ) {
         items(times) { time ->
             val isSelected = time == selectedTime
-
+            val isPast = isPastTime(date, time)
             SuggestionChip(
-                enabled = true,
+                enabled = isPast,
                 border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFFD9D9D9)),
                 label = {
                     Text(
@@ -71,56 +79,35 @@ fun TimeSlotButtonComponent(
                 modifier = Modifier
                     .width(96.dp)
                     .height(40.dp),
-                onClick = {},
+                onClick = {
+                    onTimeClick(time)
+                },
             )
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun TimeSlotButtonPreview() {
-    val sampleTimes1 = listOf("10:00", "11:00", "12:00", "14:30", "15:30", "16:30")
-    val sampleTimes2 = listOf("10:00", "11:00", "14:30") // 3개
-    val sampleTimes3 = listOf("10:00", "11:00") // 2개
-    val sampleTimes4 = listOf("10:00") // 1개
-    val selectedTime = "12:00" // 선택된 시간 예시
+@RequiresApi(Build.VERSION_CODES.O)
+private fun isPastTime(date: String, time: String): Boolean {
+    return try {
+        // `time` 정규화: 한 자리 숫자를 두 자리로 패딩
+        val normalizedTime = if (time.length == 4) "0$time" else time
 
-    ToucheeseAppTheme {
-        Surface {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // 6개
-                TimeSlotButtonComponent(
-                    times = sampleTimes1,
-                    selectedTime = selectedTime,
-                    onTimeClick = { time -> println("Selected time: $time") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                // 3개
-                TimeSlotButtonComponent(
-                    times = sampleTimes2,
-                    selectedTime = selectedTime,
-                    onTimeClick = { time -> println("Selected time: $time") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                // 2개
-                TimeSlotButtonComponent(
-                    times = sampleTimes3,
-                    selectedTime = selectedTime,
-                    onTimeClick = { time -> println("Selected time: $time") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                // 1개
-                TimeSlotButtonComponent(
-                    times = sampleTimes4,
-                    selectedTime = selectedTime,
-                    onTimeClick = { time -> println("Selected time: $time") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
+        // 날짜와 시간 파싱
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val parsedDate = LocalDate.parse(date, dateFormatter)
+        val parsedTime = LocalTime.parse(normalizedTime, timeFormatter)
+
+        // `date`와 `time`을 결합해 LocalDateTime 생성
+        val inputDateTime = parsedDate.atTime(parsedTime)
+
+        // 현재 시각
+        val now = LocalDateTime.now()
+
+        // 입력이 과거인지 판단
+        !inputDateTime.isBefore(now)
+    } catch (e: DateTimeParseException) {
+        false // 형식 오류 발생 시 false 반환
     }
 }

@@ -16,19 +16,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toucheese.app.ui.components.BottomNavigationBarComponent
 import com.toucheese.app.ui.components.InfoItem
 import com.toucheese.app.ui.components.MyInfoProflieComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.theme.ToucheeseAppTheme
 
 @Composable
-fun MyInfoScreen() {
+fun MyInfoScreen(
+    selectedTab: Int,
+    modifier: Modifier = Modifier,
+    onTabSelected: (Int) -> Unit,
+    onLogoutClicked: () -> Unit,
+) {
     Scaffold (
         topBar = {
             TopAppBarComponent(
                 title = "내 정보",
                 showLeadingIcon = false,
                 showTrailingIcon = false
+            )
+        },
+        bottomBar = {
+            BottomNavigationBarComponent(
+                selectedTab = selectedTab,
+                onTabSelected = onTabSelected,
             )
         }
     ){ innerPadding ->
@@ -120,18 +132,8 @@ fun MyInfoScreen() {
             // 아이콘이 없는 항목
             InfoItem(
                 text = "로그아웃",
-                onClick = {}
+                onClick = onLogoutClicked
             )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun MyInfoScreenPreview(){
-    ToucheeseAppTheme {
-        Surface {
-            MyInfoScreen()
         }
     }
 }

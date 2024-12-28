@@ -54,6 +54,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import com.toucheese.app.ui.components.BookingScheduleChangeScreen
 import com.toucheese.app.ui.screens.login.AdditionalInfoScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
+import com.toucheese.app.ui.screens.tab_myInfo.MyInfoScreen
 import kotlinx.coroutines.launch
 
 
@@ -521,59 +522,40 @@ fun ToucheeseApp(api: HomeService) {
                     // 뒤로가기
                     navController.navigateUp()
                 },
+                onScheduleChangeClicked = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                }
             )
         }
 
 
         // BottomNav Test 화면
-        composable("Test"){
-            Scaffold(
-                bottomBar = {
-                    BottomNavigationBarComponent(
-                        selectedTab = bottomNavSelectedTab,
-                        onTabSelected = { selectedTab ->
-                            // 탭 이동
-                            bottomNavClicked(
-                                selectedTab = selectedTab,
-                                navController = navController,
-                            )
-                            bottomNavSelectedTab = selectedTab
-                        }
+        composable(Screen.MyInfo.route){
+            MyInfoScreen(
+                selectedTab = bottomNavSelectedTab,
+                onTabSelected = { selectedTab ->
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = selectedTab,
+                        navController = navController,
                     )
-                }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    Text(
-                        text = "바텀 내비게이션 테스트 화면",
-                        fontSize = 36.sp
-                    )
-
-                    Button(
-                        onClick = {
-                            // 토큰 삭제
-                            tokenManager.clearAccessToken()
-                            Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
-                            // 로그인 화면으로 이동
-                            navController.navigate(Screen.Login.route){
-                                bottomNavSelectedTab = 0
-                                // 백스택 제거
-                                popUpTo(navController.graph.id) {
-                                    inclusive = true
-                                }
-                            }
+                    bottomNavSelectedTab = selectedTab
+                },
+                onLogoutClicked = {
+                    // 토큰 삭제
+                    tokenManager.clearAccessToken()
+                    Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                    // 로그인 화면으로 이동
+                    navController.navigate(Screen.Login.route){
+                        bottomNavSelectedTab = 0
+                        // 백스택 제거
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
                         }
-                    ) {
-                        Text(text = "로그아웃")
                     }
                 }
-            }
+            )
         }
 
         // 추가 정보 입력 화면
@@ -615,10 +597,10 @@ fun bottomNavClicked(selectedTab: Int, navController: NavController) {
                 }
             }
         }
-        // Test 화면 이동
+        // 내 정보 화면 이동
         else -> {
             // backStack 초기화
-            navController.navigate("Test"){
+            navController.navigate(Screen.MyInfo.route){
                 popUpTo(navController.graph.id){
                     inclusive = true
                 }

@@ -1,8 +1,10 @@
 package com.toucheese.app.ui.screens.tab_Home
 
+import android.os.Build
 import android.util.Log
 import android.widget.Space
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +29,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
@@ -36,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,15 +56,24 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.toucheese.app.data.model.home.calendar_studio.CalendarTimeResponseItem
 import com.toucheese.app.data.model.home.carts_list.CartListResponseItem
+import com.toucheese.app.data.model.home.carts_optionChange.ChangedCartItem
 import com.toucheese.app.data.token_manager.TokenManager
+import com.toucheese.app.ui.components.AppBarImageComponent
 import com.toucheese.app.ui.components.CartItemComponent
+import com.toucheese.app.ui.components.DatePickComponent
+import com.toucheese.app.ui.components.ProductOrderOptionComponent
 import com.toucheese.app.ui.components.SquareRadioButton
+import com.toucheese.app.ui.components.calendar.CustomDatePickerComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import kotlin.math.max
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
@@ -82,10 +96,14 @@ fun CartScreen(
 
     // `selectedOptionIds` 상태 변수 정의
     var selectedOptionIds by remember { mutableStateOf(setOf<Int>()) }
-
+    // 옵션변경하는 카트 id
+    var optionChangedCartId by remember { mutableStateOf(-1) }
+    // 옵션변경하는 카트 아이템
+    var optionChangedCartItem by remember { mutableStateOf<CartListResponseItem?>(null) }
     // `selectedItem`이 변경될 때마다 `selectedOptionIds` 업데이트
     LaunchedEffect(selectedItem) {
-        selectedOptionIds = selectedItem?.selectAddOptions?.map { it.selectOptionId }?.toSet() ?: setOf()
+        selectedOptionIds =
+            selectedItem?.selectAddOptions?.map { it.selectOptionId }?.toSet() ?: setOf()
         // 토큰에 해당하는 장바구니 목록
         viewModel.loadCartList(token)
     }
@@ -195,19 +213,29 @@ fun CartScreen(
                                 selected = selectedCartItem.size == cartItems.size,
                                 selectedColor = MaterialTheme.colorScheme.primary,
                                 unselectedColor = Color.Transparent,
-                                borderColor = if (isAllItemClicked) Color.Black else Color(0xFFBFBFBF),
+                                borderColor = if (isAllItemClicked) Color.Black else Color(
+                                    0xFFBFBFBF
+                                ),
                                 onClick = {
                                     if (isAllItemClicked) {
                                         // 전체 선택을 해제하는 경우
                                         selectedCartItem = emptySet()
-                                        Toast.makeText(context, "전체 상품이 선택해제되었습니다", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "전체 상품이 선택해제되었습니다",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     } else {
                                         // 전체 선택을 설정하는 경우
                                         selectedCartItem = selectedCartItem.toMutableSet().apply {
                                             clear() // 초기화
                                             cartItems.forEach { cartItem -> add(cartItem.cartId) }
                                         }
-                                        Toast.makeText(context, "전체 상품이 선택되었습니다", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "전체 상품이 선택되었습니다",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 },
                             )
@@ -230,7 +258,9 @@ fun CartScreen(
                                     Text(
                                         text = "선택 상품 삭제",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = if (selectedCartItem.isNotEmpty()) Color(0xFF1F1F1F) else Color(0xFFBFBFBF)
+                                        color = if (selectedCartItem.isNotEmpty()) Color(0xFF1F1F1F) else Color(
+                                            0xFFBFBFBF
+                                        )
                                     )
                                 },
                                 border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
@@ -267,7 +297,24 @@ fun CartScreen(
                                     selectedCartItem.plus(cartId)
                                 }
                             },
-                            onOptionChangeClicked = {},
+                            onOptionChangeClicked = {
+                                // 예약 변경 띄워줌
+                                isBottomSheetVisible = true
+                                // id 저장
+                                optionChangedCartId = cartId
+                                // 카트 아이템 저장
+                                optionChangedCartItem = cartItem
+                                Log.d("CartScreen", "선택된 아이템 : ${optionChangedCartItem}")
+                                if (optionChangedCartItem != null){
+                                    // 선택한 옵션 값 전달
+                                    selectedOptionIds = selectedOptionIds.toMutableSet().apply {
+                                        // 기존 선택 옵션에 새로운 옵션 추가
+                                        optionChangedCartItem!!.selectAddOptions.forEach { item ->
+                                            this.add(item.selectOptionId) // `this`는 MutableSet
+                                        }
+                                    }
+                                }
+                            },
                         )
                     }
                 }
@@ -293,13 +340,15 @@ fun CartScreen(
                 Column(
                     modifier = Modifier.padding(16.dp),
 
-                ) {
+                    ) {
                     // 삭제 문구
                     Text(
                         text = "선택한 상품을 삭제하시겠습니까?",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 24.dp)
                     )
 
                     // 버튼
@@ -320,7 +369,7 @@ fun CartScreen(
                                 text = "아니오",
                                 textAlign = TextAlign.Center,
 
-                            )
+                                )
                         }
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -351,6 +400,139 @@ fun CartScreen(
                         }
                     }
 
+                }
+            }
+        }
+
+    }
+
+    // 예약 변경
+    if (optionChangedCartId != -1 && optionChangedCartItem != null && isBottomSheetVisible) {
+        // 바텀시트 상태
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { sheetValue ->
+                // 풀 확장 or 닫힘만 허용
+                sheetValue.name == SheetValue.Expanded.name || sheetValue.name == SheetValue.Hidden.name
+            }
+        )
+
+        // 옵션 변경 데이터 보유
+        Log.d("CartScreen", "장바구니 추가 옵션 변경 전 조회 : ${selectedOptionIds}")
+        // 선택한 옵션
+        var selectedOption by remember { mutableStateOf(selectedOptionIds) }
+        // 선택 인원
+        var selectedPersonnel by remember { mutableIntStateOf(optionChangedCartItem!!.personnel) }
+        // 총 가격
+        var selectedTotalPrice by remember { mutableIntStateOf(optionChangedCartItem!!.totalPrice) }
+
+        ModalBottomSheet(
+            containerColor = MaterialTheme.colorScheme.background,
+            sheetState = sheetState,
+            onDismissRequest = {
+                isBottomSheetVisible = false
+            }
+        ) {
+            LazyColumn {
+                item {
+                    AppBarImageComponent(
+                        productName = optionChangedCartItem!!.productName, // 상품명
+                        productInfo = "", // 상품 설명
+                        productImage = optionChangedCartItem!!.productImage, // 상품 이미지,
+                        showReviewButton = false,
+                        reviewCount = 0,
+                        onReviewButtonClicked = {},
+                    )
+                }
+                item {
+                    // 가격 & 옵션
+                    ProductOrderOptionComponent(
+                        productNumOfPeople = optionChangedCartItem!!.productStandard, // 기준 인원
+                        productNumOfPeoplePrice = optionChangedCartItem!!.productPrice, // 기준 가격
+                        productOptions = optionChangedCartItem!!.addOptions, // 추가 옵션
+                        numOfPeople = selectedPersonnel,
+                        reviewCount = 0, // 리뷰 갯수
+                        isOverFlow = optionChangedCartItem!!.personnel > optionChangedCartItem!!.productStandard, // 화면에 표시된 인원수가 상품 기준인원보다 높은지 여부
+                        isOnlyOne = optionChangedCartItem!!.productStandard == 1, // 기준 인원이 1명인지 여부
+                        onDecreaseClicked = {
+                            // 기준 인원보다 큰 경우에만 작동
+                            if (selectedPersonnel > optionChangedCartItem!!.productStandard) {
+                                selectedPersonnel - 1 // 클릭 시 인원 -1
+                                selectedTotalPrice -= (selectedTotalPrice / optionChangedCartItem!!.productStandard)// 기준 인원 금액으로 감소
+                            } else {
+                                // Toast 메시지를 띄워줌
+                                Toast.makeText(
+                                    context,
+                                    "기준 인원보다 적은 인원을 선택하실 수 없습니다.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        },
+                        onIncreaseClicked = {
+                            selectedPersonnel++
+                            selectedTotalPrice += (selectedTotalPrice / optionChangedCartItem!!.productStandard)
+                        }, // 클릭 시 인원 +1
+                        onReviewButtonClicked = { },
+                        selectedOption = selectedOption,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        onOptionClicked = { optionPrice ->
+                            // 옵션 상품을 금액에 추가 및 제거한다
+                            selectedTotalPrice += optionPrice
+                        },
+                        selectedOptionChanged = { index ->
+                            selectedOption =
+                                if (selectedOption.contains(index)) {
+                                    selectedOption - index
+                                } else {
+                                    selectedOption + index
+                                }
+                        },
+                    )
+
+                    // 촬영날짜
+                    DatePickComponent(
+                        date = "${optionChangedCartItem!!.reservationDate} ${optionChangedCartItem!!.reservationTime}",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        onDateClicked = {
+                            Toast.makeText(context, "촬영날짜는 변경할 수 없습니다", Toast.LENGTH_SHORT).show()
+                        },
+                    )
+
+                    // 옵션 변경하기 버튼
+                    Button(
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color(0xFF1F1F1F)
+                        ),
+                        onClick = {
+                            // 서버에 변경된 옵션 전송
+                            viewModel.updateCartItem(
+                                token = token,
+                                cartId = optionChangedCartId,
+                                changedCartItem = ChangedCartItem(
+                                    addOptions = selectedOption.toList(),
+                                    personnel = selectedPersonnel,
+                                    totalPrice = selectedTotalPrice,
+                                )
+                            )
+                            // 새로운 장바구니 리스트 조회
+                            viewModel.loadCartList(token)
+                            // 데이터 초기화
+                            optionChangedCartId = -1
+                            optionChangedCartItem = null
+                            // 창닫기
+                            isBottomSheetVisible = false
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    ) {
+                        Text(
+                            text = "옵션 변경하기 (총 ${selectedTotalPrice / 1000},000원)",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }
