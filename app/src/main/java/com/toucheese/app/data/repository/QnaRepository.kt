@@ -23,5 +23,5 @@ class QnaRepository @Inject constructor(private val apiService: QnaService){
     suspend fun loadQnaList(token: String?, page: Int): QnaListResponse = apiService.loadQnaList(token, page)
 
     // 문의하기 글 생성
-    suspend fun writeQnaDetail(token: String?, qnaDetail: QnaDetailBody) = apiService.writeQnaDetail(token, qnaDetail)
+    suspend fun writeQnaDetail(token: String?, qnaDetail: Map<String, String>) = apiService.writeQnaDetail(token, qnaDetail)
 }

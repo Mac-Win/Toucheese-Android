@@ -6,6 +6,8 @@ import com.toucheese.app.data.model.qna.update_qnadetail.UpdateQnaBody
 import com.toucheese.app.data.model.qna.write_qnadetail.QnaDetailBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -47,9 +49,10 @@ interface QnaService {
     ): QnaListResponse
 
     // 문의하기 글 생성
+    @FormUrlEncoded // Map 데이터 전송을 위한 Annotation 추가
     @POST("v1/questions")
     suspend fun writeQnaDetail(
         @Header("Authorization") token: String?,
-        @Body qnaDetail: QnaDetailBody
+        @FieldMap qnaDetail: Map<String, String>, // Map 데이터 전송을 위한 Annotation 추가
     )
 }

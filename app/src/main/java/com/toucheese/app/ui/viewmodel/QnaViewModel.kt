@@ -81,12 +81,15 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
 
     // 문의하기 글 생성
     fun writeQnaDetail(token: String?, title: String, content: String){
-        val qnaDetail = QnaDetailBody(title = title, content =  content)
+        val qnaDetailMap = mapOf(
+            "title" to title,
+            "content" to content
+        )
         viewModelScope.launch {
             try {
                 repository.writeQnaDetail(
                     token = "Bearer $token",
-                    qnaDetail = qnaDetail
+                    qnaDetail = qnaDetailMap
                 )
             } catch (error: Exception){
                 Log.d(TAG, "문의 글 생성 ${error.message}")
