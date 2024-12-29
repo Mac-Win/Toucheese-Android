@@ -9,5 +9,7 @@ data class AnswerResponse(
     @SerializedName("createDate")
     val createDate: String,
     @SerializedName("id")
-    val id: Int
+    val id: Int,
+    @SerializedName("title")
+    val title: String
 )

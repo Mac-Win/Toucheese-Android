@@ -73,24 +73,6 @@ fun QnaContentScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val testDataList = listOf(
-                "테스트 문의1",
-                "",
-                "테스트 문의3",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4",
-                "테스트 문의4"
-            )
-
-            // 추후에 item으로 바꾸고 단일 데이터를 넣어준다
             item {
                 if (qnaDetail != null){
                     val replyState = qnaDetail!!.answerStatus != "답변대기"
@@ -99,8 +81,9 @@ fun QnaContentScreen(
                         title = qnaDetail!!.title,
                         content = qnaDetail!!.content,
                         createDate = qnaDetail!!.createDate,
-                        userName = "작성자",
+                        userName = qnaDetail!!.authorName,
                         replyState = replyState,
+                        imageList = qnaDetail!!.imageUrls,
                         isContentShowed = qnaDetail!!.content.isNotBlank(),
                         modifier = Modifier.padding(
                             start = 12.dp,
@@ -117,7 +100,7 @@ fun QnaContentScreen(
                         val answerResponse = qnaDetail!!.answerResponse
                         // 스튜디오 (미미팀) 답변
                         InfoListItemComponentNoChip(
-                            title = "터치즈 담당자",
+                            title = answerResponse.title,
                             content = answerResponse.content,
                             createDate = answerResponse.createDate,
                             modifier = Modifier

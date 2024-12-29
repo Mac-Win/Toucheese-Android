@@ -74,6 +74,7 @@ fun TimeSlotButtonComponent(
                 shape = RoundedCornerShape(8.dp),
                 colors = SuggestionChipDefaults.suggestionChipColors(
                     containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    disabledContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFFF0F0F0),
                     labelColor = Color(0xFF1F1F1F),
                 ),
                 modifier = Modifier

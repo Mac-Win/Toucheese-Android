@@ -36,18 +36,13 @@ fun InfoListItemComponent(
     content: String = "",
     createDate: String,
     userName: String,
+    imageList: List<String>,
     replyState: Boolean,
     isContentShowed: Boolean,
     modifier: Modifier = Modifier,
     onItemClicked: () -> Unit,
 ) {
-    val list = listOf(
-        "https://i.imgur.com/1JyMHIq.jpeg",
-        "https://i.imgur.com/kW8AmQ3.jpeg",
-        "https://i.imgur.com/ddUrPZH.jpeg",
-        "https://i.imgur.com/noTkeSZ.jpeg",
-        "https://i.imgur.com/EEVgYuZ.jpeg",
-    )
+
     OutlinedCard(
         shape = CardDefaults.outlinedShape,
         colors = CardDefaults.outlinedCardColors(
@@ -114,13 +109,13 @@ fun InfoListItemComponent(
 
                 Spacer(modifier = Modifier.height(12.dp))
                 // 문의 이미지
-                if (list.isNotEmpty()){
+                if (imageList.isNotEmpty()){
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        items(list) { item ->
+                        items(imageList) { item ->
                             Card(
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.fillMaxWidth(),
@@ -175,6 +170,13 @@ private fun InfoListItemPreview() {
             createDate = createDate,
             userName = userName,
             replyState = replyState,
+            imageList = listOf(
+                "https://i.imgur.com/1JyMHIq.jpeg",
+                "https://i.imgur.com/kW8AmQ3.jpeg",
+                "https://i.imgur.com/ddUrPZH.jpeg",
+                "https://i.imgur.com/noTkeSZ.jpeg",
+                "https://i.imgur.com/EEVgYuZ.jpeg",
+            ),
             isContentShowed = isContentShowed,
             modifier = Modifier
                 .fillMaxWidth()
