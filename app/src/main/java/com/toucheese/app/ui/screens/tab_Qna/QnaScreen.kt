@@ -51,7 +51,7 @@ fun QnaScreen(
     val qnaList by viewModel.qnaList.collectAsState()
     LaunchedEffect(Unit) {
         // 자신의 모든 문의 글 리스트 조회
-        viewModel.loadQnaList(token, page = 1)
+        viewModel.loadQnaList(token, page = 0)
     }
 
     // FAB의 가시성 상태
