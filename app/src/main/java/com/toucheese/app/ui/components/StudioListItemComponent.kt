@@ -133,32 +133,6 @@ private fun StudioListItemTitleComponent(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-        // 별점
-        SuggestionChip(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = Color(0xFFFFCC00),
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            shape = RoundedCornerShape(4.dp),
-            border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
-            enabled = false,
-            label = {
-                Text(
-                    text = "$studioRating",
-                    style = MaterialTheme.typography.labelSmall
-                )
-            },
-            colors = SuggestionChipDefaults.suggestionChipColors(
-                disabledLabelColor = Color.Black,
-                disabledContainerColor = Color(0xFFFAFAFA),
-            ),
-            onClick = {},
-        )
-
 
         // 가격
         SuggestionChip(
@@ -185,6 +159,34 @@ private fun StudioListItemTitleComponent(
             ),
             onClick = {},
         )
+
+        // 별점
+        if (studioRating.toInt() != 0){
+            SuggestionChip(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFFFCC00),
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                shape = RoundedCornerShape(4.dp),
+                border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+                enabled = false,
+                label = {
+                    Text(
+                        text = "$studioRating",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    disabledLabelColor = Color.Black,
+                    disabledContainerColor = Color(0xFFFAFAFA),
+                ),
+                onClick = {},
+            )
+        }
     }
 }
 

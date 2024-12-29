@@ -87,6 +87,7 @@ fun StudioListScreen(
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutine = rememberCoroutineScope()
+
     LaunchedEffect(conceptId) {
         viewModel.getConceptStudio(conceptId)
         viewModel.loadConceptName(conceptId)

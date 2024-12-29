@@ -2,6 +2,7 @@ package com.toucheese.app.ui.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +12,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -161,32 +164,34 @@ fun StudioInfoComponent(
             modifier = Modifier.fillMaxWidth()
         ) {
             // 평점 카드
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                modifier = Modifier.size(width = 60.dp, height = 30.dp) // 크기 조정
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .fillMaxSize()
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.star),
-                        contentDescription = "별 아이콘",
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "${studio.rating}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+            if (studio.rating.toInt() != 0){
+                SuggestionChip(
+                    enabled = false,
+                    onClick = { },
+                    label = {
+                        Image(
+                            painter = painterResource(id = R.drawable.star),
+                            contentDescription = "별 아이콘",
+                            modifier = Modifier.size(16.dp)
+                        )
 
-            Spacer(modifier = Modifier.width(16.dp)) // 카드와 리뷰 간 간격
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = "${studio.rating}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    colors = SuggestionChipDefaults.suggestionChipColors(
+                        disabledContainerColor = Color(0xFFFAFAFA),
+                        disabledLabelColor = Color(0xFF262626),
+                    ),
+                    border = BorderStroke(1.dp, Color(0xFFF0F0F0))
+                )
+
+                Spacer(modifier = Modifier.width(16.dp)) // 카드와 리뷰 간 간격
+            }
 
             // 리뷰 갯수
             Text(
