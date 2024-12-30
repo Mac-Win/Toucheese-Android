@@ -2,8 +2,11 @@ package com.toucheese.app.data.token_manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class TokenManager(context: Context) {
+class TokenManager @Inject constructor(
+    @ApplicationContext context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
 
     fun saveAccessToken(token: String) {
