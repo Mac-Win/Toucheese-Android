@@ -552,8 +552,13 @@ fun ToucheeseApp(api: HomeService) {
         // 추가 정보 입력 화면
         composable("AdditionalInfo") {
             AdditionalInfoScreen(
-                navController = navController,
-                tokenManager = tokenManager
+                tokenManager = tokenManager,
+                onLoginSuccess = {
+                    // 추가 정보 업데이트 성공 시 메인 화면으로 이동
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
             )
         }
 

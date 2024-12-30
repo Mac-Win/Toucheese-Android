@@ -159,6 +159,7 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
             _kakaoLoginState.value = KakaoLoginUiState.Loading
 
             try {
+                Log.d(TAG, "deviceId = ${tokenManager.getDeviceId()}")
                 // 1) 카카오 로그인 POST 요청
                 val socialLoginRequest = SocialLoginRequest(
                     accessToken = kakaoAccessToken,

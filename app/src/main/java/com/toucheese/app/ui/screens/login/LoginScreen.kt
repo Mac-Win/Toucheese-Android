@@ -97,7 +97,7 @@ fun LoginScreen(
             // 카카오톡 앱을 통한 로그인
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 if (error != null) {
-                    Log.d("KakaoLogin", "KakaoTalk Login failed: ${error.message}")
+                    Log.d("KakaoLogin", "KakaoTalk Login failed with Kakao App: ${error.message}")
                 } else if (token != null) {
                     // accessToken, idToken(있을 경우) 추출
                     val accessToken = token.accessToken
@@ -111,7 +111,7 @@ fun LoginScreen(
             // 카카오 계정 로그인 (카카오톡 미설치 시)
             UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
                 if (error != null) {
-                    Log.d("KakaoLogin", "KakaoAccount Login failed: ${error.message}")
+                    Log.d("KakaoLogin", "KakaoAccount Login failed with No Kakao App: ${error.message}")
                 } else if (token != null) {
                     // accessToken, idToken(있을 경우) 추출
                     val accessToken = token.accessToken
