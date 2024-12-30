@@ -6,8 +6,6 @@ import com.google.gson.annotations.SerializedName
 data class StudioDetailResponse(
     @SerializedName("address")
     val address: String,
-    @SerializedName("description")
-    val description: String,
     @SerializedName("facilityImageUrls")
     val facilityImageUrls: List<String>,
     @SerializedName("id")
