@@ -172,11 +172,11 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 Image(
-                    painter = painterResource(R.drawable.toucheeselogo),
+                    painter = painterResource(R.drawable.toucheese_logo),
                     contentDescription = "Toucheese Logo",
                     modifier = Modifier
-                        .height(24.dp)
-                        .width(180.dp)
+                        .height(32.dp)
+                        .width(186.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
