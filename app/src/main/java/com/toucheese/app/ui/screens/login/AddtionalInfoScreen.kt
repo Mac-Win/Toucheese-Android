@@ -79,6 +79,7 @@ fun AdditionalInfoScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -96,9 +97,10 @@ fun AdditionalInfoScreen(
                 label = { Text("전화번호") },
                 placeholder = { Text("전화번호를 입력해주세요 (11자리)") },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Phone,
                     imeAction = ImeAction.Done
                 ),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
