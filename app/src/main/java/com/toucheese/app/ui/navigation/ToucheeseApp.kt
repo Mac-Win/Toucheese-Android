@@ -545,6 +545,14 @@ fun ToucheeseApp(api: HomeService) {
                             inclusive = true
                         }
                     }
+                },
+                onBookListClickedList = {
+                    // 탭 이동
+                    bottomNavClicked(
+                        selectedTab = 1,
+                        navController = navController,
+                    )
+                    bottomNavSelectedTab = 1
                 }
             )
         }

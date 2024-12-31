@@ -28,6 +28,7 @@ fun MyInfoScreen(
     modifier: Modifier = Modifier,
     onTabSelected: (Int) -> Unit,
     onLogoutClicked: () -> Unit,
+    onBookListClickedList: () -> Unit,
 ) {
     Scaffold (
         topBar = {
@@ -68,7 +69,7 @@ fun MyInfoScreen(
                         tint = Color.Gray
                     )
                 },
-                onClick = {}
+                onClick = onBookListClickedList
             )
 
             HorizontalDivider(
