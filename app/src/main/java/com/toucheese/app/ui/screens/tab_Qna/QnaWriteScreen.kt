@@ -2,6 +2,7 @@ package com.toucheese.app.ui.screens.tab_Qna
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,6 +44,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,6 +77,8 @@ fun QnaWriteScreen(
 ) {
     // 토큰
     val token = tokenManager.getAccessToken()
+    // qnaList
+    val qnaList by viewModel.qnaList.collectAsState()
     // 문의 제목
     val (textFieldTitle, setTitle) = remember { mutableStateOf("") }
     // 문의 내용
@@ -138,9 +143,20 @@ fun QnaWriteScreen(
                             content = textFieldContent,
                             mediaList = mediaList,
                             context = context,
+                            onSuccess = {
+                                // 문의 데이터 호출
+                                viewModel.loadQnaList(
+                                    token = token,
+                                    page = qnaList.size / 10,
+                                )
+                                // 화면 이동
+                                onEnrolledClicked()
+                            },
+                            onError = { error ->
+                                Toast.makeText(context, "문의 작성 실패", Toast.LENGTH_SHORT).show()
+                                Log.d("QnaWriteScreen", "문의 작성 실패: ${error.message}")
+                            }
                         )
-                        // 화면 이동
-                        onEnrolledClicked()
                     },
                 ) {
                     Text(

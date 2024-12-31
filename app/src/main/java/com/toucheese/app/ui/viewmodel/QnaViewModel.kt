@@ -97,7 +97,9 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
         title: String,
         content: String,
         mediaList: List<Media>,
-        context: Context
+        context: Context,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit,
         ){
         viewModelScope.launch {
             try {
@@ -123,9 +125,9 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
                         uploadFiles = uploadFiles
                     )
                 }
-                Log.d(TAG, "문의 글 생성완료?")
+                onSuccess()
             } catch (error: Exception){
-                Log.e(TAG, "문의 글 생성 error : ${error.message}")
+                onError(error)
             }
         }
     }
