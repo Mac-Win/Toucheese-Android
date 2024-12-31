@@ -285,12 +285,12 @@ fun SearchBar(
 @Composable
 private fun CardGrid(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
     val cardData = listOf(
-        Triple(R.drawable.image1, "생동감 있는", 1), // ID 추가
-        Triple(R.drawable.image2, "플래쉬/유광", 2),
-        Triple(R.drawable.image3, "흑백/블루 배우", 3),
-        Triple(R.drawable.image6, "내추럴 화보", 4),
-        Triple(R.drawable.image5, "선명한", 5),
-        Triple(R.drawable.image4, "수채화 그림체", 6)
+        Triple(R.drawable.alive, "생동감 있는", 1), // ID 추가
+        Triple(R.drawable.flash_idole, "플래쉬/유광", 2),
+        Triple(R.drawable.black_blue, "흑백/블루 배우", 3),
+        Triple(R.drawable.natural, "내추럴 화보", 4),
+        Triple(R.drawable.dole, "선명한", 5),
+        Triple(R.drawable.filter, "수채화 그림체", 6)
     )
 
     LazyVerticalGrid(

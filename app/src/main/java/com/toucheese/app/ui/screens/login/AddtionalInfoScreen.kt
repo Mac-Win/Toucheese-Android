@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdditionalInfoScreen(
     viewModel: LoginViewModel = hiltViewModel(),
-    navController: NavController,
-    tokenManager: TokenManager
+    tokenManager: TokenManager,
+    onLoginSuccess: () -> Unit,
 ) {
     // 사용자 입력 상태
     var name by remember { mutableStateOf("") }
@@ -41,9 +41,7 @@ fun AdditionalInfoScreen(
         when (updateInfoState) {
             is UpdateInfoUiState.Success -> {
                 // 추가 정보 업데이트 성공 시 메인 화면으로 이동
-                navController.navigate("home") {
-                    popUpTo("login") { inclusive = true }
-                }
+                onLoginSuccess()
             }
             is UpdateInfoUiState.Error -> {
                 val msg = (updateInfoState as UpdateInfoUiState.Error).msg
@@ -81,6 +79,7 @@ fun AdditionalInfoScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -98,9 +97,10 @@ fun AdditionalInfoScreen(
                 label = { Text("전화번호") },
                 placeholder = { Text("전화번호를 입력해주세요 (11자리)") },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Phone,
                     imeAction = ImeAction.Done
                 ),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 

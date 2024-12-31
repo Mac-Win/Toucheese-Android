@@ -46,20 +46,20 @@ fun MyInfoProflieComponent(
         ) {
             // 프로필 내용
             Text(
-                text = "홍길동",
+                text = "사용자",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
 
             Text(
-                text = "likelion@likelion.net",
+                text = "toucheese@likelion.net",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
 
             Text(
-                text = "010-0000-0000",
+                text = "010-1234-5678",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )

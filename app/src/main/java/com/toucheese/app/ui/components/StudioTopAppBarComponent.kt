@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
@@ -36,7 +37,7 @@ fun StudioTopAppBarComponent(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.image2), // 임의의 기본 프로필 이미지
+                        painter = painterResource(id = R.drawable.filter), // 임의의 기본 프로필 이미지
                         contentDescription = "프로필 이미지",
                         modifier = Modifier
                             .size(32.dp)
@@ -48,7 +49,7 @@ fun StudioTopAppBarComponent(
         },
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
-                Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "뒤로가기")
+                Icon(Icons.AutoMirrored.Default.KeyboardArrowLeft, contentDescription = "뒤로가기")
             }
         },
         actions = {
