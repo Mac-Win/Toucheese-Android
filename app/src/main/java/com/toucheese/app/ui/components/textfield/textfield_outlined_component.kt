@@ -28,13 +28,14 @@ fun TextFieldOutlinedComponent(
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = Color.White,
             focusedContainerColor = Color.White,
+            focusedLabelColor = Color(0xFF262626),
         ),
         placeholder = {
             Text(
                 text = placeholder,
                 modifier = Modifier
                     .fillMaxWidth(),
-                color = Color.Gray
+                color = Color(0xFFD9D9D9)
             )
         },
         singleLine = true,
@@ -42,7 +43,7 @@ fun TextFieldOutlinedComponent(
             Icon(
                 imageVector = leadingIcon,
                 contentDescription = "id",
-                tint = Color.Gray
+                tint = Color(0xFFD9D9D9)
             )
         },
         keyboardOptions = keyboardOptions,
