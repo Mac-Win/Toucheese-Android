@@ -55,8 +55,8 @@ fun AppBarImageComponent(
                 Card(
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(300.dp)
+                        .width(136.dp)
+                        .height(184.dp)
                 ) {
                     AsyncImage(
                         model = productImage,

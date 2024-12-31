@@ -139,6 +139,7 @@ fun ProductOrderDetailScreen(
                                 // 서버로 데이터 전송
                                 viewModel.saveCartData(token = token, cartData = cartData)
                                 Log.d(TAG, "서버 전송 클릭")
+                                viewModel.loadCartList(token)
                             }
 
                             // 장바구니 화면으로 이동한다

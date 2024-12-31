@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -148,57 +149,59 @@ fun StudioInfoComponent(
         Spacer(modifier = Modifier.height(8.dp))
 
         // 설명 및 펼치기/접기
-        if (isExpanded) {
-            // 펼쳐졌을 때: 텍스트와 아이콘을 Column으로 배치
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFFFFDE6)) // 배경 노란색
-                    .padding(16.dp) // 내부 여백 조정
-            ) {
-                Text(
-                    text = studio.notice,
-                    style = MaterialTheme.typography.bodyMedium,
+        if (studio.notice.isNotEmpty()){
+            if (isExpanded) {
+                // 펼쳐졌을 때: 텍스트와 아이콘을 Column으로 배치
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { isExpanded = false } // 텍스트 클릭 시 접기
-                )
-                Icon(
-                    tint = MaterialTheme.colorScheme.primary,
-                    painter = painterResource(R.drawable.arrow_up_yellow),
-                    contentDescription = "접기",
+                        .background(Color(0xFFFFFDE6)) // 배경 노란색
+                        .padding(16.dp) // 내부 여백 조정
+                ) {
+                    Text(
+                        text = studio.notice,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { isExpanded = false } // 텍스트 클릭 시 접기
+                    )
+                    Icon(
+                        tint = MaterialTheme.colorScheme.primary,
+                        painter = painterResource(R.drawable.arrow_up_yellow),
+                        contentDescription = "접기",
+                        modifier = Modifier
+                            .size(12.dp)
+                            .align(Alignment.End)
+                            .clickable { isExpanded = false }
+                    )
+                }
+            } else {
+                // 접혔을 때: Row로 텍스트와 아이콘을 배치
+                Row(
                     modifier = Modifier
-                        .size(12.dp)
-                        .align(Alignment.End)
-                        .clickable { isExpanded = false }
-                )
-            }
-        } else {
-            // 접혔을 때: Row로 텍스트와 아이콘을 배치
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFFFFDE6)) // 배경 노란색
-                    .padding(vertical = 4.dp, horizontal = 8.dp) // 내부 여백 조정
-            ) {
-                Text(
-                    text = if (studio.notice.length > 50) studio.notice.take(50) + "..." else studio.notice,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1, // 한 줄만 표시
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .weight(1f)
-                        .clickable { isExpanded = true } // 텍스트 클릭 시 펼치기
-                )
-                Icon(
-                    tint = MaterialTheme.colorScheme.primary,
-                    painter = painterResource(R.drawable.arrow_drop_down),
-                    contentDescription = "펼치기",
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clickable { isExpanded = true }
-                )
+                        .fillMaxWidth()
+                        .background(Color(0xFFFFFDE6)) // 배경 노란색
+                        .padding(vertical = 4.dp, horizontal = 8.dp) // 내부 여백 조정
+                ) {
+                    Text(
+                        text = if (studio.notice.length > 50) studio.notice.take(50) + "..." else studio.notice,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1, // 한 줄만 표시
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .weight(1f)
+                            .clickable { isExpanded = true } // 텍스트 클릭 시 펼치기
+                    )
+                    Icon(
+                        tint = MaterialTheme.colorScheme.primary,
+                        painter = painterResource(R.drawable.arrow_drop_down),
+                        contentDescription = "펼치기",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clickable { isExpanded = true }
+                    )
+                }
             }
         }
 
@@ -213,12 +216,13 @@ fun StudioInfoComponent(
             if (studio.rating.toInt() != 0){
                 SuggestionChip(
                     enabled = false,
+                    shape = RoundedCornerShape(4.dp),
                     onClick = { },
                     label = {
                         Image(
                             painter = painterResource(id = R.drawable.star),
                             contentDescription = "별 아이콘",
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(24.dp)
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))

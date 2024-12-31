@@ -389,6 +389,8 @@ fun CartScreen(
                                     token = token,
                                     cartIds = selectedCartItem.toList()
                                 )
+                                // 선택된 상품 초기화
+                                selectedCartItem = emptySet()
                                 // 삭제 알림 Toast
                                 Toast.makeText(context, "상품이 삭제되었습니다", Toast.LENGTH_SHORT).show()
                             }
