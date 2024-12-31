@@ -39,6 +39,52 @@ fun StudioInfoComponent(
     studio: StudioDetailResponse,
     modifier: Modifier = Modifier
 ) {
+    // 보조 함수들을 최상단에 정의
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun parseTime(timeStr: String): LocalTime {
+        return try {
+            LocalTime.parse(timeStr.trim(), DateTimeFormatter.ofPattern("HH:mm"))
+        } catch (e: Exception) {
+            // 예외 처리: 기본 시간 반환 또는 에러 메시지
+            LocalTime.MIDNIGHT
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDayOfWeekInKorean(): String {
+        val today = LocalDateTime.now()
+        val koreanDays = mapOf(
+            "MONDAY" to "월",
+            "TUESDAY" to "화",
+            "WEDNESDAY" to "수",
+            "THURSDAY" to "목",
+            "FRIDAY" to "금",
+            "SATURDAY" to "토",
+            "SUNDAY" to "일"
+        )
+        return koreanDays[today.dayOfWeek.name] ?: "Unknown"
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun isCurrentlyOpen(
+        operatingHour: OperatingHour,
+        todayKorean: String,
+        currentTime: LocalTime
+    ): Boolean {
+        if (operatingHour.dayOfWeek != todayKorean) return false
+        if (operatingHour.openTime == "휴무") return false
+        val open = parseTime(operatingHour.openTime)
+        val close = parseTime(operatingHour.closeTime)
+        return currentTime.isAfter(open) && currentTime.isBefore(close)
+    }
+
+    // 24시간 운영 여부를 판단하는 함수 수정
+    fun is24HourOperation(openTime: String, closeTime: String): Boolean {
+        val open = parseTime(openTime)
+        val close = parseTime(closeTime)
+        return open == LocalTime.MIDNIGHT && close == LocalTime.MIDNIGHT
+    }
+
     var isExpanded by remember { mutableStateOf(false) } // 설명 펼치기/접기 상태
     var isOperationHoursExpanded by remember { mutableStateOf(false) }
 
@@ -53,6 +99,7 @@ fun StudioInfoComponent(
     val currentStatus = when {
         todayOperatingHour == null -> "Unknown"
         todayOperatingHour.openTime == "휴무" -> "휴무"
+        is24HourOperation(todayOperatingHour.openTime, todayOperatingHour.closeTime) -> "영업중"
         else -> {
             val open = parseTime(todayOperatingHour.openTime)
             val close = parseTime(todayOperatingHour.closeTime)
@@ -154,7 +201,6 @@ fun StudioInfoComponent(
                 )
             }
         }
-
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -266,83 +312,61 @@ fun StudioInfoComponent(
             if (isOperationHoursExpanded) {
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     studio.operatingHours.forEach { operatingHour ->
-                        // 휴무일인 경우
-                        if (operatingHour.openTime == "휴무") {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "${operatingHour.dayOfWeek} : ",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "휴무",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Red
-                                )
+                        when {
+                            operatingHour.openTime == "휴무" -> {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "${operatingHour.dayOfWeek} : ",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "휴무",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Red
+                                    )
+                                }
                             }
-                        } else {
-                            // 영업일인 경우
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "${operatingHour.dayOfWeek} : ",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "${operatingHour.openTime} ~ ${operatingHour.closeTime}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
+
+                            is24HourOperation(operatingHour.openTime, operatingHour.closeTime) -> {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "${operatingHour.dayOfWeek} : ",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "24시간 영업",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Blue
+                                    )
+                                }
+                            }
+
+                            else -> {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "${operatingHour.dayOfWeek} : ",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "${operatingHour.openTime} ~ ${operatingHour.closeTime}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Black
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-}
-
-// 오늘 요일 구하기
-@RequiresApi(Build.VERSION_CODES.O)
-fun getCurrentDayOfWeekInKorean(): String {
-    val today = LocalDateTime.now()
-    val koreanDays = mapOf(
-        "MONDAY" to "월",
-        "TUESDAY" to "화",
-        "WEDNESDAY" to "수",
-        "THURSDAY" to "목",
-        "FRIDAY" to "금",
-        "SATURDAY" to "토",
-        "SUNDAY" to "일"
-    )
-    return koreanDays[today.dayOfWeek.name] ?: "Unknown"
-}
-
-// 현재 영업 중인지 확인하는 함수
-@RequiresApi(Build.VERSION_CODES.O)
-fun isCurrentlyOpen(
-    operatingHour: OperatingHour,
-    todayKorean: String,
-    currentTime: LocalTime
-): Boolean {
-    if (operatingHour.dayOfWeek != todayKorean) return false
-    if (operatingHour.openTime == "휴무") return false
-    val open = parseTime(operatingHour.openTime)
-    val close = parseTime(operatingHour.closeTime)
-    return currentTime.isAfter(open) && currentTime.isBefore(close)
-}
-
-// 문자열 시간을 LocalTime으로 변환
-@RequiresApi(Build.VERSION_CODES.O)
-fun parseTime(timeStr: String): LocalTime {
-    return try {
-        LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"))
-    } catch (e: Exception) {
-        // 예외 처리: 기본 시간 반환 또는 에러 메시지
-        LocalTime.MIDNIGHT
     }
 }
