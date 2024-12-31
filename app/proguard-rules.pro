@@ -24,3 +24,7 @@
 -keepattributes LineNumberTable,SourceFile # 메서드에 위치 정보를 유지하여 스택 트레이스에 이러한 위치가 출력되도록 한다
 # SoucreFile: 모든 잠재적 런타임에 실제로 위치 정보가 출력되도록 한다
 -renamesourcefileattribute SourceFile # 스택 트레이스의 소스 파일 이름을 SourceFile로 설정 / 매핑 파일에 원본 소스 파일이 포함되어 있으므로 재추적할 때 실제 원본 소스 파일 이름은 필요하지 않습니다.
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi
