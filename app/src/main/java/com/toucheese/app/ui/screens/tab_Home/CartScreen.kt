@@ -518,15 +518,21 @@ fun CartScreen(
                                     addOptions = selectedOption.toList(),
                                     personnel = selectedPersonnel,
                                     totalPrice = selectedTotalPrice,
-                                )
+                                ),
+                                onSuccess = {
+                                    // 새로운 장바구니 리스트 조회
+                                    viewModel.loadCartList(token)
+                                    // 데이터 초기화
+                                    optionChangedCartId = -1
+                                    optionChangedCartItem = null
+                                    // 창닫기
+                                    isBottomSheetVisible = false
+                                },
+                                onError = { error ->
+                                    Toast.makeText(context, "옵션 변경 실패", Toast.LENGTH_SHORT).show()
+                                    Log.d("CartScreen", "옵션 변경 error = ${error.message}")
+                                }
                             )
-                            // 새로운 장바구니 리스트 조회
-                            viewModel.loadCartList(token)
-                            // 데이터 초기화
-                            optionChangedCartId = -1
-                            optionChangedCartItem = null
-                            // 창닫기
-                            isBottomSheetVisible = false
                         },
                         modifier = Modifier.fillMaxWidth().padding(16.dp)
                     ) {

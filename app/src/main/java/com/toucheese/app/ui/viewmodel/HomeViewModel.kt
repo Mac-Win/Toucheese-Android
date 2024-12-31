@@ -301,14 +301,18 @@ class HomeViewModel @Inject constructor(
     fun updateCartItem(
         token: String?,
         cartId: Int,
-        changedCartItem: ChangedCartItem
+        changedCartItem: ChangedCartItem,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit,
     ) {
         viewModelScope.launch {
             try {
                 repository.updateCartItem("Bearer $token", cartId, changedCartItem)
                 loadCartList(token)
+                onSuccess()
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "장바구니 옵션 및 인원 변경 error: ${error.message}")
+                onError(error)
             }
         }
 
