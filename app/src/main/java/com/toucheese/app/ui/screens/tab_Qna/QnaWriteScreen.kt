@@ -77,8 +77,6 @@ fun QnaWriteScreen(
 ) {
     // 토큰
     val token = tokenManager.getAccessToken()
-    // qnaList
-    val qnaList by viewModel.qnaList.collectAsState()
     // 문의 제목
     val (textFieldTitle, setTitle) = remember { mutableStateOf("") }
     // 문의 내용
@@ -147,7 +145,6 @@ fun QnaWriteScreen(
                                 // 문의 데이터 호출
                                 viewModel.loadQnaList(
                                     token = token,
-                                    page = qnaList.size / 10,
                                 )
                                 // 화면 이동
                                 onEnrolledClicked()
