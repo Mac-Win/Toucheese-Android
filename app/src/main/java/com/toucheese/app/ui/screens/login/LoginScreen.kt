@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -154,7 +155,7 @@ fun LoginScreen(
         containerColor = Color.White,
         snackbarHost = { SnackbarHost(hostState = hostState) }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -164,211 +165,213 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Top
         )
         {
-            // 로고 및 설명 텍스트
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.toucheese_logo),
-                    contentDescription = "Toucheese Logo",
+            item {
+                // 로고 및 설명 텍스트
+                Column(
                     modifier = Modifier
-                        .height(32.dp)
-                        .width(186.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "스튜디오 고민은 그만!",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "터치즈에 로그인하고 스튜디오를 한 눈에 살펴보세요.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp)) // 콘텐츠와 로고 사이 간격 조정
-
-            // Id 입력
-            TextFieldOutlinedComponent(
-                textFieldValue = textFieldId,
-                onValueChanged = setId,
-                placeholder = "이메일을 입력해주세요",
-                leadingIcon = Icons.Default.Person,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
-
-            // 비밀번호 입력
-            TextFieldOutlinedComponent(
-                textFieldValue = textFieldPw,
-                onValueChanged = setPw,
-                placeholder = "비밀번호를 입력해주세요",
-                leadingIcon = Icons.Default.Lock,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                visualTransformation = PasswordVisualTransformation()
-            )
-
-            // 자동 로그인, 회원 가입, 아이디 및 비번 찾기
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // 자동 로그인 체크박스
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Top
                 ) {
-                    Checkbox(
-                        checked = autoLogin,
-                        onCheckedChange = { setLogin(it) },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = MaterialTheme.colorScheme.primary,
-                            uncheckedColor = Color.Gray
-                        )
+                    Image(
+                        painter = painterResource(R.drawable.toucheese_logo),
+                        contentDescription = "Toucheese Logo",
+                        modifier = Modifier
+                            .height(32.dp)
+                            .width(186.dp)
                     )
-                    Text(
-                        text = "자동 로그인",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
 
-                // 아이디/비밀번호 찾기 버튼
-                TextButton(onClick = {
-                    Toast.makeText(context, "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show()
-                }) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     Text(
-                        text = "회원가입 / ID PASSWORD 찾기",
+                        text = "스튜디오 고민은 그만!",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "터치즈에 로그인하고 스튜디오를 한 눈에 살펴보세요.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.Black
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp)) // 로그인 버튼과 아래 요소 간 간격
+                Spacer(modifier = Modifier.height(24.dp)) // 콘텐츠와 로고 사이 간격 조정
 
-            // 로그인 버튼
-            Button(
-                onClick = {
-                    coroutine.launch {
-                        // 로그인 요청
-                        viewModel.requestLogin(
-                            tokenManager = TokenManager(context),
-                            email = textFieldId,
-                            password = textFieldPw
-                        )
-                        // 로그인 여부 확인
-                        val result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
-                        Log.d(TAG, "result = $result")
-                        if (result) {
-                            Log.d(TAG, "result = $result")
-                            // 로그인 성공 시 화면 전환
-                            onLoginClicked(
-                                viewModel.memberId.value,
-                                viewModel.memberName.value,
-                                result
+                // Id 입력
+                TextFieldOutlinedComponent(
+                    textFieldValue = textFieldId,
+                    onValueChanged = setId,
+                    placeholder = "이메일을 입력해주세요",
+                    leadingIcon = Icons.Default.Person,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+
+                // 비밀번호 입력
+                TextFieldOutlinedComponent(
+                    textFieldValue = textFieldPw,
+                    onValueChanged = setPw,
+                    placeholder = "비밀번호를 입력해주세요",
+                    leadingIcon = Icons.Default.Lock,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                // 자동 로그인, 회원 가입, 아이디 및 비번 찾기
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // 자동 로그인 체크박스
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = autoLogin,
+                            onCheckedChange = { setLogin(it) },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = MaterialTheme.colorScheme.primary,
+                                uncheckedColor = Color.Gray
                             )
-                        } else {
-                            // 로그인 실패 시 Snackbar 표시
-                            hostState.showSnackbar("아이디 또는 비밀번호를 확인해주세요.")
-                        }
+                        )
+                        Text(
+                            text = "자동 로그인",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
-                    // 키보드 내리기
-                    imeController?.hide()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White // 버튼 텍스트 색상을 대비되게 조정
-                ),
-                shape = RoundedCornerShape(8.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
-            ) {
-                Text(
-                    text = "로그인",
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black
-                )
-            }
 
-            Spacer(modifier = Modifier.height(48.dp))
+                    // 아이디/비밀번호 찾기 버튼
+                    TextButton(onClick = {
+                        Toast.makeText(context, "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Text(
+                            text = "회원가입 / ID PASSWORD 찾기",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Black
+                        )
+                    }
+                }
 
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Divider(
+                Spacer(modifier = Modifier.height(16.dp)) // 로그인 버튼과 아래 요소 간 간격
+
+                // 로그인 버튼
+                Button(
+                    onClick = {
+                        coroutine.launch {
+                            // 로그인 요청
+                            viewModel.requestLogin(
+                                tokenManager = TokenManager(context),
+                                email = textFieldId,
+                                password = textFieldPw
+                            )
+                            // 로그인 여부 확인
+                            val result = viewModel.isLoggedIn(tokenManager = TokenManager(context))
+                            Log.d(TAG, "result = $result")
+                            if (result) {
+                                Log.d(TAG, "result = $result")
+                                // 로그인 성공 시 화면 전환
+                                onLoginClicked(
+                                    viewModel.memberId.value,
+                                    viewModel.memberName.value,
+                                    result
+                                )
+                            } else {
+                                // 로그인 실패 시 Snackbar 표시
+                                hostState.showSnackbar("아이디 또는 비밀번호를 확인해주세요.")
+                            }
+                        }
+                        // 키보드 내리기
+                        imeController?.hide()
+                    },
                     modifier = Modifier
-                        .weight(1f)
-                        .height(1.dp),
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "SNS 간편 로그인",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Divider(
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White // 버튼 텍스트 색상을 대비되게 조정
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
+                ) {
+                    Text(
+                        text = "로그인",
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Black
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Row (
                     modifier = Modifier
-                        .weight(1f)
-                        .height(1.dp),
-                    color = Color.Gray
-                )
-            }
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Divider(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(1.dp),
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "SNS 간편 로그인",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Divider(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(1.dp),
+                        color = Color.Gray
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                SocialLoginButton(
-                    backgroundColor = Color(0xFFFEE500),
-                    icon = painterResource(R.drawable.kakaologo),
-                    text = "카카오 로그인",
-                    textColor = Color.Black,
-                    onClick = { performKakaoLogin() }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SocialLoginButton(
+                        backgroundColor = Color(0xFFFEE500),
+                        icon = painterResource(R.drawable.kakaologo),
+                        text = "카카오 로그인",
+                        textColor = Color.Black,
+                        onClick = { performKakaoLogin() }
+                    )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                SocialLoginButton(
-                    backgroundColor = Color(0xFF03C75A),
-                    icon = painterResource(R.drawable.naverlogo),
-                    text = "네이버 로그인",
-                    textColor = Color.White,
-                    onClick = { /* 네이버 로그인 로직 */ }
-                )
+                    SocialLoginButton(
+                        backgroundColor = Color(0xFF03C75A),
+                        icon = painterResource(R.drawable.naverlogo),
+                        text = "네이버 로그인",
+                        textColor = Color.White,
+                        onClick = { /* 네이버 로그인 로직 */ }
+                    )
+                }
             }
         }
     }
