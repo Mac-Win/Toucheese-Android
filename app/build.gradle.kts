@@ -54,7 +54,7 @@ android {
             // ProGuard 활성화
             isMinifyEnabled = true
             // Resource 축소
-            isShrinkResources = false
+            isShrinkResources = true
             proguardFiles(
                 // 기본 ProGuard 설정
                 getDefaultProguardFile("proguard-android-optimize.txt"),
