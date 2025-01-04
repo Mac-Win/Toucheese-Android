@@ -14,8 +14,8 @@ android {
         applicationId = "com.toucheese.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.1"
+        versionCode = 10
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -51,16 +51,33 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField ("String", "BASE_URL", "\"https://dev.api.toucheese-macwin.store/\"")
+            // ProGuard 활성화
+            isMinifyEnabled = true
+            // Resource 축소
+            isShrinkResources = false
+            proguardFiles(
+                // 기본 ProGuard 설정
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                // 프로젝트에 필요한 ProGuard 설정
+                "proguard-rules.pro"
+            )
+            buildConfigField("String", "BASE_URL", "\"https://api.toucheese-macwin.store/\"")
+            buildConfigField("Boolean", "ENABLE_LOG", "true") // 디버그 로그 활성화
         }
 
         release {
-            isMinifyEnabled = true // 코드 축소 활성화 (proguard)
+            // ProGuard 활성화
+            isMinifyEnabled = true
+            // Resource 축소
+            isShrinkResources = true
             proguardFiles(
+                // 기본 ProGuard 설정
                 getDefaultProguardFile("proguard-android-optimize.txt"),
+                // 프로젝트에 필요한 ProGuard 설정
                 "proguard-rules.pro"
             )
-            buildConfigField ("String", "BASE_URL", "\"https://api.toucheese-macwin.store/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.toucheese-macwin.store/\"") // 운영 URL
+            buildConfigField("Boolean", "ENABLE_LOG", "false") // 릴리스에서 로그 비활성화
         }
     }
     compileOptions {
