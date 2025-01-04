@@ -1,1 +1,3 @@
 /build
+# ProGuard/R8 mapping file
+mapping.txt
