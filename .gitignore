@@ -31,3 +31,9 @@ local.properties
 # OS별 파일
 .DS_Store
 Thumbs.db
+
+# ProGuard/R8 mapping file
+mapping.txt
+
+# Ignore app-release.dm file
+app-release.dm
