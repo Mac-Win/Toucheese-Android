@@ -1,26 +1,83 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# 기본 설정
+-keepattributes LineNumberTable,SourceFile,Signature,*Annotation*,InnerClasses
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Missing Rule 추가
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi
+-dontwarn com.google.errorprone.annotations.MustBeClosed
+-keep,allowobfuscation,allowshrinking class kotlinx.coroutines.flow.Flow
+-keep class com.toucheese.app.data.model.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Retrofit
+-keep class retrofit2.** { *; }
+-keep class okhttp3.** { *; }
+-keep class retrofit2.Call { *; }
+-keep class retrofit2.converter.gson.** { *; }
+-keepclassmembers class * {
+    @retrofit2.http.* <methods>;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Gson
+-keep class com.google.gson.reflect.TypeToken { *; }
 
-# stackTrace 재추적
--keepattributes LineNumberTable,SourceFile # 메서드에 위치 정보를 유지하여 스택 트레이스에 이러한 위치가 출력되도록 한다
-# SoucreFile: 모든 잠재적 런타임에 실제로 위치 정보가 출력되도록 한다
--renamesourcefileattribute SourceFile # 스택 트레이스의 소스 파일 이름을 SourceFile로 설정 / 매핑 파일에 원본 소스 파일이 포함되어 있으므로 재추적할 때 실제 원본 소스 파일 이름은 필요하지 않습니다.
+# Hilt
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-keepclassmembers class * {
+    @javax.inject.Inject <fields>;
+    @javax.inject.Inject <methods>;
+}
+-keepnames class * {
+    @javax.inject.Inject <init>(...);
+}
+-keep class dagger.hilt.internal.** { *; }
+-keep class dagger.hilt.processor.** { *; }
+-keep class dagger.hilt.codegen.** { *; }
+
+# Kotlin
+-keepclassmembers class kotlin.Metadata { *; }
+-keepclassmembers class kotlinx.coroutines.** { *; }
+
+# Coil
+-keep class coil.** { *; }
+-keep class coil.request.** { *; }
+
+# Navigation
+-keep class androidx.navigation.** { *; }
+
+# Compose
+-keep class androidx.compose.** { *; }
+
+# Navigation Compose
+-keep class androidx.hilt.navigation.** { *; }
+
+# 로그 유지
+-keep class android.util.Log { *; }
+
+# Kakao SDK 관련 Proguard 설정
+-keep class com.kakao.** { *; }
+-keep class com.kakao.sdk.** { *; }
+-keep class com.kakao.sdk.auth.** { *; }
+-keep class com.kakao.sdk.user.** { *; }
+-keep class com.fasterxml.jackson.** { *; }
+-keep class com.kakao.sdk.common.** { *; }
+-keep class com.kakao.sdk.network.** { *; }
+-keep class com.kakao.sdk.auth.model.** { *; }
+
+# OkHttp 관련 Proguard 설정
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-keep class okhttp3.logging.** { *; }
+-keep interface okhttp3.logging.** { *; }
+
+# Base64 관련
+-keep class android.util.Base64 { *; }
+
+# Cipher 및 암호화 관련
+-keep class javax.crypto.** { *; }
+
+# ProGuard 활성화 후 디버깅
+-printmapping mapping.txt

@@ -137,13 +137,16 @@ fun ProductOrderDetailScreen(
                             // 예약 정보를 서버로 전송한다
                             coroutineScope.launch {
                                 // 서버로 데이터 전송
-                                viewModel.saveCartData(token = token, cartData = cartData)
-                                Log.d(TAG, "서버 전송 클릭")
-                                viewModel.loadCartList(token)
+                                val result = viewModel.saveCartData(token = token, cartData = cartData)
+                                if (result){
+                                    // 장바구니 목록 조회
+                                    viewModel.loadCartList(token)
+                                    // 장바구니 화면으로 이동한다
+                                    onOrderClicked()
+                                } else {
+                                    Toast.makeText(context, "장바구니 예약 실패", Toast.LENGTH_SHORT).show()
+                                }
                             }
-
-                            // 장바구니 화면으로 이동한다
-                            onOrderClicked()
                         },
                         modifier = Modifier
                             .fillMaxWidth()

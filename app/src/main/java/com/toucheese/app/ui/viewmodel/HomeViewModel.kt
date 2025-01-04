@@ -237,11 +237,13 @@ class HomeViewModel @Inject constructor(
     suspend fun saveCartData(
         token: String?,
         cartData: com.toucheese.app.data.model.home.saveCartData.CartData
-    ) {
-        try {
+    ): Boolean {
+        return try {
             repository.saveCartData(token = "Bearer $token", reservation = cartData)
+            true
         } catch (error: Exception) {
             Log.d("StudioViewModel", "error = ${error.message}")
+            false
         }
     }
 
@@ -265,8 +267,10 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val cartData = repository.loadCartList(token = "Bearer $token").toList()
-                _cartItems.value = cartData
-                Log.d("StudioViewModel", "cardData: ${cartData}")
+                _cartItems.value = _cartItems.value .toMutableList().apply {
+                    addAll(cartData)
+                }
+                Log.d("StudioViewModel", "cardData: ${cartItems.value}")
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "Error fetching cart list: ${error.message}", error)
             } finally {
@@ -297,14 +301,18 @@ class HomeViewModel @Inject constructor(
     fun updateCartItem(
         token: String?,
         cartId: Int,
-        changedCartItem: ChangedCartItem
+        changedCartItem: ChangedCartItem,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit,
     ) {
         viewModelScope.launch {
             try {
                 repository.updateCartItem("Bearer $token", cartId, changedCartItem)
                 loadCartList(token)
+                onSuccess()
             } catch (error: Exception) {
                 Log.e("StudioViewModel", "장바구니 옵션 및 인원 변경 error: ${error.message}")
+                onError(error)
             }
         }
 

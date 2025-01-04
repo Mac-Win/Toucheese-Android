@@ -77,14 +77,16 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
     }
 
     // 자신의 모든 문의하기 글 조회 (페이징 처리)
-    fun loadQnaList(token: String?, page: Int = 0){
+    fun loadQnaList(token: String?){
         viewModelScope.launch {
             try {
                 val result = repository.loadQnaList(
                     token = "Bearer $token",
-                    page = page
+                    page = qnaList.value.size / 10
                 )
-                _qnaList.value = result.qnaListItem
+                _qnaList.value = _qnaList.value.toMutableList().apply {
+                    addAll(result.qnaListItem)
+                }
             } catch (error: Exception){
                 Log.d(TAG, "모든 문의 글 조회 error: ${error.message}")
             }
@@ -97,7 +99,9 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
         title: String,
         content: String,
         mediaList: List<Media>,
-        context: Context
+        context: Context,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit,
         ){
         viewModelScope.launch {
             try {
@@ -123,9 +127,9 @@ class QnaViewModel @Inject constructor(private val repository: QnaRepository): V
                         uploadFiles = uploadFiles
                     )
                 }
-                Log.d(TAG, "문의 글 생성완료?")
+                onSuccess()
             } catch (error: Exception){
-                Log.e(TAG, "문의 글 생성 error : ${error.message}")
+                onError(error)
             }
         }
     }

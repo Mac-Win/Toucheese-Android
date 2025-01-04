@@ -159,8 +159,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(top = 128.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 128.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
         )
@@ -295,6 +294,7 @@ fun LoginScreen(
                             } else {
                                 // 로그인 실패 시 Snackbar 표시
                                 hostState.showSnackbar("아이디 또는 비밀번호를 확인해주세요.")
+//                                Toast.makeText(context, "아이디 또는 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
                             }
                         }
                         // 키보드 내리기
