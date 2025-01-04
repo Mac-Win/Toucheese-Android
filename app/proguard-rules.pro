@@ -7,6 +7,7 @@
 -dontwarn com.google.errorprone.annotations.CheckReturnValue
 -dontwarn com.google.errorprone.annotations.Immutable
 -dontwarn com.google.errorprone.annotations.RestrictedApi
+-dontwarn com.google.errorprone.annotations.MustBeClosed
 -keep,allowobfuscation,allowshrinking class kotlinx.coroutines.flow.Flow
 -keep class com.toucheese.app.data.model.** { *; }
 

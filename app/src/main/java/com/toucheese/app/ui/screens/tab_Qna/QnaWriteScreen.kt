@@ -134,6 +134,8 @@ fun QnaWriteScreen(
                         .fillMaxWidth()
                         .padding(vertical = 14.dp, horizontal = 8.dp),
                     onClick = {
+                        // 화면 이동
+                        onEnrolledClicked()
                         // 서버에 데이터 전송
                         viewModel.writeQnaDetail(
                             token = token,
@@ -146,8 +148,6 @@ fun QnaWriteScreen(
                                 viewModel.loadQnaList(
                                     token = token,
                                 )
-                                // 화면 이동
-                                onEnrolledClicked()
                             },
                             onError = { error ->
                                 Toast.makeText(context, "문의 작성 실패", Toast.LENGTH_SHORT).show()
