@@ -1,39 +1,52 @@
-# 빌드 파일
-/build/
-.gradle/
+# OS별 파일
+*.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Android Studio 파일
-.idea/caches/
-.idea/libraries/
-.idea/modules.xml
-.idea/workspace.xml
-.idea/inspectionProfiles/
-.idea/vcs.xml
-
-# 로컬 설정 파일
+# Android/Gradle
 *.iml
-local.properties
-.classpath
-.project
-.settings/
-*.prefs
+.gradle
+/local.properties
+.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
 
-# 디버그 키스토어
-*.keystore
-
-# APK/AAB 파일
-*.apk
+# 빌드 산출물
 *.aab
+*.apk
+
+# ProGuard mapping 파일
+/app/mapping.txt
 
 # 로그 파일
 *.log
+*.log.*
 
-# OS별 파일
-.DS_Store
-Thumbs.db
+# IDE 설정 파일
+*.ipr
+*.iws
+*.bak
+*.swp
+.vscode/
 
-# ProGuard/R8 mapping file
-mapping.txt
+# Dependency 캐시
+/.gradle/
+/build/
+.compose-cache/
 
-# Ignore app-release.dm file
-app-release.dm
+# 보안 및 환경 파일
+.env
+*.keystore
+*.jks
+secrets.properties
+
+# Git 설정 관련
+*.orig
+*.rej
+*.patch

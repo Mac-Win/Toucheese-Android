@@ -80,4 +80,4 @@
 -keep class javax.crypto.** { *; }
 
 # ProGuard 활성화 후 디버깅
--printmapping mapping.txt
+#-printmapping mapping.txt
