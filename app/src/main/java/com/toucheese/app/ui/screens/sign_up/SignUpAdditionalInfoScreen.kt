@@ -1,8 +1,10 @@
 package com.toucheese.app.ui.screens.sign_up
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +23,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
@@ -39,7 +46,7 @@ fun SignUpAdditionalInfoScreen(
     onSignUpButtonClicked: () -> Unit,
 ) {
     // 인증번호 요청 여부
-    var isCertificateRequested: Boolean = false
+    var isCertificateRequested by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBarComponent(
@@ -62,7 +69,7 @@ fun SignUpAdditionalInfoScreen(
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onSignUpButtonClicked,
-                ){
+                ) {
                     Text(
                         text = "다음"
                     )
@@ -80,7 +87,7 @@ fun SignUpAdditionalInfoScreen(
                 .padding(16.dp),
         ) {
             // 회원가입 안내 문구
-            item{
+            item {
                 Text(
                     text = "본인 확인을 위한\n이름과 연락처를 입력해주세요"
                 )
@@ -89,7 +96,7 @@ fun SignUpAdditionalInfoScreen(
 
             // 이름
             item {
-                Text(text = "이메일")
+                Text(text = "이름")
 
                 // 공간
                 Spacer(
@@ -99,12 +106,12 @@ fun SignUpAdditionalInfoScreen(
                 // 입력
                 TextFieldOutlinedComponent(
                     textFieldValue = "",
-                    leadingIcon = Icons.Default.MailOutline,
                     placeholder = "이름을 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Email,
                     ),
+                    showLeadingIcon = false,
                     onValueChanged = {
                         // 값이 변할 때 작동
                     },
@@ -120,16 +127,22 @@ fun SignUpAdditionalInfoScreen(
                     modifier = Modifier.height(4.dp)
                 )
 
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
+                ) {
                     // 연락처
                     TextFieldOutlinedComponent(
                         textFieldValue = "",
-                        leadingIcon = Icons.Default.Lock,
                         placeholder = "숫자만 입력해주세요",
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next,
                             keyboardType = KeyboardType.Password,
                         ),
+                        showLeadingIcon = false,
+                        modifier = Modifier.weight(1f),
                         onValueChanged = {
                             // 값이 변할 때 작동
                         },
@@ -140,10 +153,12 @@ fun SignUpAdditionalInfoScreen(
 
                     // 인증번호
                     Button(
+                        shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF434343),
                             contentColor = Color.White,
                         ),
+                        modifier = Modifier.fillMaxHeight(),
                         onClick = {
                             // 인증번호 요청
                             isCertificateRequested = true
@@ -154,22 +169,27 @@ fun SignUpAdditionalInfoScreen(
                         )
                     }
                 }
+            }
 
-                // 공간
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 인증번호
-                if (isCertificateRequested){
-                    Row {
+            if (isCertificateRequested) {
+                item {
+                    // 인증번호
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min),
+                    ) {
                         // 인증번호
                         TextFieldOutlinedComponent(
                             textFieldValue = "",
-                            leadingIcon = Icons.Default.Lock,
                             placeholder = "인증번호를 입력해주세요",
                             keyboardOptions = KeyboardOptions.Default.copy(
                                 imeAction = ImeAction.Done,
                                 keyboardType = KeyboardType.Password,
                             ),
+                            showLeadingIcon = false,
+                            modifier = Modifier.weight(1f),
                             onValueChanged = {
                                 // 값이 변할 때 작동
                             },
@@ -180,10 +200,12 @@ fun SignUpAdditionalInfoScreen(
 
                         // 인증번호 확인
                         Button(
+                            shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary,
                             ),
+                            modifier = Modifier.fillMaxHeight(),
                             onClick = {
                                 // 인증번호 확인
 

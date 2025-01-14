@@ -205,11 +205,11 @@ fun LoginScreen(
                     textFieldValue = textFieldId,
                     onValueChanged = setId,
                     placeholder = "이메일을 입력해주세요",
-                    leadingIcon = Icons.Default.Person,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
+                    showLeadingIcon = false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -220,11 +220,11 @@ fun LoginScreen(
                     textFieldValue = textFieldPw,
                     onValueChanged = setPw,
                     placeholder = "비밀번호를 입력해주세요",
-                    leadingIcon = Icons.Default.Lock,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
                     ),
+                    showLeadingIcon = false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),

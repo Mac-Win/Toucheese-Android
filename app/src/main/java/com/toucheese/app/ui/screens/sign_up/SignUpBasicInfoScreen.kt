@@ -96,12 +96,12 @@ fun SignUpBasicInfoScreen(
                 // 입력
                 TextFieldOutlinedComponent(
                     textFieldValue = "",
-                    leadingIcon = Icons.Default.MailOutline,
                     placeholder = "이메일을 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Email,
                     ),
+                    showLeadingIcon = false,
                     onValueChanged = {
                         // 값이 변할 때 작동
                     },
@@ -120,12 +120,12 @@ fun SignUpBasicInfoScreen(
                 // 입력
                 TextFieldOutlinedComponent(
                     textFieldValue = "",
-                    leadingIcon = Icons.Default.Lock,
                     placeholder = "비밀번호를 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Password,
                     ),
+                    showLeadingIcon = false,
                     onValueChanged = {
                         // 값이 변할 때 작동
                     },
@@ -144,12 +144,12 @@ fun SignUpBasicInfoScreen(
                 // 입력
                 TextFieldOutlinedComponent(
                     textFieldValue = "",
-                    leadingIcon = Icons.Default.Lock,
                     placeholder = "비밀번호를 한 번 더 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done,
                         keyboardType = KeyboardType.Password,
                     ),
+                    showLeadingIcon = false,
                     onValueChanged = {
                         // 값이 변할 때 작동
                     },

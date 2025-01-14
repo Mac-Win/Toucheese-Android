@@ -2,6 +2,8 @@ package com.toucheese.app.ui.components.textfield
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -16,7 +18,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 fun TextFieldOutlinedComponent(
     textFieldValue: String,
     placeholder: String,
-    leadingIcon: ImageVector,
+    leadingIcon: ImageVector = Icons.Default.Add,
+    showLeadingIcon: Boolean,
     keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier,
     onValueChanged: (String) -> Unit,
@@ -39,13 +42,15 @@ fun TextFieldOutlinedComponent(
             )
         },
         singleLine = true,
-        leadingIcon = {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = "id",
-                tint = Color(0xFFD9D9D9)
-            )
-        },
+        leadingIcon = if (showLeadingIcon) {
+            {
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = "id",
+                    tint = Color(0xFFD9D9D9)
+                )
+            }
+        } else null,
         keyboardOptions = keyboardOptions,
         modifier = modifier,
         visualTransformation = visualTransformation
