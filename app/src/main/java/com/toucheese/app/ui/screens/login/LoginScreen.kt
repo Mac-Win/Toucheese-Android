@@ -66,6 +66,7 @@ fun LoginScreen(
     onLoginClicked: (Int, String, Boolean) -> Unit,
     onKakaoFirstLoginClicked: () -> Unit,
     onKakaoLoginClicked: () -> Unit,
+    onClickSignUp: () -> Unit,
 ) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
@@ -204,11 +205,11 @@ fun LoginScreen(
                     textFieldValue = textFieldId,
                     onValueChanged = setId,
                     placeholder = "이메일을 입력해주세요",
-                    leadingIcon = Icons.Default.Person,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
+                    showLeadingIcon = false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -219,11 +220,11 @@ fun LoginScreen(
                     textFieldValue = textFieldPw,
                     onValueChanged = setPw,
                     placeholder = "비밀번호를 입력해주세요",
-                    leadingIcon = Icons.Default.Lock,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
                     ),
+                    showLeadingIcon = false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
@@ -257,9 +258,9 @@ fun LoginScreen(
                     }
 
                     // 아이디/비밀번호 찾기 버튼
-                    TextButton(onClick = {
-                        Toast.makeText(context, "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show()
-                    }) {
+                    TextButton(
+                        onClick = onClickSignUp
+                    ) {
                         Text(
                             text = "회원가입 / ID PASSWORD 찾기",
                             style = MaterialTheme.typography.bodyMedium,

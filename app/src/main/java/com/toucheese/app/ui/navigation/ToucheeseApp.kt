@@ -53,6 +53,9 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.toucheese.app.ui.components.BookingScheduleChangeScreen
 import com.toucheese.app.ui.screens.login.AdditionalInfoScreen
+import com.toucheese.app.ui.screens.sign_up.SignUpAdditionalInfoScreen
+import com.toucheese.app.ui.screens.sign_up.SignUpBasicInfoScreen
+import com.toucheese.app.ui.screens.sign_up.SignUpWelcomeScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import com.toucheese.app.ui.screens.tab_myInfo.MyInfoScreen
 import kotlinx.coroutines.launch
@@ -145,8 +148,11 @@ fun ToucheeseApp(api: HomeService) {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(navController.graph.id) { inclusive = true }
                     }
+                },
+                onClickSignUp = {
+                    // 회원가입 화면으로 이동
+                    navController.navigate(Screen.SignUpBasic.route)
                 }
-
             )
         }
         // 메인 화면
@@ -570,6 +576,47 @@ fun ToucheeseApp(api: HomeService) {
             )
         }
 
+        // 회원가입 화면 - 이메일, 비밀번호
+        composable(Screen.SignUpBasic.route){
+            SignUpBasicInfoScreen(
+                onClickLeadingIcon = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+                onNextButtonClicked = {
+                    // SignUpAdditionalInfoScreen 으로 이동
+                    navController.navigate(Screen.SignUpAdditional.route)
+                },
+            )
+        }
+
+        // 회원가입 화면 - 이름, 연락처
+        composable(Screen.SignUpAdditional.route){
+            SignUpAdditionalInfoScreen(
+                onClickLeadingIcon = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+                onSignUpButtonClicked = {
+                    // 환영 페이지로 이동
+                    navController.navigate(Screen.SignUpWelcome.route)
+                },
+            )
+        }
+
+        // 회원가입 화면 - 환영 페이지
+        composable(Screen.SignUpWelcome.route){
+            SignUpWelcomeScreen(
+                onButtonClicked = {
+                    // 로그인 화면으로 이동
+                    navController.navigate(Screen.Login.route){
+                        popUpTo(navController.graph.id){
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 
