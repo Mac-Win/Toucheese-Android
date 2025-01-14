@@ -53,6 +53,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.toucheese.app.ui.components.BookingScheduleChangeScreen
 import com.toucheese.app.ui.screens.login.AdditionalInfoScreen
+import com.toucheese.app.ui.screens.sign_up.SignUpAdditionalInfoScreen
 import com.toucheese.app.ui.screens.sign_up.SignUpBasicInfoScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import com.toucheese.app.ui.screens.tab_myInfo.MyInfoScreen
@@ -583,13 +584,23 @@ fun ToucheeseApp(api: HomeService) {
                 },
                 onNextButtonClicked = {
                     // SignUpAdditionalInfoScreen 으로 이동
-                }
+                    navController.navigate(Screen.SignUpAdditional.route)
+                },
             )
         }
 
         // 회원가입 화면 - 이름, 연락처
         composable(Screen.SignUpAdditional.route){
+            SignUpAdditionalInfoScreen(
+                onClickLeadingIcon = {
+                    // 뒤로가기
+                    navController.navigateUp()
+                },
+                onSignUpButtonClicked = {
+                    // 환영 페이지로 이동
 
+                },
+            )
         }
     }
 }
