@@ -33,4 +33,6 @@ sealed class Screen(val route: String) {
     object SignUpBasic: Screen("SignUpBasicInfoScreen")
     // ----- SignUpAdditional -----
     object SignUpAdditional: Screen("SignUpAdditionalInfoScreen")
+    // ----- SignUpWelcome -----
+    object SignUpWelcome: Screen("SignUpWelcomeScreen")
 }
