@@ -29,4 +29,8 @@ sealed class Screen(val route: String) {
     object BookScheduleChange: Screen("BookScheduleChangeScreen/{studioId}/{reservationId}")
     // ----- MyInfo ----
     object MyInfo: Screen("MyInfoScreen")
+    // ----- SignUpBasic -----
+    object SignUpBasic: Screen("SignUpBasicInfoScreen")
+    // ----- SignUpAdditional -----
+    object SignUpAdditional: Screen("SignUpAdditionalInfoScreen")
 }

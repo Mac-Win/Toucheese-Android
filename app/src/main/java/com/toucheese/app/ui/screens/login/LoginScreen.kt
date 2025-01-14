@@ -66,6 +66,7 @@ fun LoginScreen(
     onLoginClicked: (Int, String, Boolean) -> Unit,
     onKakaoFirstLoginClicked: () -> Unit,
     onKakaoLoginClicked: () -> Unit,
+    onClickSignUp: () -> Unit,
 ) {
     // id 정보
     val (textFieldId, setId) = remember { mutableStateOf("") }
@@ -257,9 +258,9 @@ fun LoginScreen(
                     }
 
                     // 아이디/비밀번호 찾기 버튼
-                    TextButton(onClick = {
-                        Toast.makeText(context, "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show()
-                    }) {
+                    TextButton(
+                        onClick = onClickSignUp
+                    ) {
                         Text(
                             text = "회원가입 / ID PASSWORD 찾기",
                             style = MaterialTheme.typography.bodyMedium,
