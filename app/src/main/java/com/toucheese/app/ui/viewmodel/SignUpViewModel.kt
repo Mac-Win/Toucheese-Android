@@ -67,7 +67,6 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             // 비밀번호 확인 검사
             _matchingPasswordState
-                .debounce(300)
                 .collect{ matchingPassword: String ->
                     // paasword 일치 검사
                     isMatchingPassword()
@@ -126,10 +125,11 @@ class SignUpViewModel @Inject constructor(
 
     // 비밀번호 확인 일치 여부
     private fun isMatchingPassword(){
-        val isMatching = _passwordState.value == _matchingPasswordState.value
-        _isMatchingPassword.value = isMatching
-        Log.d("SignUpViewModel", "입력된 비밀번호 확인 : ${_matchingPasswordState.value}")
-        Log.d("SignUpViewModel", "비밀번호 확인 여부 검사 결과: $isMatching")
+        _isMatchingPassword.value = if (matchingPasswordState.value.isNotBlank()) {
+            passwordState.value == matchingPasswordState.value
+        } else false
+        Log.d("SignUpViewModel", "입력된 비밀번호 확인 : ${matchingPasswordState.value}")
+        Log.d("SignUpViewModel", "비밀번호 확인 여부 검사 결과: ${isMatchingPassword.value}")
     }
 
 }

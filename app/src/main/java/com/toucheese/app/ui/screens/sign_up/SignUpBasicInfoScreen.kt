@@ -70,6 +70,7 @@ fun SignUpBasicInfoScreen(
 
             ) {
                 Button(
+                    enabled = isValidateEmail && isValidatePassword && isMatchingPassword,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onNextButtonClicked,
