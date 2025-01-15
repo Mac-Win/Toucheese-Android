@@ -12,12 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,15 +27,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.ui.components.textfield.TextFieldOutlinedComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.theme.ToucheeseAppTheme
-import com.toucheese.app.ui.viewmodel.LoginViewModel
+import com.toucheese.app.ui.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpBasicInfoScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onNextButtonClicked: () -> Unit,
 ) {
+    // email 상태
+    val emailState by viewModel.emailState.collectAsState()
+    // email 유효성
+    val isValidateEmail by viewModel.isValidateEmail.collectAsState()
 
     Scaffold(
         topBar = {
@@ -95,15 +99,19 @@ fun SignUpBasicInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = emailState,
                     placeholder = "이메일을 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Email,
                     ),
+                    errorMessage = "이메일 형식을 맞춰주세요 (Ex. toucheese@email.com)",
+                    showError = !isValidateEmail,
                     showLeadingIcon = false,
-                    onValueChanged = {
-                        // 값이 변할 때 작동
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChanged = { email ->
+                        // 값 저장 & 유효성 검사
+                        viewModel.setEmail(email)
                     },
                 )
             }

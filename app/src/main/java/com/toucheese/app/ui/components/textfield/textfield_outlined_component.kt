@@ -19,7 +19,9 @@ fun TextFieldOutlinedComponent(
     textFieldValue: String,
     placeholder: String,
     leadingIcon: ImageVector = Icons.Default.Add,
+    errorMessage: String = "",
     showLeadingIcon: Boolean,
+    showError: Boolean = false,
     keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier,
     onValueChanged: (String) -> Unit,
@@ -53,7 +55,16 @@ fun TextFieldOutlinedComponent(
         } else null,
         keyboardOptions = keyboardOptions,
         modifier = modifier,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
+        supportingText = if (showError) {
+            // Error
+            {
+                Text(
+                    text = errorMessage,
+                    color = Color.Red,
+                )
+            }
+        } else null
     )
 
 }
