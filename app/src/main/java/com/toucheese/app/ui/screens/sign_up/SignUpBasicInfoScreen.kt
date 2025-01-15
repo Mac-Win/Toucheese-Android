@@ -46,6 +46,10 @@ fun SignUpBasicInfoScreen(
     val passwordState by viewModel.passwordState.collectAsState()
     // password 유효성
     val isValidatePassword by viewModel.isValidatePassword.collectAsState()
+    // password 확인 상태
+    val matchingPasswordState by viewModel.matchingPasswordState.collectAsState()
+    // password 확인 유효성
+    val isMatchingPassword by viewModel.isMatchingPassword.collectAsState()
 
     Scaffold(
         topBar = {
@@ -139,13 +143,13 @@ fun SignUpBasicInfoScreen(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Password,
                     ),
-                    errorMessage = "소문자, 대문자, 숫자, 특수문자의 조합으로 8자 이상 20자 이하 입력해주세요",
+                    errorMessage = "소문자, 대문자, 숫자, 특수문자($,@,!,%,*,#,?,&,.)의 조합으로 8자 이상 20자 이하 입력해주세요",
                     showError = !isValidatePassword,
                     showLeadingIcon = false,
                     modifier = Modifier.fillMaxWidth(),
                     visualTransformation = PasswordVisualTransformation(),
                     onValueChanged = { password ->
-                        // 값이 변할 때 작동
+                        // 값 저장 & 유효성 검사
                         viewModel.setPassword(password)
                     },
                 )
@@ -162,16 +166,21 @@ fun SignUpBasicInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = matchingPasswordState,
+                    enabled = isValidatePassword,
                     placeholder = "비밀번호를 한 번 더 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done,
                         keyboardType = KeyboardType.Password,
                     ),
+                    errorMessage = "비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요",
+                    showError = !isMatchingPassword,
                     showLeadingIcon = false,
                     visualTransformation = PasswordVisualTransformation(),
-                    onValueChanged = {
-                        // 값이 변할 때 작동
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChanged = { matchingPassword ->
+                        // 값 저장 & 유효성 검사
+                        viewModel.setMatchingPassword(matchingPassword)
                     },
                 )
             }

@@ -35,6 +35,14 @@ class SignUpViewModel @Inject constructor(
     private val _isValidatePassword = MutableStateFlow(false)
     val isValidatePassword: StateFlow<Boolean> = _isValidatePassword
 
+    // 비밀번호 확인 상태
+    private val _matchingPasswordState = MutableStateFlow("")
+    val matchingPasswordState: StateFlow<String> = _matchingPasswordState
+
+    // 비밀번호 확인 여부
+    private val _isMatchingPassword = MutableStateFlow(false)
+    val isMatchingPassword: StateFlow<Boolean> = _isMatchingPassword
+
     init {
         viewModelScope.launch {
             // 이메일 유효성 검사
@@ -56,6 +64,16 @@ class SignUpViewModel @Inject constructor(
                 }
         }
 
+        viewModelScope.launch {
+            // 비밀번호 확인 검사
+            _matchingPasswordState
+                .debounce(300)
+                .collect{ matchingPassword: String ->
+                    // paasword 일치 검사
+                    isMatchingPassword()
+                }
+        }
+
     }
 
     // 이메일 설정
@@ -66,6 +84,11 @@ class SignUpViewModel @Inject constructor(
     // 비밀번호 설정
     fun setPassword(password: String){
         _passwordState.value = password
+    }
+
+    // 비밀번호 확인 설정
+    fun setMatchingPassword(matchingPassword: String){
+        _matchingPasswordState.value = matchingPassword
     }
 
     // 이메일 관련 초기화
@@ -95,10 +118,18 @@ class SignUpViewModel @Inject constructor(
         /** 정규 표현식 내용
          * 소문자, 대문자, 특수문자의 조합으로 8글자 이상 20글자 이하
          */
-        val pwPattern = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&.])[A-Za-z[0-9]$@$!%*#?&.]{8,20}$"
+        val pwPattern = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@!%*#?&.])[A-Za-z[0-9]$@$!%*#?&.]{8,20}$"
         val isValidate = Pattern.matches(pwPattern, passwordState.value)
         _isValidatePassword.value = isValidate
         Log.d("SignUpViewModel", "비밀번호 유효성 검사 결과 : $isValidate")
+    }
+
+    // 비밀번호 확인 일치 여부
+    private fun isMatchingPassword(){
+        val isMatching = _passwordState.value == _matchingPasswordState.value
+        _isMatchingPassword.value = isMatching
+        Log.d("SignUpViewModel", "입력된 비밀번호 확인 : ${_matchingPasswordState.value}")
+        Log.d("SignUpViewModel", "비밀번호 확인 여부 검사 결과: $isMatching")
     }
 
 }
