@@ -43,6 +43,14 @@ class SignUpViewModel @Inject constructor(
     private val _isMatchingPassword = MutableStateFlow(false)
     val isMatchingPassword: StateFlow<Boolean> = _isMatchingPassword
 
+    // 이름 상태
+    private val _nameState = MutableStateFlow("")
+    val nameState: StateFlow<String> = _nameState
+
+    // 이름 유효성
+    private val _isValidateName = MutableStateFlow(false)
+    val isValidateName: StateFlow<Boolean> = _isValidateName
+
     init {
         viewModelScope.launch {
             // 이메일 유효성 검사
@@ -73,6 +81,16 @@ class SignUpViewModel @Inject constructor(
                 }
         }
 
+        viewModelScope.launch {
+            // 이름 유효성 검사
+            _nameState
+                .debounce(300)
+                .collect { name: String ->
+                    // 이름 유효성 검사
+                    isValidateName()
+                }
+        }
+
     }
 
     // 이메일 설정
@@ -90,8 +108,13 @@ class SignUpViewModel @Inject constructor(
         _matchingPasswordState.value = matchingPassword
     }
 
-    // 이메일 관련 초기화
-    fun initEmail() {
+    // 이름 설정
+    fun setName(name: String){
+        _nameState.value = name
+    }
+
+    // 회원 등록 데이터 초기화
+    fun initData() {
         // 이메일 상태 초기화
         _emailState.value = ""
         // 이메일 유효성 초기화
@@ -107,7 +130,7 @@ class SignUpViewModel @Inject constructor(
          * .이 나온 후 소문자, 대문자, 숫자 중 하나 이상 반복
          */
         val emailPattern = "[a-zA-Z0-9]{4,}+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$"
-        val isValidate = Pattern.matches(emailPattern, emailState.value)
+        val isValidate = Pattern.matches(emailPattern, emailState.value.trim())
         _isValidateEmail.value = isValidate
         Log.d("SignUpViewModel", "이메일 유효성 검사 결과 : $isValidate")
     }
@@ -118,7 +141,7 @@ class SignUpViewModel @Inject constructor(
          * 소문자, 대문자, 특수문자의 조합으로 8글자 이상 20글자 이하
          */
         val pwPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@!%*#?&])[A-Za-z0-9$@!%*#?&]{8,20}$"
-        val isValidate = Pattern.matches(pwPattern, passwordState.value)
+        val isValidate = Pattern.matches(pwPattern, passwordState.value.trim())
         _isValidatePassword.value = isValidate
         Log.d("SignUpViewModel", "비밀번호 유효성 검사 결과 : $isValidate")
     }
@@ -130,6 +153,18 @@ class SignUpViewModel @Inject constructor(
         } else false
         Log.d("SignUpViewModel", "입력된 비밀번호 확인 : ${matchingPasswordState.value}")
         Log.d("SignUpViewModel", "비밀번호 확인 여부 검사 결과: ${isMatchingPassword.value}")
+    }
+
+    // 이름 유효성 검사
+    private fun isValidateName() {
+        /** 정규 표현식 내용
+         * 한글 2글자 ~ 4글자
+         */
+        val namePattern = "^[가-힣]{2,4}$"
+        val isValidate = Pattern.matches(namePattern, nameState.value.trim())
+        _isValidateName.value = isValidate
+        Log.d("SignUpViewModel", "이름 입력값: ${nameState.value}")
+        Log.d("SignUpViewModel", "이름 유효성 검사 결과: ${isValidateName.value}")
     }
 
 }

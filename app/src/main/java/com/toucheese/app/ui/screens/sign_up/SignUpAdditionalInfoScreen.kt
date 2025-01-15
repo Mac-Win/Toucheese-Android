@@ -15,14 +15,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,17 +35,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.ui.components.textfield.TextFieldOutlinedComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.viewmodel.LoginViewModel
+import com.toucheese.app.ui.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpAdditionalInfoScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onSignUpButtonClicked: () -> Unit,
 ) {
     // 인증번호 요청 여부
     var isCertificateRequested by remember { mutableStateOf(false) }
+
+    // 이름
+    val nameState by viewModel.nameState.collectAsState()
+    // 이름 유효성
+    val isValidateName by viewModel.isValidateName.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBarComponent(
@@ -105,15 +110,19 @@ fun SignUpAdditionalInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = nameState,
                     placeholder = "이름을 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Email,
+                        keyboardType = KeyboardType.Text,
                     ),
+                    errorMessage = "한글로 2자 이상 4자 이하의 이름을 작성해주세요",
+                    showError = !isValidateName,
                     showLeadingIcon = false,
-                    onValueChanged = {
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChanged = { name: String ->
                         // 값이 변할 때 작동
+                        viewModel.setName(name)
                     },
                 )
             }
@@ -136,10 +145,10 @@ fun SignUpAdditionalInfoScreen(
                     // 연락처
                     TextFieldOutlinedComponent(
                         textFieldValue = "",
-                        placeholder = "숫자만 입력해주세요",
+                        placeholder = "010-1234-5678 형식을 맞춰주세요",
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next,
-                            keyboardType = KeyboardType.Password,
+                            keyboardType = KeyboardType.Phone,
                         ),
                         showLeadingIcon = false,
                         modifier = Modifier.weight(1f),
@@ -186,7 +195,7 @@ fun SignUpAdditionalInfoScreen(
                             placeholder = "인증번호를 입력해주세요",
                             keyboardOptions = KeyboardOptions.Default.copy(
                                 imeAction = ImeAction.Done,
-                                keyboardType = KeyboardType.Password,
+                                keyboardType = KeyboardType.Phone,
                             ),
                             showLeadingIcon = false,
                             modifier = Modifier.weight(1f),
