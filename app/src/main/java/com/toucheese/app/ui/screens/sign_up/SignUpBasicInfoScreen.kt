@@ -21,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +42,10 @@ fun SignUpBasicInfoScreen(
     val emailState by viewModel.emailState.collectAsState()
     // email 유효성
     val isValidateEmail by viewModel.isValidateEmail.collectAsState()
+    // password 상태
+    val passwordState by viewModel.passwordState.collectAsState()
+    // password 유효성
+    val isValidatePassword by viewModel.isValidatePassword.collectAsState()
 
     Scaffold(
         topBar = {
@@ -127,15 +133,20 @@ fun SignUpBasicInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = passwordState,
                     placeholder = "비밀번호를 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Password,
                     ),
+                    errorMessage = "소문자, 대문자, 숫자, 특수문자의 조합으로 8자 이상 20자 이하 입력해주세요",
+                    showError = !isValidatePassword,
                     showLeadingIcon = false,
-                    onValueChanged = {
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = PasswordVisualTransformation(),
+                    onValueChanged = { password ->
                         // 값이 변할 때 작동
+                        viewModel.setPassword(password)
                     },
                 )
             }
@@ -158,6 +169,7 @@ fun SignUpBasicInfoScreen(
                         keyboardType = KeyboardType.Password,
                     ),
                     showLeadingIcon = false,
+                    visualTransformation = PasswordVisualTransformation(),
                     onValueChanged = {
                         // 값이 변할 때 작동
                     },

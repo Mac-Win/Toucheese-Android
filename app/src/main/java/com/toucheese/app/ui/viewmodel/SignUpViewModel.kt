@@ -27,6 +27,14 @@ class SignUpViewModel @Inject constructor(
     private val _isValidateEmail = MutableStateFlow(false)
     val isValidateEmail: StateFlow<Boolean> = _isValidateEmail
 
+    // 비밀번호 상태
+    private val _passwordState = MutableStateFlow("")
+    val passwordState: StateFlow<String> = _passwordState
+
+    // 비밀번호 유효성
+    private val _isValidatePassword = MutableStateFlow(false)
+    val isValidatePassword: StateFlow<Boolean> = _isValidatePassword
+
     init {
         viewModelScope.launch {
             // 이메일 유효성 검사
@@ -36,14 +44,28 @@ class SignUpViewModel @Inject constructor(
                     // email 유효성 검사
                     isValidateEmail()
                 }
-
-            // 비밀번호 유효성 검사
         }
+
+        viewModelScope.launch {
+            // 비밀번호 유효성 검사
+            _passwordState
+                .debounce(300)
+                .collect{ password: String ->
+                    // password 유효성 검사
+                    isValidatePassword()
+                }
+        }
+
     }
 
     // 이메일 설정
     fun setEmail(email: String) {
         _emailState.value = email
+    }
+
+    // 비밀번호 설정
+    fun setPassword(password: String){
+        _passwordState.value = password
     }
 
     // 이메일 관련 초기화
@@ -56,16 +78,27 @@ class SignUpViewModel @Inject constructor(
 
     // 이메일 유효성 검사
     private fun isValidateEmail() {
-        // 입력된 내용이 있는경우
         /** 정규 표현식 내용
          * a-z, A-Z, 0-9까지의 영문자나 숫자 4개 이상
          * _, 소문자, 숫자, 하이픈 중 하나가 반복 가능
          * @ 뒤에 소문자, 대문자, 숫자 중 하나 이상 반복
          * .이 나온 후 소문자, 대문자, 숫자 중 하나 이상 반복
          */
-        val isValidate = Pattern.matches("[a-zA-Z0-9]{4,}+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$", emailState.value)
+        val emailPattern = "[a-zA-Z0-9]{4,}+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$"
+        val isValidate = Pattern.matches(emailPattern, emailState.value)
         _isValidateEmail.value = isValidate
         Log.d("SignUpViewModel", "이메일 유효성 검사 결과 : $isValidate")
+    }
+
+    // 비밀번호 유효성 검사
+    private fun isValidatePassword(){
+        /** 정규 표현식 내용
+         * 소문자, 대문자, 특수문자의 조합으로 8글자 이상 20글자 이하
+         */
+        val pwPattern = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&.])[A-Za-z[0-9]$@$!%*#?&.]{8,20}$"
+        val isValidate = Pattern.matches(pwPattern, passwordState.value)
+        _isValidatePassword.value = isValidate
+        Log.d("SignUpViewModel", "비밀번호 유효성 검사 결과 : $isValidate")
     }
 
 }
