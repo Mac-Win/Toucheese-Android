@@ -51,6 +51,14 @@ class SignUpViewModel @Inject constructor(
     private val _isValidateName = MutableStateFlow(false)
     val isValidateName: StateFlow<Boolean> = _isValidateName
 
+    // 연락처 상태
+    private val _contactState = MutableStateFlow("")
+    val contactState: StateFlow<String> = _contactState
+
+    // 연락처 유효성
+    private val _isValidateContact = MutableStateFlow(false)
+    val isValidateContact: StateFlow<Boolean> = _isValidateContact
+
     init {
         viewModelScope.launch {
             // 이메일 유효성 검사
@@ -91,6 +99,16 @@ class SignUpViewModel @Inject constructor(
                 }
         }
 
+        viewModelScope.launch {
+            // 연락처 유효성 검사
+            _contactState
+                .debounce(300)
+                .collect{ contact: String ->
+                    // 연락처 유효성 검사
+                    isValidateContact()
+                }
+        }
+
     }
 
     // 이메일 설정
@@ -111,6 +129,11 @@ class SignUpViewModel @Inject constructor(
     // 이름 설정
     fun setName(name: String){
         _nameState.value = name
+    }
+
+    // 연락처 설정
+    fun setContact(contact: String){
+        _contactState.value = contact
     }
 
     // 회원 등록 데이터 초기화
@@ -165,6 +188,18 @@ class SignUpViewModel @Inject constructor(
         _isValidateName.value = isValidate
         Log.d("SignUpViewModel", "이름 입력값: ${nameState.value}")
         Log.d("SignUpViewModel", "이름 유효성 검사 결과: ${isValidateName.value}")
+    }
+
+    // 연락처 유효성 검사
+    private fun isValidateContact() {
+        /** 정규 표현식 내용
+         *  010-XXXX-XXXX
+         */
+        val contactPattern = "^01[01]-\\d{4}-\\d{4}$"
+        val isValidate = Pattern.matches(contactPattern, contactState.value.trim())
+        _isValidateContact.value = isValidate
+        Log.d("SignUpViewModel", "연락처 입력값: ${contactState.value}")
+        Log.d("SignUpViewModel", "연락처 유효성 검사 결과: ${isValidateContact.value}")
     }
 
 }
