@@ -118,7 +118,7 @@ class SignUpViewModel @Inject constructor(
         /** 정규 표현식 내용
          * 소문자, 대문자, 특수문자의 조합으로 8글자 이상 20글자 이하
          */
-        val pwPattern = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@!%*#?&.])[A-Za-z[0-9]$@$!%*#?&.]{8,20}$"
+        val pwPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@!%*#?&])[A-Za-z0-9$@!%*#?&]{8,20}$"
         val isValidate = Pattern.matches(pwPattern, passwordState.value)
         _isValidatePassword.value = isValidate
         Log.d("SignUpViewModel", "비밀번호 유효성 검사 결과 : $isValidate")
