@@ -1,6 +1,5 @@
 package com.toucheese.app.ui.screens.sign_up
 
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -28,14 +26,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.R
-import com.toucheese.app.ui.components.topbar.TopAppBarComponent
-import com.toucheese.app.ui.viewmodel.LoginViewModel
+import com.toucheese.app.ui.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpWelcomeScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel,
     modifier: Modifier = Modifier,
     onButtonClicked: () -> Unit,
 ) {

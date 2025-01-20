@@ -33,7 +33,7 @@ import com.toucheese.app.ui.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpBasicInfoScreen(
-    viewModel: SignUpViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel,
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onNextButtonClicked: () -> Unit,
@@ -187,17 +187,5 @@ fun SignUpBasicInfoScreen(
             }
         }
 
-    }
-}
-
-
-@Preview
-@Composable
-private fun SignUpBasicInfoScreenPreview() {
-    ToucheeseAppTheme {
-        SignUpBasicInfoScreen(
-            onClickLeadingIcon = { },
-            onNextButtonClicked = { },
-        )
     }
 }

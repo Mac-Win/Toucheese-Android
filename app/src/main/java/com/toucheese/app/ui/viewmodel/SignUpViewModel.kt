@@ -1,8 +1,15 @@
 package com.toucheese.app.ui.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.i18n.phonenumbers.NumberParseException
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.toucheese.app.data.model.sign_up.SignUpData
 import com.toucheese.app.data.repository.SignUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -13,10 +20,9 @@ import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val repository: SignUpRepository
+    private val repository: SignUpRepository,
 ) : ViewModel() {
 
     // 이메일 상태
@@ -195,11 +201,49 @@ class SignUpViewModel @Inject constructor(
         /** 정규 표현식 내용
          *  010-XXXX-XXXX
          */
-        val contactPattern = "^01[01]-\\d{4}-\\d{4}$"
+        val contactPattern = "^01[01]\\d{8,10}$"
         val isValidate = Pattern.matches(contactPattern, contactState.value.trim())
         _isValidateContact.value = isValidate
         Log.d("SignUpViewModel", "연락처 입력값: ${contactState.value}")
         Log.d("SignUpViewModel", "연락처 유효성 검사 결과: ${isValidateContact.value}")
     }
 
+    // 회원가입 요청
+    fun requestSignUp(
+        onCompleted: () -> Unit,
+        onCanceled: () -> Unit,
+    ){
+        // data 추출
+        val email: String = emailState.value
+        val password: String = passwordState.value
+        val name: String = nameState.value
+        val phone: String = contactState.value
+
+        // data 생성
+        val signUpData = SignUpData(email, password, name, phone)
+        Log.d("SignUpViewModel", "signUpData = ${signUpData.toString()}")
+        // 회원가입 요청
+        val job = viewModelScope.launch {
+            repository.requestSignUp(data = signUpData)
+        }
+        if (job.isCompleted){
+            // 작업 완료
+            onCompleted()
+        } else if (job.isCancelled){
+            // 작업 실패
+            onCanceled()
+        }
+    }
+
+    // PhoneNumber -> E164 형식
+    private fun formatPhoneNumberToE164(phoneNumber: String, countryCode: String = "KR"): String {
+        val phoneNumberUtil = PhoneNumberUtil.getInstance()
+        return try {
+            val number = phoneNumberUtil.parse(phoneNumber, countryCode)
+            phoneNumberUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164)
+        } catch (e: NumberParseException) {
+            Log.e("SignUpViewModel", "잘못된 전화번호 입력: ${e.message}")
+            throw IllegalArgumentException("전화번호를 다시 확인해주세요.") // 예외 처리
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.toucheese.app.ui.screens.sign_up
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -25,29 +26,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.ui.components.textfield.TextFieldOutlinedComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpAdditionalInfoScreen(
-    viewModel: SignUpViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel,
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onSignUpButtonClicked: () -> Unit,
 ) {
+    // Context
+    val context = LocalContext.current
     // 인증번호 요청 여부
     var isCertificateRequested by remember { mutableStateOf(false) }
+    // 버튼 활성화 여부
+    var isDataVerified by rememberSaveable { mutableStateOf(false) }
 
     // 이름
     val nameState by viewModel.nameState.collectAsState()
@@ -77,9 +81,21 @@ fun SignUpAdditionalInfoScreen(
 
                 ) {
                 Button(
+                    enabled = isDataVerified,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onSignUpButtonClicked,
+                    onClick = {
+                        // 회원가입 요청
+                        viewModel.requestSignUp(
+                            onCompleted = {
+                                onSignUpButtonClicked()
+                            },
+                            onCanceled = {
+                                // 요청 실패
+                                Toast.makeText(context, "요청실패. 관리자에게 문의하세요", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    },
                 ) {
                     Text(
                         text = "다음"
@@ -150,7 +166,7 @@ fun SignUpAdditionalInfoScreen(
                     // 연락처
                     TextFieldOutlinedComponent(
                         textFieldValue = contactState,
-                        placeholder = "010-XXXX-XXXX",
+                        placeholder = "- 없이 입력해주세요",
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next,
                             keyboardType = KeyboardType.Phone,
@@ -174,8 +190,13 @@ fun SignUpAdditionalInfoScreen(
                         ),
                         modifier = Modifier.fillMaxHeight(),
                         onClick = {
-                            // 인증번호 요청
-                            isCertificateRequested = true
+                            // 올바른 번호
+                            if (isValidateContact) {
+                                // 전화번호 인증 요청
+                                isDataVerified = true
+                            }
+                            // 올바르지 않은 번호
+                            else Toast.makeText(context, "올바른 전화번호를 입력해주세요", Toast.LENGTH_SHORT).show()
                         }
                     ) {
                         Text(

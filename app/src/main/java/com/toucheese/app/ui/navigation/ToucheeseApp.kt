@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -58,6 +59,7 @@ import com.toucheese.app.ui.screens.sign_up.SignUpBasicInfoScreen
 import com.toucheese.app.ui.screens.sign_up.SignUpWelcomeScreen
 import com.toucheese.app.ui.screens.tab_bookSchedule.BookScheduleScreen
 import com.toucheese.app.ui.screens.tab_myInfo.MyInfoScreen
+import com.toucheese.app.ui.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
 
@@ -577,8 +579,11 @@ fun ToucheeseApp(api: HomeService) {
         }
 
         // 회원가입 화면 - 이메일, 비밀번호
-        composable(Screen.SignUpBasic.route){
+        composable(Screen.SignUpBasic.route){ backStackEntry: NavBackStackEntry ->
+            val viewModel: SignUpViewModel = hiltViewModel(viewModelStoreOwner = backStackEntry)
+
             SignUpBasicInfoScreen(
+                viewModel = viewModel,
                 onClickLeadingIcon = {
                     // 뒤로가기
                     navController.navigateUp()
@@ -591,8 +596,18 @@ fun ToucheeseApp(api: HomeService) {
         }
 
         // 회원가입 화면 - 이름, 연락처
-        composable(Screen.SignUpAdditional.route){
+        composable(Screen.SignUpAdditional.route){ backStackEntry: NavBackStackEntry ->
+            val viewModel: SignUpViewModel = if (navController.previousBackStackEntry != null){
+                // 이전 화면이 존재하는 경우
+                hiltViewModel(viewModelStoreOwner = navController.previousBackStackEntry!!)
+            } else {
+                // 이전 화면이 존재하지 않는 경우
+                hiltViewModel()
+            }
+
+
             SignUpAdditionalInfoScreen(
+                viewModel = viewModel,
                 onClickLeadingIcon = {
                     // 뒤로가기
                     navController.navigateUp()
@@ -605,8 +620,16 @@ fun ToucheeseApp(api: HomeService) {
         }
 
         // 회원가입 화면 - 환영 페이지
-        composable(Screen.SignUpWelcome.route){
+        composable(Screen.SignUpWelcome.route){ backStackEntry: NavBackStackEntry ->
+            val viewModel: SignUpViewModel = if (navController.previousBackStackEntry != null){
+                // 이전 화면이 존재하는 경우
+                hiltViewModel(viewModelStoreOwner = navController.previousBackStackEntry!!)
+            } else {
+                // 이전 화면이 존재하지 않는 경우
+                hiltViewModel()
+            }
             SignUpWelcomeScreen(
+                viewModel = viewModel,
                 onButtonClicked = {
                     // 로그인 화면으로 이동
                     navController.navigate(Screen.Login.route){

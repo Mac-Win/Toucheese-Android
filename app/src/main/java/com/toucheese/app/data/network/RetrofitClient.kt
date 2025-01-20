@@ -58,4 +58,8 @@ object RetrofitClient {
     @Singleton
     @Provides
     fun provideBookScheduleService(retrofit: Retrofit): BookScheduleService = retrofit.create(BookScheduleService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideSignUpService(retrofit: Retrofit): SignUpService = retrofit.create(SignUpService::class.java)
 }
