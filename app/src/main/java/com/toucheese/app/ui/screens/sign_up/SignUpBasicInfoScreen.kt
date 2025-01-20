@@ -12,30 +12,44 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toucheese.app.ui.components.textfield.TextFieldOutlinedComponent
 import com.toucheese.app.ui.components.topbar.TopAppBarComponent
 import com.toucheese.app.ui.theme.ToucheeseAppTheme
-import com.toucheese.app.ui.viewmodel.LoginViewModel
+import com.toucheese.app.ui.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpBasicInfoScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel,
     modifier: Modifier = Modifier,
     onClickLeadingIcon: () -> Unit,
     onNextButtonClicked: () -> Unit,
 ) {
+    // email 상태
+    val emailState by viewModel.emailState.collectAsState()
+    // email 유효성
+    val isValidateEmail by viewModel.isValidateEmail.collectAsState()
+    // password 상태
+    val passwordState by viewModel.passwordState.collectAsState()
+    // password 유효성
+    val isValidatePassword by viewModel.isValidatePassword.collectAsState()
+    // password 확인 상태
+    val matchingPasswordState by viewModel.matchingPasswordState.collectAsState()
+    // password 확인 유효성
+    val isMatchingPassword by viewModel.isMatchingPassword.collectAsState()
 
     Scaffold(
         topBar = {
@@ -56,6 +70,7 @@ fun SignUpBasicInfoScreen(
 
             ) {
                 Button(
+                    enabled = isValidateEmail && isValidatePassword && isMatchingPassword,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onNextButtonClicked,
@@ -95,15 +110,19 @@ fun SignUpBasicInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = emailState,
                     placeholder = "이메일을 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Email,
                     ),
+                    errorMessage = "이메일 형식을 맞춰주세요 (Ex. toucheese@email.com)",
+                    showError = !isValidateEmail,
                     showLeadingIcon = false,
-                    onValueChanged = {
-                        // 값이 변할 때 작동
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChanged = { email ->
+                        // 값 저장 & 유효성 검사
+                        viewModel.setEmail(email)
                     },
                 )
             }
@@ -119,15 +138,20 @@ fun SignUpBasicInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = passwordState,
                     placeholder = "비밀번호를 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Password,
                     ),
+                    errorMessage = "소문자, 대문자, 숫자, 특수문자($,@,!,%,*,#,?,&,.)의 조합으로 8자 이상 20자 이하 입력해주세요",
+                    showError = !isValidatePassword,
                     showLeadingIcon = false,
-                    onValueChanged = {
-                        // 값이 변할 때 작동
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = PasswordVisualTransformation(),
+                    onValueChanged = { password ->
+                        // 값 저장 & 유효성 검사
+                        viewModel.setPassword(password)
                     },
                 )
             }
@@ -143,31 +167,25 @@ fun SignUpBasicInfoScreen(
 
                 // 입력
                 TextFieldOutlinedComponent(
-                    textFieldValue = "",
+                    textFieldValue = matchingPasswordState,
+                    enabled = isValidatePassword,
                     placeholder = "비밀번호를 한 번 더 입력해주세요",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done,
                         keyboardType = KeyboardType.Password,
                     ),
+                    errorMessage = "비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요",
+                    showError = !isMatchingPassword,
                     showLeadingIcon = false,
-                    onValueChanged = {
-                        // 값이 변할 때 작동
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChanged = { matchingPassword ->
+                        // 값 저장 & 유효성 검사
+                        viewModel.setMatchingPassword(matchingPassword)
                     },
                 )
             }
         }
 
-    }
-}
-
-
-@Preview
-@Composable
-private fun SignUpBasicInfoScreenPreview() {
-    ToucheeseAppTheme {
-        SignUpBasicInfoScreen(
-            onClickLeadingIcon = { },
-            onNextButtonClicked = { },
-        )
     }
 }

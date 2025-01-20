@@ -2,8 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    // Hilt
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+//    // Firebase
+//    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,9 +55,9 @@ android {
 
         debug {
             // ProGuard 활성화
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             // Resource 축소
-            isShrinkResources = true
+            isShrinkResources = false
             proguardFiles(
                 // 기본 ProGuard 설정
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -132,6 +135,13 @@ dependencies {
 
     // Naver SDK
     implementation ("com.navercorp.nid:oauth:5.10.0")
+//    // Firebase
+//    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+//    implementation("com.google.firebase:firebase-analytics")
+//    implementation("com.google.firebase:firebase-auth") // Firebase 인증
+//    // PhoneNumber 변환 라이브러리
+    implementation(libs.libphonenumber)
+
 
 }
 
