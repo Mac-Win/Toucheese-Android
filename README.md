@@ -81,20 +81,27 @@ TOUCHEESE = TOUCH + CHEESE
 #### - 예약일정
 주문하신 예약 상품은 예약일정 탭에서 확인이 가능합니다. 
 예약을 해놨는데 정말 불가피한 일로 촬영이 불가능하신 경우, 예약 일정 탭에서 예약일정 변경을 클릭하시면 날짜를 변경할 수 있습니다.
+- 상세한 변경: 예약일정을 `연도`, `월`, `일`, `시간`별로 한 번에 변경할 수 있는 기능을 제공
+- 간편한 변경: 기존 예약일자에 해당하는 주 내에서 `일`, `시간`을 간편하게 변경할 수 있는 기능을 제공
 
-| 예약 일정 조회 | 예약 일정 변경 | 
-| ----- | ----- | 
-| <img src="https://github.com/user-attachments/assets/63bcd211-0a59-4797-9157-16b1b062bff5" width="200" height="400"/> | <img src="https://github.com/user-attachments/assets/59f75bc8-c71b-40b4-bc1a-f3c2bc102d11" width="200" height="400"/> |
+| 예약 일정 조회 | 예약 일정 변경 화면 | 상세한 변경 | 상세 변경 완료 | 간편한 변경 | 예약일정 변경 완료 |
+| ----- | ----- | ----- | ----- | ----- | ----- | 
+| <img src="https://github.com/user-attachments/assets/63bcd211-0a59-4797-9157-16b1b062bff5" width="200" height="400"/> | <img src="https://github.com/user-attachments/assets/59f75bc8-c71b-40b4-bc1a-f3c2bc102d11" width="200" height="400"/> | <img src= "https://github.com/user-attachments/assets/4e01cd77-50bb-44a5-a752-e7f5927dc371" width= "200" height = "400" /> | <img src= "https://github.com/user-attachments/assets/a8f207cb-dcc6-4c43-82c3-d0bfb95e9e29" width= "200" height = "400" /> | <img src= "https://github.com/user-attachments/assets/967ad3d2-febb-489e-b8b2-27031825fce2" width= "200" height = "400" /> | <img src= "https://github.com/user-attachments/assets/d427f80c-5361-4ef0-8471-d59946a36a19" width= "200" height = "400" /> |
 
 
 <br><br>
+
 ### 5. 문의
+스튜디오 예약과 관련하여 궁금하신 사항이 있는 경우에 문의 탭을 이용하여 관리자에게 문의할 수 있습니다. 문의 탭에서는 `문의 작성`, `문의 내역 조회`, `문의 답변 조회` 기능을 제공합니다
 
-#### - 문의내역 조회
+| 문의 탭 | 문의 작성 | 사진 첨부 - 카메라 | 사진 첨부 - 앨범 | 첨부 완료 | 
+| ----- | ----- | ----- | ----- | -----|
+| <img src= "https://github.com/user-attachments/assets/d9d5aed5-dcfd-4baa-9c42-a007c0ba6769" width="200" height="400"/> | <img src = "https://github.com/user-attachments/assets/5e8be671-c8ec-4e00-9ac3-a5e27ddcf616" width ="200" height = "400" /> | <img src="https://github.com/user-attachments/assets/cbec0a7d-d751-4d58-a19c-e55f099a3f6d" width ="200" height = "400" /> | <img src = "https://github.com/user-attachments/assets/1068a144-3d32-46b4-90e6-d1c574a834a2" width ="200" height = "400"/> | <img src = "https://github.com/user-attachments/assets/37d7b03d-a8d7-4ce2-abe6-693adee6b38e" width ="200" height = "400"/> |  
 
-#### - 글 작성 문의
 
-#### - 사진 파일 첨부
+
+
+
 
 
 <br><br><br><br>
