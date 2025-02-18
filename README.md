@@ -1,6 +1,10 @@
 # 스튜디오 정보에 대한 쉽고 빠른 접근 및 예약, Toucheese
 
-<br><br><br><br>
+<br>
+
+개선된 프로젝트 : [Toucheese-클린 아키텍처](https://github.com/TedMoon99/Toucheese-Clean)
+
+<br>
 
 ## 🔍 프로젝트 소개
 
